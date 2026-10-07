@@ -25,6 +25,12 @@ It was moved here with its history, and the old address now redirects here.
 1. Put the tool in its own folder in this repo.
 2. Add an entry to the `TOOLS` list near the top of the script in `index.html`.
    It shows up in the sidebar and as a card on the home page.
-3. In the tool's page, add the sign-in check to `<head>` and the shared
+3. In the tool's page, add the `noindex` robots tag and sign-in check to `<head>`, and the shared
    sidebar with a "Back to Fuse Hub" link. Copy both from
    `present-feedback/index.html`.
+
+## Keeping it out of search engines
+
+Every page has `<meta name="robots" content="noindex, nofollow, ...">`, which
+stops search engines and well-behaved bots from listing it. Add the same tag
+to any new page.
