@@ -17,6 +17,8 @@ step-by-step instructions for anything she has to do outside the repo.
   Worker that holds the flow URL as a secret. See
   `automation-finder/FLOW_SPEC.md` and `*/worker/DEPLOY.md`.
 - Workers only accept requests from `https://fuserecruitment.github.io`.
+- Links to SharePoint files are fine (they need a Fuse sign-in). The
+  Automation Finder and Journey Map sidebars both link to the register.
 
 ## Every page must have
 
