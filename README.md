@@ -15,6 +15,7 @@ confidential content here.
 |---|---|---|
 | Bullhorn Categorisation | `bullhorn-category/` (its AI proxy worker is in `bullhorn-category/worker/`) | https://fuserecruitment.github.io/hub/bullhorn-category/ |
 | Automation Finder | `automation-finder/` (worker in `automation-finder/worker/`, flow setup in `automation-finder/FLOW_SPEC.md`) | https://fuserecruitment.github.io/hub/automation-finder/ |
+| Automation Journey Map | `journeys/` (reads the register through the Automation Finder worker; stages are set in `STAGE_IDS` in its `index.html`) | https://fuserecruitment.github.io/hub/journeys/ |
 | Present Feedback Review | `present-feedback/` | https://fuserecruitment.github.io/hub/present-feedback/ |
 
 Bullhorn Categorisation used to live in its own repo,

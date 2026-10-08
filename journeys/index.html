@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<title>Automation Journey Map | Fuse Recruitment</title>
+<script>
+/* Fuse Hub sign-in check: send people to the hub to enter their Fuse email first. */
+(function () {
+  var email = null;
+  try { email = localStorage.getItem('fuseHub.email'); } catch (e) { return; }
+  if (!email || !/^[^\s@]+@fuserecruitment\.com$/i.test(email)) {
+    location.replace('../?next=' + encodeURIComponent(location.href));
+  }
+})();
+</script>
+<link rel="icon" type="image/png" href="../fuse-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --navy:#151A36;
+    --blue:#009CDD;
+    --concrete:#A2C8D8;
+    --steel:#E6EFF3;
+    --line:#CBD9E1;
+    --warn:#B23B3B;
+    --white:#FFFFFF;
+    --ink:#151A36;
+    --ink-soft:#5B6178;
+    --green:#1E7B4F;
+    --green-bg:#E3F3EA;
+    --amber:#8A5A00;
+    --amber-bg:#FBF0D9;
+    --grey-bg:#EDEFF3;
+    --red-bg:#FBECEC;
+    --radius-lg:10px;
+    --radius-md:8px;
+    --radius-sm:7px;
+    --sidebar-w:300px;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--steel);
+    color:var(--ink);
+    font-family:'Work Sans',sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{margin:0;color:var(--navy);font-weight:700;letter-spacing:-0.01em;}
+  p{margin:0;}
+  [hidden]{display:none !important;}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+
+  /* ---------- Shell: sidebar + workspace (same component as the other Fuse Hub tools) ---------- */
+  .shell{display:flex;min-height:100vh;}
+
+  .sidebar{
+    width:var(--sidebar-w);flex-shrink:0;
+    background:var(--navy);color:var(--white);
+    display:flex;flex-direction:column;
+    height:100vh;position:sticky;top:0;overflow:hidden;
+  }
+  .sidebar-scroll{flex:1;min-height:0;overflow-y:auto;}
+  .sidebar-brand{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center;}
+  .sidebar-logo{display:block;width:96px;height:auto;margin:0 auto 14px;}
+  .sidebar-brand h1{font-size:16.5px;margin:0;color:#fff;}
+  .sidebar-brand .tag{font-size:11px;color:rgba(255,255,255,.55);margin-top:3px;}
+  .sidebar-block{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .sidebar-block label{
+    display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.06em;color:rgba(255,255,255,.5);margin-bottom:8px;
+  }
+  .sidebar-block p{font-size:13px;color:rgba(255,255,255,.7);}
+  .sidebar-block p + p{margin-top:8px;}
+  .sidebar-block a{color:var(--concrete);}
+  .sidebar-nav-btn{
+    display:block;width:100%;text-align:left;padding:10px 12px;margin-bottom:4px;border-radius:7px;border:none;
+    background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);font-family:'Work Sans',sans-serif;
+    font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;
+  }
+  .sidebar-nav-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+  .sidebar-nav-btn.active{background:var(--blue);color:#fff;}
+  .sidebar-nav-btn.hub-back{margin-bottom:0;}
+  .sidebar-nav-btn .n{float:right;font-weight:500;opacity:.7;font-variant-numeric:tabular-nums;}
+
+  .workspace{flex:1;min-width:0;padding:32px 36px 80px;}
+  .workspace-inner{max-width:1500px;margin:0 auto;}
+
+  /* ---------- Intro ---------- */
+  .intro{padding-bottom:22px;}
+  .intro h1{font-size:28px;line-height:1.25;margin:0 0 10px;}
+  .intro p{color:var(--ink-soft);font-size:15px;max-width:72ch;}
+
+  .stats{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
+  .stat{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:12px 16px;min-width:0;}
+  .stat .k{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+  .stat .v{font-size:22px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;}
+  .stat .v small{font-size:12.5px;font-weight:500;color:var(--ink-soft);margin-left:6px;}
+
+  .status{min-height:22px;font-size:13.5px;color:var(--ink-soft);}
+  .status.working::before{
+    content:"";display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px;
+    border:2px solid var(--concrete);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .error{
+    background:var(--red-bg);border:1px solid #EBC5C5;border-radius:var(--radius-lg);padding:14px 16px;color:var(--warn);
+    display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;
+  }
+
+  /* ---------- Controls ---------- */
+  .view-head{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;margin-bottom:6px;}
+  .view-head h2{font-size:21px;}
+  .view-head p{color:var(--ink-soft);font-size:14px;}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 16px;}
+  .controls input[type=search]{
+    flex:1 1 260px;min-width:0;max-width:420px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);
+    background:var(--white);color:var(--ink);font-family:'Work Sans',sans-serif;font-size:15px;
+  }
+  .controls input[type=search]:focus{outline:none;border-color:var(--blue);}
+  .chip{
+    padding:6px 12px;border-radius:100px;border:1px solid var(--line);background:var(--white);color:var(--ink-soft);
+    font-family:'Work Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;
+  }
+  .chip:hover{border-color:var(--blue);}
+  .chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600;}
+  .hint{font-size:13px;color:var(--ink-soft);}
+
+  /* ---------- Journey track ---------- */
+  .track-scroll{overflow-x:auto;padding-bottom:10px;}
+  .track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(272px,1fr);gap:14px;min-width:min-content;}
+  .stage{
+    background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px;
+    display:flex;flex-direction:column;gap:10px;min-width:0;border-top:4px solid var(--accent);
+  }
+  .stage.new{border-top-color:var(--amber);background:#FFFCF5;}
+  .stage.hl{box-shadow:0 0 0 3px var(--blue);}
+  .stage-top{display:flex;align-items:baseline;gap:10px;}
+  .num{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
+  .stage h3{font-size:16.5px;line-height:1.3;}
+  .blurb{font-size:13.5px;color:var(--ink-soft);}
+  .handoffs{display:flex;flex-wrap:wrap;gap:6px;}
+  .ho{
+    font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:600;text-align:left;cursor:pointer;
+    border:1px dashed var(--other);color:var(--other);background:var(--white);border-radius:var(--radius-sm);padding:4px 9px;
+  }
+  .ho:hover{background:var(--steel);}
+  .cnt{font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+  .cards{display:flex;flex-direction:column;gap:6px;}
+
+  details.card{border:1px solid var(--line);border-radius:var(--radius-md);background:var(--white);}
+  details.card[open]{border-color:var(--concrete);background:#F7FAFC;}
+  details.card summary{list-style:none;cursor:pointer;padding:9px 11px;display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:start;}
+  details.card summary::-webkit-details-marker{display:none;}
+  .nm{font-size:13.5px;font-weight:600;line-height:1.35;overflow-wrap:anywhere;}
+  .sub{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11.5px;color:var(--ink-soft);}
+  .pill{font-size:11px;font-weight:600;border-radius:100px;padding:2px 9px;background:var(--steel);color:var(--ink-soft);white-space:nowrap;}
+  .pill.active{background:var(--green-bg);color:var(--green);}
+  .pill.paused{background:var(--amber-bg);color:var(--amber);}
+  .pill.retired,.pill.hibernated{background:var(--grey-bg);color:var(--ink-soft);}
+  .pill.ext{background:var(--white);border:1px dashed var(--concrete);color:var(--ink-soft);}
+  .mini{font-size:11px;padding:1px 7px;border-radius:100px;background:var(--steel);color:var(--ink-soft);}
+  .card-body{padding:0 11px 11px;font-size:13.5px;display:flex;flex-direction:column;gap:8px;}
+  .card-body dl{display:grid;grid-template-columns:90px 1fr;gap:4px 10px;margin:0;font-size:13px;}
+  .card-body dt{color:var(--ink-soft);}
+  .card-body dd{margin:0;overflow-wrap:anywhere;}
+  .open-link{
+    align-self:flex-start;display:inline-block;padding:7px 12px;border-radius:var(--radius-sm);background:var(--navy);color:#fff;
+    font-size:12.5px;font-weight:600;text-decoration:none;
+  }
+  .open-link:hover{background:#262D57;}
+  details.group > summary .nm::before{content:"▸ ";color:var(--ink-soft);}
+  details.group[open] > summary .nm::before{content:"▾ ";}
+  details.group > .cards{padding:0 8px 8px;}
+  details.card.ext{border-style:dashed;}
+  .empty{font-size:13px;color:var(--ink-soft);font-style:italic;}
+
+  .band{margin-top:14px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px;}
+  .band-head{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;margin-bottom:12px;}
+  .band-head h3{font-size:16.5px;}
+  .band > .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px;align-items:start;}
+
+  /* ---------- Connections ---------- */
+  .lanes{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:14px;overflow-x:auto;}
+  .lane{display:flex;align-items:center;gap:8px;min-width:min-content;}
+  .lane-label{width:118px;flex-shrink:0;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+  .lane-step{
+    font-family:'Work Sans',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;
+    border:none;border-radius:var(--radius-sm);padding:7px 11px;
+  }
+  .lane-step.c{background:#E0F3FB;color:#00658F;}
+  .lane-step.s{background:var(--navy);color:#fff;}
+  .lane-arrow{color:var(--concrete);font-weight:700;}
+  .lane-note{font-size:12.5px;color:var(--ink-soft);}
+  .conn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:16px;}
+  .conn{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0;}
+  .conn h3{font-size:16px;}
+  .route{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .conn p{font-size:14px;color:var(--ink-soft);}
+  .ids{display:flex;flex-wrap:wrap;gap:6px;}
+  .ids a{font-size:12px;color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);border-radius:100px;padding:2px 9px;}
+  .ids a:hover{border-color:var(--blue);color:var(--ink);}
+
+  /* ---------- Gaps ---------- */
+  .flags{display:flex;flex-direction:column;gap:12px;max-width:960px;}
+  .flagc{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--sev);border-radius:var(--radius-lg);padding:14px 18px;display:flex;flex-direction:column;gap:8px;}
+  .flagc h3{font-size:16px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;}
+  .sev{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sev);}
+  .flagc p{font-size:14px;}
+
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+  @media(max-width:860px){
+    .shell{flex-direction:column;}
+    .sidebar{width:100%;height:auto;position:relative;}
+    .sidebar-about{display:none;}
+    .workspace{padding:24px 16px 60px;}
+    .intro h1{font-size:24px;}
+  }
+  @media (prefers-reduced-motion:reduce){.status.working::before{animation:none;}}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-scroll">
+      <div class="sidebar-brand">
+        <img src="../fuse-logo.png" alt="Fuse" class="sidebar-logo">
+        <h1>Automation Journey Map</h1>
+      </div>
+
+      <div class="sidebar-block">
+        <a class="sidebar-nav-btn hub-back" href="../">&larr; Back to Fuse Hub</a>
+      </div>
+
+      <div class="sidebar-block">
+        <label>Views</label>
+        <nav id="viewNav">
+          <button type="button" class="sidebar-nav-btn active" data-view="cand">Candidate journey <span class="n" id="navCand"></span></button>
+          <button type="button" class="sidebar-nav-btn" data-view="sales">Sales contact journey <span class="n" id="navSales"></span></button>
+          <button type="button" class="sidebar-nav-btn" data-view="conn">How they connect</button>
+          <button type="button" class="sidebar-nav-btn" data-view="flags">Gaps &amp; checks</button>
+        </nav>
+      </div>
+
+      <div class="sidebar-block sidebar-about">
+        <label>Where the data comes from</label>
+        <p>The Active Automation Register 2026 spreadsheet in Marketing &rsaquo; BH Automation (Herefish). The register is updated every Monday morning, and this page picks up the new copy after that. It's the same source as the <a href="../automation-finder/">Automation Finder</a>.</p>
+        <p>The journey stages, hand-offs and gaps were mapped on 8 October 2026. Automations added after that show up in a "Not on the map yet" column until they're given a stage.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <div class="workspace-inner">
+      <div class="intro">
+        <h1>How our automations fit together</h1>
+        <p>Every Bullhorn Automation in the register, placed on the candidate and sales contact journeys, with the points where one journey hands off to the other. Open any card to see what it does and jump to it in Bullhorn Automation.</p>
+      </div>
+
+      <div class="stats" id="stats" hidden></div>
+      <div class="status working" id="loadStatus" role="status" aria-live="polite">Reading the automation register…</div>
+      <div class="error" id="loadError" hidden>
+        <span>Couldn't load the automation register. Check your connection and try again.</span>
+        <button type="button" class="chip" id="retry">Try again</button>
+      </div>
+
+      <section id="v-cand" hidden></section>
+      <section id="v-sales" hidden></section>
+      <section id="v-conn" hidden></section>
+      <section id="v-flags" hidden></section>
+
+      <footer>
+        <span>Fuse Recruitment</span>
+        <span>Stages and gaps reviewed 8 Oct 2026. Automation details come from the register and refresh after its weekly update.</span>
+      </footer>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ===================== CONFIG ===================== */
+/* Same Worker and flow as the Automation Finder (see ../automation-finder/FLOW_SPEC.md).
+   The flow returns { reply, automations }; this page only uses "automations",
+   so the register itself never has to be copied into this public repo.
+   "mode": "register" lets the flow skip the AI step if it's set up to (FLOW_SPEC.md, step 13). */
+const FLOW_URL = 'https://bullhorn-automation-finder.marketing-1b3.workers.dev/api/ask';
+const REQUEST_BODY = {
+  mode: 'register',
+  conversation: [{ role: 'user', content: 'List every automation in the register.' }]
+};
+const CACHE_KEY = 'automationJourneys.register';
+/* The register's scheduled update runs Mondays at 6:00 am Philippine time
+   (UTC+8, no daylight saving). A saved copy counts as stale once the
+   following hour has passed: Monday 7:00 am PHT = Sunday 23:00 UTC. */
+const WEEKLY_UPDATE_UTC = { day: 0, hour: 23 };
+
+/* ===================== JOURNEY MODEL ===================== */
+/* Where each automation sits, by the number at the end of its Automation URL.
+   Families of near-identical automations (state clean-up, category tools,
+   Top Talent sends) are placed by name in placeAutomation() below. */
+const STAGE_IDS = {
+  cand: {
+    enter:   '80709 82657 101678 104294 104784 102931 98513 98484 104781 98854',
+    welcome: '107533 60170 107534 106542 87035 105823 74711 88095 50522',
+    apply:   '99250 97579 100872 103019 101016 105548 107006 59884 63520 37575 104225',
+    submit:  '62899 83616 98652 106607 109804 98454',
+    tt:      '106616 107635 106823 106625 98024 102540 98573',
+    placed:  '91646 92321 89095 89683 98835 98830 90982 101401 57075 79210 104070 110870 103812',
+    refer:   '58602 81170 102640 104258 104267 104264 104263',
+    nurture: '80666 105822 80665 104255 84292 110865 110871 102541 35684 30476 89719 89718 91772 85989 110475 110603 103937 104004',
+    campaigns: '110172 87268 102856 92831 93017 93100 97229 97275 108997 110386 110434 110471 110476 111132 39698 110100 110057',
+    health:  '41014 59547 105554 91569 110291 104912 104502'
+  },
+  sales: {
+    enter:      '107403 107402 107401 105135 107436 107437 107434 105136 111088 105469',
+    categorise: '106600 106557 89220 110477',
+    nurture:    '89457 105904 106160 106776 104902 105508 102577 100016',
+    signals:    '87676 11722 110213 98983 98029',
+    hiring:     '100093 94648',
+    placed:     '89686 106203 89684',
+    health:     '33887 63467 105550 106885 110597 105064'
+  }
+};
+/* Automations that matter to both journeys: shown in their own stage and
+   also in this stage of the other journey. */
+const ALSO = { '59884':['sales','hiring'], '106625':['sales','tt'], '106607':['sales','tt'], '106616':['sales','tt'] };
+
+const JOURNEYS = {
+ cand:{ label:'Candidate', accent:'var(--blue)', other:'var(--navy)', stages:[
+  {k:'enter',t:'Arrive in Bullhorn',b:'Website (Applyflow) applications, RefeRec referrals and ZoomInfo imports create the record. Source and owner get set; overseas records are archived.',
+   ho:[['sales','enter','ZoomInfo import also feeds clients']]},
+  {k:'welcome',t:'Welcome & register',b:'Welcome email and SMS, status set to Active, registration form with a 7-day reminder. Form answers set Registration Compliance Status.'},
+  {k:'apply',t:'Apply & screen',b:'Open jobs get AI-written VR screener questions; web applicants are invited to the screener, then acknowledged or rejected. Automatch suggests the top 10 candidates per job.',
+   ho:[['sales','hiring','Starts when a client job is opened']],
+   ext:[{name:'Applicant scoring workflow',purpose:'Planned: fit score, fit category and plain-English summary on Web Response submissions; Silver Medal pool; Proven Similar Placement flag.',status:'Planned'}]},
+  {k:'submit',t:'Submitted to a client',b:'Submission flips Passive to Active, stamps the Top Talent Prompt Date and has AI write Top Talent dot points (status Queued).',
+   ho:[['sales','tt','Queued candidates become shortlist content']]},
+  {k:'tt',t:'Top Talent pool',b:'Queued and Priority candidates are marketed to clients for 8 weeks, then move to the Secondary pool. Placed or DNU candidates are excluded.',
+   ho:[['sales','tt','Feeds weekly Top Talent sends']]},
+  {k:'placed',t:'Placed & onboarded',b:'Perm and on-hire onboarding series, host induction checks, CEIS at 6 and 12 months, credential expiry alerts and overdue placement tasks.',
+   ho:[['sales','placed','Client host induction check'],['sales','signals','Past placements drive BD alerts']],
+   ext:[{name:'Amplify reference check workflow',purpose:'Aircall transcript → Bullhorn Note → Amplify Enrich → Reference Check Report.',status:'Outside register'}]},
+  {k:'refer',t:'Refer & advocate',b:'Referral asks to placed candidates and gift-card notifications when a referred person starts. Referrals come back in at step 01 through RefeRec.'},
+  {k:'nurture',t:'Nurture & re-engage',b:'Active and Passive content, fortnightly Top Jobs, status decay (Active to Passive after 6 months), 12-month profile refresh, programmes and targeted job campaigns.'}
+ ]},
+ sales:{ label:'Sales contact', accent:'var(--navy)', other:'var(--blue)', stages:[
+  {k:'enter',t:'Arrive in Bullhorn',b:'ZoomInfo imports and Amplify-created prospects. Clean-up tearsheets catch missing category, missing or personal email and bounces; duplicates are archived.'},
+  {k:'categorise',t:'Categorise',b:'Industry, Category and Sub-category decide which Top Talent list and nurture series a client gets. Contacts in more than one client workflow get a weekly fix-it task.',
+   ho:[['cand','tt','Same categories as candidates']],
+   ext:[{name:'Bullhorn Categorisation',purpose:'Works out Industry, Category and Sub-category from who the contact recruits for. Being moved into Bullhorn Amplify.',status:'Fuse Hub tool',url:'../bullhorn-category/'}]},
+  {k:'nurture',t:'Nurture',b:'The new Government client series is the only always-on client nurture. Employment reports, webinars and Project Fusion sends are one-offs.'},
+  {k:'tt',t:'Top Talent shortlists',b:'Weekly sends by industry (Insurance & FS, Manufacturing, Infrastructure & Renewables, Trades) built from the candidate Top Talent pool. Each send is a copied template.',
+   ho:[['cand','tt','Candidates come from the TT pool'],['cand','submit','AI dot points written at submission']],
+   ext:[{name:'Top Talent Planner',purpose:'SharePoint Lists, Power Automate and an HTML app that plan and track the shortlist campaigns: status, branches, candidate profiles, metrics and subject line A/B winners.',status:'Outside register'},
+        {name:'TTP - Log Reply',purpose:'In progress: logs client replies to shortlist emails from Contact Owners\' mailboxes into the TopTalentReplies list.',status:'In progress'}]},
+  {k:'signals',t:'Engagement signals → BD',b:'Daily and weekly website-visit alerts, the weekly BD call list by industry and state, and alerts for inactive clients who have placed with Fuse before.',
+   ho:[['cand','placed','Uses placement history']]},
+  {k:'hiring',t:'Job on',b:'Assigned users are told about new jobs; replacement jobs with no activity are chased. Opening a job starts the candidate screening flow.',
+   ho:[['cand','apply','VR questions and Automatch']]},
+  {k:'placed',t:'Placement (client side)',b:'2–5 days after an on-hire start, the client is asked to confirm the host induction, with reminders and a consultant chase list.',
+   ho:[['cand','placed','Triggered by the candidate\'s start']]}
+ ]}
+};
+const BAND = { t:'Always-on data health', b:'Runs underneath every stage: keeps state, category, email, phone and owner data clean so the lists above pick the right people.' };
+const NEW_STAGE = { k:'new', t:'Not on the map yet', b:'In the register but added after the map was drawn on 8 Oct 2026. Give each one a stage in STAGE_IDS in this page.' };
+
+const CONNS = [
+ {t:'Submission becomes shortlist content', r:[['c','submit','Submitted'],['c','tt','TT pool'],['s','tt','Weekly TT send']],
+  p:'A client submission stamps the Top Talent Prompt Date and AI writes dot points (Queued). Consultants can also mark someone Priority. Those candidates are what the weekly Top Talent emails show clients.', ids:['106607','98652','106616','106823']},
+ {t:'Client replies turn into roles', r:[['s','tt','TT send'],['s','hiring','Job on'],['c','apply','Apply & screen']],
+  p:'A reply to a shortlist or a new job order opens a job. The job gets VR screener questions and Automatch, which starts candidate screening. Reply logging (TTP - Log Reply) is still being built.', ids:['99250','97579','59884','100872']},
+ {t:'Placement closes two loops', r:[['c','placed','Placed'],['c','tt','Exclude from TT'],['s','placed','Client induction']],
+  p:'When a candidate is placed they are excluded from Top Talent, the on-hire host induction check goes to the client contact, and the placement history later drives the "inactive clients with past placements" BD alert.', ids:['106625','89686','106203','98029']},
+ {t:'Referral loop', r:[['c','placed','Placed'],['c','refer','Refer'],['c','enter','New candidate']],
+  p:'Placed candidates are asked to refer people through RefeRec. Referred candidates arrive as RefeRec submissions, take the submission owner as candidate owner, and a gift card is ordered once they start.', ids:['102640','104294','104784','102931','58602','81170']},
+ {t:'One set of categories for both sides', r:[['s','categorise','Client categories'],['c','tt','Candidate categories']],
+  p:'Matching a Top Talent shortlist to the right clients depends on candidates and clients using the same category values. The "Update Category / Industry" tools exist for both, and clients in conflicting workflows are held out of Top Talent until fixed.', ids:['89220','106701','106702']},
+ {t:'Website visits prompt BD', r:[['s','signals','Visit alert'],['s','hiring','Job on']],
+  p:'Client website visits add a note and alert the owner daily, with a weekly roll-up. With the weekly BD call list, this is the main automated path from interest to a conversation.', ids:['11722','87676','110213']}
+];
+
+const FLAGS = [
+ {sev:'Bug',t:'Candidate category tool writes the wrong value',p:'The Candidate "Update Category to Administration and Business Support" automation adds Accounting & Finance instead (found 8 Oct 2026).',ids:['106702']},
+ {sev:'Gap',t:'Only Government clients get an always-on nurture',p:'"New Government Client into Database (FY26)" is the only active client nurture series. Employment reports, webinars and Project Fusion are one-offs, so new Insurance, Manufacturing, Infrastructure or Trades clients get Top Talent sends but no welcome or nurture.',ids:['89457','105904','106160']},
+ {sev:'Gap',t:'No path back to "available" when a contract ends',p:'Nothing moves a candidate back into Active content or the Top Talent pool when an on-hire placement finishes. "Overdue Placements Notification" only asks the recruiter to close or extend it.',ids:['79210','106625']},
+ {sev:'Gap',t:'No client follow-up after a permanent placement',p:'The client side of a placement is covered for on-hire (host induction) only. There\'s no check-in with the hiring manager after a perm start, which is a natural BD and referral moment.',ids:['91646','89686']},
+ {sev:'Check',t:'Two welcome workflows are both Active',p:'Welcome Workflow (FY25) and Welcome Workflow [FY26] both welcome new candidates and set status to Active. FY26 targets candidates added since 31 May 2026. Confirm the FY25 list has an end date so nobody gets welcomed twice.',ids:['60170','107533']},
+ {sev:'Check',t:'Two automations set Active on client submission',p:'"Change Passive to Active from Client Submission (FY25)" and "Change status to ACTIVE based on client submission (FY25)" do the same job from different lists. One can probably be retired.',ids:['62899','83616']},
+ {sev:'Check',t:'Active Candidate content is still the FY25 series',p:'Passive candidates moved to a 2026 series; Active candidates are still on "Active Candidate FY25 [2pm-4pm]".',ids:['80666','105822']},
+ {sev:'Check',t:'Sept 25 category migration still switched on',p:'The "Map to New Categories - SEPT 25" automations are still Active. If the migration is finished they can be retired.',ids:['101404','101421']},
+ {sev:'Check',t:'Technology & Transformation has no live Top Talent send',p:'Insurance & FS, Manufacturing, Infrastructure and Trades all have recent Top Talent sends. Technology only has a template.',ids:['104790']},
+ {sev:'Check',t:'Register notes that need a decision',p:'"Update Sub-Category to Facades…" is Active but has no trigger list, so it picks nobody up. "Map to New Categories - Marketing & Communications" was corrected but not turned back on. "Candidate Owner is Not Active" has some industry and location combinations with no owner.',ids:['108642','101413','91569']},
+ {sev:'Tidy-up',t:'Paused automations',p:'Many Paused automations are finished one-off campaigns (client-specific sends, temp broking, dated Top Talent sends). Moving finished ones to Retired keeps this map and the Automation Finder cleaner.',ids:[],count:'paused'}
+];
+const SEV_COLOUR = { 'Bug':'var(--warn)', 'Gap':'var(--warn)', 'Check':'var(--amber)', 'Tidy-up':'var(--ink-soft)' };
+
+/* ===================== HELPERS ===================== */
+function escapeHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+function clean(value) {
+  const s = String(value == null ? '' : value).trim();
+  return s && s.toUpperCase() !== 'N/A' ? s : '';
+}
+function safeUrl(value) {
+  try { const url = new URL(String(value || '').trim()); return url.protocol === 'https:' ? url.href : null; }
+  catch { return null; }
+}
+function automationId(url) {
+  const m = String(url || '').match(/(\d+)\s*\/?\s*$/);
+  return m ? m[1] : '';
+}
+function statusKey(status) {
+  const s = clean(status).toLowerCase();
+  if (s.startsWith('active')) return 'Active';
+  if (s.startsWith('paused')) return 'Paused';
+  if (s.startsWith('retired')) return 'Retired';
+  if (s.startsWith('hibernat')) return 'Retired';
+  return 'Paused';
+}
+
+const STAGE_LOOKUP = {};
+for (const [j, stages] of Object.entries(STAGE_IDS)) {
+  for (const [k, ids] of Object.entries(stages)) {
+    for (const id of ids.split(/\s+/)) STAGE_LOOKUP[id] = STAGE_LOOKUP[id] || { j, k };
+  }
+}
+
+function ttGroup(name) {
+  const u = name.toUpperCase();
+  const g = (u.includes('INSUR') || u.includes('FIN SERV')) ? 'Insurance & Financial Services'
+    : u.includes('MANU') ? 'Manufacturing & Operations'
+    : u.includes('INFRA') ? 'Infrastructure & Renewables'
+    : u.includes('TRADES') ? 'Trades & Services'
+    : u.includes('TECH') ? 'Technology & Transformation' : 'Other';
+  return 'Top Talent sends: ' + g;
+}
+
+/* Decide which journey, stage and family group an automation belongs to. */
+function placeAutomation(a) {
+  const name = a.name, record = clean(a.record), id = a.id;
+  const known = STAGE_LOOKUP[id];
+  let journey = known ? known.j : (record === 'Sales Contact' || record === 'Company' ? 'sales' : 'cand');
+  let stage = known ? known.k : null, group = null;
+
+  if (journey === 'sales') {
+    if (/^Map to New/i.test(name)) { stage = stage || 'categorise'; group = 'Map to new categories (Sept 25 migration)'; }
+    else if (/^Update (Category|Industry|Sub-Category)/i.test(name) && !stage) { stage = 'categorise'; group = 'Bulk categorisation tearsheet tools'; }
+    else if (!stage && (/^(TT|TEMPLATE)\b/i.test(name) || /Top Talent/i.test(name))) { stage = 'tt'; group = ttGroup(name); }
+  } else {
+    if (/^Map to New/i.test(name)) { stage = stage || 'health'; group = 'Map to new categories (Sept 25 migration)'; }
+    else if (/^Update (Category|Industry) to/i.test(name) && !stage) { stage = 'health'; group = 'Bulk categorisation tearsheet tools'; }
+    else if (/^(Add [Ss]tate|Change (ACT|NSW|NT|QLD|SA|TAS|VIC|WA) to|Postcode)/.test(name) && !stage) { stage = 'health'; group = 'State & postcode clean-up'; }
+    else if (/^Update Candidate Last Job Title/i.test(name) && !stage) stage = 'enter';
+  }
+  if (stage === 'campaigns') { stage = 'nurture'; group = 'Targeted job campaigns & one-off sends'; }
+  if (!stage) stage = 'new';
+  return { journey, stage, group, also: ALSO[id] || null };
+}
+
+/* ===================== STATE ===================== */
+const state = { view:'cand', q:'', show:{ Active:true, Paused:true, Retired:false } };
+let ITEMS = [];
+let BY_ID = {};
+
+function matches(item) {
+  if (!state.show[item.statusKey]) return false;
+  if (!state.q) return true;
+  const hay = (item.name + ' ' + item.purpose + ' ' + item.list + ' ' + item.groups + ' ' + item.id).toLowerCase();
+  return state.q.split(/\s+/).every(w => hay.includes(w));
+}
+function itemsFor(j, k) {
+  const own = ITEMS.filter(i => i.journey === j && i.stage === k).map(i => ({ i }));
+  const shared = ITEMS.filter(i => i.also && i.also[0] === j && i.also[1] === k).map(i => ({ i, also: i.journey }));
+  return own.concat(shared).filter(x => matches(x.i));
+}
+
+/* ===================== RENDER ===================== */
+function card(i, also) {
+  const url = safeUrl(i.url);
+  const rows = [
+    ['List', i.list], ['Excludes', i.exclusion], ['Groups', i.groups]
+  ].filter(r => r[1]).map(r => `<dt>${r[0]}</dt><dd>${escapeHtml(r[1])}</dd>`).join('');
+  return `<details class="card"><summary><span class="nm">${escapeHtml(i.name)}</span><span class="pill ${i.statusKey.toLowerCase()}">${escapeHtml(i.status || i.statusKey)}</span>
+    <span class="sub">${i.id ? '#' + escapeHtml(i.id) : 'No URL'}<span>· ${escapeHtml(i.record)}</span>${also ? `<span class="mini">Also on the ${also === 'sales' ? 'sales contact' : 'candidate'} journey</span>` : ''}</span></summary>
+    <div class="card-body">${i.purpose ? `<p>${escapeHtml(i.purpose)}</p>` : '<p class="hint">No purpose in the register yet.</p>'}
+    ${rows ? `<dl>${rows}</dl>` : ''}
+    ${url ? `<a class="open-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open in Bullhorn Automation</a>` : '<span class="hint">No link in the register.</span>'}</div></details>`;
+}
+function extCard(e) {
+  const link = e.url ? `<a class="open-link" href="${escapeHtml(e.url)}">Open</a>` : '';
+  return `<details class="card ext"><summary><span class="nm">${escapeHtml(e.name)}</span><span class="pill ext">${escapeHtml(e.status)}</span>
+    <span class="sub">Not a Bullhorn automation</span></summary><div class="card-body"><p>${escapeHtml(e.purpose)}</p>${link}</div></details>`;
+}
+function renderList(list) {
+  const solo = [], groups = {};
+  for (const x of list) { if (x.i.group) (groups[x.i.group] = groups[x.i.group] || []).push(x); else solo.push(x); }
+  let html = solo.map(x => card(x.i, x.also)).join('');
+  for (const [g, arr] of Object.entries(groups)) {
+    const counts = {};
+    arr.forEach(x => counts[x.i.statusKey] = (counts[x.i.statusKey] || 0) + 1);
+    const summary = Object.entries(counts).map(([k, v]) => `${v} ${k.toLowerCase()}`).join(' · ');
+    html += `<details class="card group"${state.q ? ' open' : ''}><summary><span class="nm">${escapeHtml(g)}</span><span class="cnt">${arr.length}</span>
+      <span class="sub">${summary}</span></summary><div class="cards">${arr.map(x => card(x.i, x.also)).join('')}</div></details>`;
+  }
+  return html;
+}
+function stageColumn(j, s, n) {
+  const list = itemsFor(j, s.k);
+  const ho = (s.ho || []).map(([oj, os, txt]) => `<button type="button" class="ho" data-go="${oj}:${os}">&rarr; ${escapeHtml(JOURNEYS[oj].label)}: ${escapeHtml(txt)}</button>`).join('');
+  const ext = state.q ? '' : (s.ext || []).map(extCard).join('');
+  return {
+    count: list.length,
+    html: `<div class="stage${s.k === 'new' ? ' new' : ''}" id="${j}-${s.k}"><div class="stage-top">${n ? `<span class="num">${n}</span>` : ''}<h3>${escapeHtml(s.t)}</h3></div>
+      <p class="blurb">${escapeHtml(s.b)}</p>${ho ? `<div class="handoffs">${ho}</div>` : ''}
+      <div class="cnt">${list.length} automation${list.length === 1 ? '' : 's'} shown</div>
+      <div class="cards">${renderList(list) || '<p class="empty">Nothing matches the filters.</p>'}${ext}</div></div>`
+  };
+}
+function renderJourney(j) {
+  const J = JOURNEYS[j];
+  const el = document.getElementById('v-' + j);
+  el.style.setProperty('--accent', J.accent);
+  el.style.setProperty('--other', J.other);
+  let total = 0;
+  const cols = J.stages.map((s, idx) => { const c = stageColumn(j, s, String(idx + 1).padStart(2, '0')); total += c.count; return c.html; });
+  if (ITEMS.some(i => i.journey === j && i.stage === 'new')) { const c = stageColumn(j, NEW_STAGE, ''); total += c.count; cols.push(c.html); }
+  const band = itemsFor(j, 'health'); total += band.length;
+  const other = j === 'cand' ? 'sales' : 'cand';
+  el.innerHTML = `
+    <div class="view-head"><h2>${escapeHtml(J.label)} journey</h2><p>Scroll sideways through the stages. Dashed buttons jump to the matching stage on the ${escapeHtml(JOURNEYS[other].label.toLowerCase())} journey.</p></div>
+    <div class="controls">
+      <input type="search" id="q-${j}" placeholder="Search name, purpose, list or ID" aria-label="Search automations" value="${escapeHtml(state.q)}">
+      ${['Active','Paused','Retired'].map(s => `<button type="button" class="chip" data-status="${s}" aria-pressed="${state.show[s]}">${s}</button>`).join('')}
+      <span class="hint">${total} shown</span>
+    </div>
+    <div class="track-scroll"><div class="track">${cols.join('')}</div></div>
+    <div class="band" id="${j}-health"><div class="band-head"><h3>${BAND.t}</h3><span class="blurb">${BAND.b}</span><span class="cnt">${band.length} shown</span></div>
+      <div class="cards">${renderList(band) || '<p class="empty">Nothing matches the filters.</p>'}</div></div>`;
+}
+function stageTitle(code, k) {
+  const s = JOURNEYS[code === 'c' ? 'cand' : 'sales'].stages.find(x => x.k === k);
+  return s ? s.t : k;
+}
+function idLinks(ids) {
+  return ids.map(id => {
+    const i = BY_ID[id]; if (!i) return '';
+    const url = safeUrl(i.url);
+    return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${escapeHtml(i.name)}">#${id}</a>` : '';
+  }).join('');
+}
+function renderConn() {
+  const lane = (j, code) => JOURNEYS[j].stages.map((s, n) =>
+    `${n ? '<span class="lane-arrow">&rsaquo;</span>' : ''}<button type="button" class="lane-step ${code}" data-go="${j}:${s.k}">${String(n + 1).padStart(2, '0')} ${escapeHtml(s.t)}</button>`).join('');
+  document.getElementById('v-conn').innerHTML = `
+    <div class="view-head"><h2>How the two journeys connect</h2><p>They meet at four places: the Top Talent pool, a client opening a job, a placement starting, and the shared categories.</p></div>
+    <div class="lanes">
+      <div class="lane"><span class="lane-label">Candidate</span>${lane('cand', 'c')}</div>
+      <div class="lane"><span class="lane-label">Sales contact</span>${lane('sales', 's')}</div>
+      <p class="lane-note">Click any step to open it on its journey.</p>
+    </div>
+    <div class="conn-grid">${CONNS.map(c => `<div class="conn"><h3>${escapeHtml(c.t)}</h3>
+      <div class="route">${c.r.map(([code, k, label], n) => `${n ? '<span class="lane-arrow">&rarr;</span>' : ''}<button type="button" class="lane-step ${code}" data-go="${code === 'c' ? 'cand' : 'sales'}:${k}" title="${escapeHtml(stageTitle(code, k))}">${escapeHtml(label)}</button>`).join('')}</div>
+      <p>${escapeHtml(c.p)}</p><div class="ids">${idLinks(c.ids)}</div></div>`).join('')}</div>`;
+}
+function renderFlags() {
+  const paused = ITEMS.filter(i => i.statusKey === 'Paused').length;
+  document.getElementById('v-flags').innerHTML = `
+    <div class="view-head"><h2>Gaps &amp; checks</h2><p>What surfaced while placing every automation on the map, reviewed 8 Oct 2026. Bugs and gaps first.</p></div>
+    <div class="flags">${FLAGS.map(f => `<div class="flagc" style="--sev:${SEV_COLOUR[f.sev]}"><h3><span class="sev">${escapeHtml(f.sev)}</span>${escapeHtml(f.t)}${f.count === 'paused' ? ` (${paused} today)` : ''}</h3>
+      <p>${escapeHtml(f.p)}</p>${f.ids.length ? `<div class="ids">${idLinks(f.ids)}</div>` : ''}</div>`).join('')}</div>`;
+}
+function renderStats() {
+  const count = j => {
+    const a = ITEMS.filter(i => i.journey === j);
+    const n = k => a.filter(i => i.statusKey === k).length;
+    return { total:a.length, active:n('Active'), paused:n('Paused'), retired:n('Retired'), fresh:a.filter(i => i.stage === 'new').length };
+  };
+  const c = count('cand'), s = count('sales');
+  const fresh = c.fresh + s.fresh;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="k">Candidate journey</div><div class="v">${c.total}<small>${c.active} active · ${c.paused} paused · ${c.retired} retired</small></div></div>
+    <div class="stat"><div class="k">Sales contact journey</div><div class="v">${s.total}<small>${s.active} active · ${s.paused} paused · ${s.retired} retired</small></div></div>
+    <div class="stat"><div class="k">Hand-offs</div><div class="v">${CONNS.length}</div></div>
+    <div class="stat"><div class="k">Not on the map yet</div><div class="v">${fresh}</div></div>`;
+  document.getElementById('navCand').textContent = c.total;
+  document.getElementById('navSales').textContent = s.total;
+}
+function render() {
+  for (const v of ['cand', 'sales', 'conn', 'flags']) document.getElementById('v-' + v).hidden = v !== state.view;
+  document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
+  if (state.view === 'cand' || state.view === 'sales') renderJourney(state.view);
+}
+function go(target) {
+  const [j, k] = target.split(':');
+  state.view = j; render();
+  const el = document.getElementById(j + '-' + k);
+  if (!el) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
+  el.classList.add('hl'); setTimeout(() => el.classList.remove('hl'), 1600);
+}
+
+/* ===================== EVENTS ===================== */
+document.getElementById('viewNav').addEventListener('click', e => {
+  const b = e.target.closest('[data-view]'); if (!b) return;
+  state.view = b.dataset.view; render();
+  try { history.replaceState(null, '', '#' + state.view); } catch {}
+});
+document.addEventListener('click', e => {
+  const goBtn = e.target.closest('[data-go]');
+  if (goBtn) { go(goBtn.dataset.go); return; }
+  const chip = e.target.closest('[data-status]');
+  if (chip) { state.show[chip.dataset.status] = !state.show[chip.dataset.status]; render(); }
+});
+document.addEventListener('input', e => {
+  if (!e.target.id || !e.target.id.startsWith('q-')) return;
+  state.q = e.target.value.trim().toLowerCase();
+  const pos = e.target.selectionStart;
+  render();
+  const box = document.getElementById(e.target.id);
+  if (box) { box.focus(); try { box.setSelectionRange(pos, pos); } catch {} }
+});
+document.getElementById('retry').addEventListener('click', () => load(true));
+
+/* ===================== LOAD ===================== */
+/* When the most recent weekly register update (plus the hour's margin) happened. */
+function lastWeeklyUpdate(now) {
+  const d = new Date(now);
+  d.setUTCHours(WEEKLY_UPDATE_UTC.hour, 0, 0, 0);
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() - WEEKLY_UPDATE_UTC.day + 7) % 7);
+  if (d.getTime() > now) d.setUTCDate(d.getUTCDate() - 7);
+  return d.getTime();
+}
+/* Use the saved register until the next weekly update has passed. */
+function readCache() {
+  try {
+    const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (c && c.at >= lastWeeklyUpdate(Date.now()) && Array.isArray(c.rows)) return c.rows;
+  } catch {}
+  return null;
+}
+function writeCache(rows) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), rows })); } catch {}
+}
+async function fetchRegister() {
+  const response = await fetch(FLOW_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(REQUEST_BODY)
+  });
+  if (!response.ok) throw new Error('Flow returned ' + response.status);
+  const data = await response.json();
+  if (!Array.isArray(data.automations) || !data.automations.length) throw new Error('No automations received.');
+  return data.automations;
+}
+function prepare(rows) {
+  const seen = new Set();
+  ITEMS = [];
+  for (const r of rows) {
+    const name = clean(r.name);
+    if (!name) continue;
+    const id = automationId(r.url);
+    const key = id || (clean(r.record) + '|' + name);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const item = {
+      id, name, record: clean(r.record), status: clean(r.status), statusKey: statusKey(r.status),
+      purpose: clean(r.purpose), list: clean(r.list), exclusion: clean(r.exclusion), groups: clean(r.groups), url: clean(r.url)
+    };
+    Object.assign(item, placeAutomation(item));
+    ITEMS.push(item);
+  }
+  BY_ID = Object.fromEntries(ITEMS.filter(i => i.id).map(i => [i.id, i]));
+}
+async function load(force) {
+  const status = document.getElementById('loadStatus');
+  document.getElementById('loadError').hidden = true;
+  status.hidden = false;
+  try {
+    let rows = force ? null : readCache();
+    if (!rows) { rows = await fetchRegister(); writeCache(rows); }
+    prepare(rows);
+    status.hidden = true;
+    document.getElementById('stats').hidden = false;
+    renderStats(); renderConn(); renderFlags(); render();
+  } catch (err) {
+    console.error('Automation register load error:', err);
+    status.hidden = true;
+    document.getElementById('loadError').hidden = false;
+  }
+}
+
+const startView = location.hash.slice(1);
+if (['cand', 'sales', 'conn', 'flags'].includes(startView)) state.view = startView;
+document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
+load(false);
+</script>
+</body>
+</html>

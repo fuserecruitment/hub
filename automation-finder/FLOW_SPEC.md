@@ -275,6 +275,36 @@ can never be made up.
 3. Open https://fuserecruitment.github.io/hub/automation-finder/ and try
    one of the example questions.
 
+## 13. Optional: answer the Automation Journey Map without the AI step
+
+The Automation Journey Map (`../journeys/`) uses this same flow to
+read the register. It sends `"mode": "register"` and only uses the
+`automations` list, so the AI step is wasted work for it. It works without
+this change, it's just slower and uses AI Builder credits on every page load.
+(The page also saves the register for the week, so this mostly matters for
+the first load after each Monday update.)
+
+To skip the AI step for those requests:
+
+1. Directly after **Filter automations**, add a **Condition** and name it
+   `Register only`. Its row reads **Choose a value · is equal to · Choose a
+   value**:
+   - First **Choose a value**: click it, click the `fx` icon, paste
+     `coalesce(triggerBody()?['mode'], '')` and click **Add**.
+   - Middle: leave it on **is equal to**.
+   - Second **Choose a value**: type `register`.
+2. In **If yes**, add a **Response**: status 200, header
+   `Content-Type` = `application/json`, body (expression)
+   `addProperty(json('{}'), 'automations', body('Filter_automations'))`.
+   Name it `Register response`.
+3. Still in **If yes**, under that Response, add **Terminate** with status
+   **Succeeded**. This stops the run there, so the AI step never starts.
+4. Leave **If no** empty, and leave **Register lines** and everything after
+   it where they are, below the Condition.
+
+The Automation Finder never sends `mode`, so it takes the empty **If no**
+branch, carries on to **Register lines** and works exactly as before.
+
 ## Permissions
 
 The Excel actions run as whoever owns the flow's Excel connection, so that
