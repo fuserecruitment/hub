@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<title>Automation Finder | Fuse Recruitment</title>
+<script>
+/* Fuse Hub sign-in check: send people to the hub to enter their Fuse email first. */
+(function () {
+  var email = null;
+  try { email = localStorage.getItem('fuseHub.email'); } catch (e) { return; }
+  if (!email || !/^[^\s@]+@fuserecruitment\.com$/i.test(email)) {
+    location.replace('../?next=' + encodeURIComponent(location.href));
+  }
+})();
+</script>
+<link rel="icon" type="image/png" href="../fuse-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --navy:#151A36;
+    --blue:#009CDD;
+    --concrete:#A2C8D8;
+    --steel:#E6EFF3;
+    --line:#CBD9E1;
+    --warn:#B23B3B;
+    --white:#FFFFFF;
+    --ink:#151A36;
+    --ink-soft:#5B6178;
+    --green:#1E7B4F;
+    --green-bg:#E3F3EA;
+    --amber:#8A5A00;
+    --amber-bg:#FBF0D9;
+    --grey-bg:#EDEFF3;
+    --radius-lg:10px;
+    --radius-md:8px;
+    --radius-sm:7px;
+    --sidebar-w:300px;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--steel);
+    color:var(--ink);
+    font-family:'Work Sans',sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{margin:0;color:var(--navy);font-weight:700;letter-spacing:-0.01em;}
+  p{margin:0;}
+  [hidden]{display:none !important;}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+
+  /* ---------- Shell: sidebar + workspace (same component as the other Fuse Hub tools) ---------- */
+  .shell{display:flex;min-height:100vh;}
+
+  .sidebar{
+    width:var(--sidebar-w);flex-shrink:0;
+    background:var(--navy);color:var(--white);
+    display:flex;flex-direction:column;
+    height:100vh;position:sticky;top:0;overflow:hidden;
+  }
+  .sidebar-scroll{flex:1;min-height:0;overflow-y:auto;}
+  .sidebar-brand{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center;}
+  .sidebar-logo{display:block;width:96px;height:auto;margin:0 auto 14px;}
+  .sidebar-brand h1{font-size:16.5px;margin:0;color:#fff;}
+  .sidebar-brand .tag{font-size:11px;color:rgba(255,255,255,.55);margin-top:3px;}
+  .sidebar-block{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .sidebar-block label{
+    display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.06em;color:rgba(255,255,255,.5);margin-bottom:8px;
+  }
+  .sidebar-block p{font-size:13px;color:rgba(255,255,255,.7);}
+  .sidebar-block p + p{margin-top:8px;}
+  .sidebar-block a{color:var(--concrete);}
+  .sidebar-nav-btn{
+    display:block;width:100%;text-align:left;padding:10px 12px;margin-bottom:4px;border-radius:7px;border:none;
+    background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);font-family:'Work Sans',sans-serif;
+    font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;
+  }
+  .sidebar-nav-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+  .sidebar-nav-btn.hub-back{margin-bottom:0;}
+
+  .workspace{flex:1;min-width:0;padding:32px 36px 80px;}
+  .workspace-inner{max-width:860px;margin:0 auto;}
+
+  /* ---------- Intro + ask box ---------- */
+  .intro{padding-bottom:22px;}
+  .intro h1{font-size:28px;line-height:1.25;margin:0 0 10px;}
+  .intro p{color:var(--ink-soft);font-size:15px;max-width:62ch;}
+
+  .ask{
+    background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px;
+  }
+  .ask label{display:block;font-size:13px;font-weight:600;margin-bottom:8px;}
+  .ask-row{display:flex;gap:10px;}
+  .ask-row textarea{
+    flex:1;min-width:0;resize:vertical;min-height:48px;max-height:200px;padding:12px;
+    border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--white);color:var(--ink);
+    font-family:'Work Sans',sans-serif;font-size:15px;line-height:1.4;
+  }
+  .ask-row textarea:focus{outline:none;border-color:var(--blue);}
+  .btn{
+    flex-shrink:0;align-self:flex-start;padding:12px 18px;border:none;border-radius:var(--radius-sm);
+    background:var(--blue);color:#fff;font-family:'Work Sans',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;
+  }
+  .btn:hover{background:#1AAEEC;}
+  .btn:disabled{background:var(--concrete);cursor:default;}
+  .examples{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .examples span{font-size:12.5px;color:var(--ink-soft);align-self:center;margin-right:2px;}
+  .chip{
+    padding:6px 12px;border-radius:100px;border:1px solid var(--line);background:var(--steel);color:var(--ink);
+    font-family:'Work Sans',sans-serif;font-size:13px;cursor:pointer;
+  }
+  .chip:hover{border-color:var(--blue);}
+  .status{min-height:22px;margin-top:10px;font-size:13.5px;color:var(--ink-soft);}
+  .status.working::before{
+    content:"";display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px;
+    border:2px solid var(--concrete);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Results ---------- */
+  .results{margin-top:22px;}
+  .asked{font-size:13px;color:var(--ink-soft);margin-bottom:8px;}
+  .asked strong{color:var(--ink);font-weight:600;}
+  .answer{
+    background:var(--navy);color:#fff;border-radius:var(--radius-lg);padding:18px 20px;font-size:15.5px;
+  }
+  .followup{
+    margin-top:12px;background:var(--white);border:1px solid var(--blue);border-radius:var(--radius-lg);padding:14px 16px;
+  }
+  .followup-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:4px;}
+  .followup-text{font-weight:500;}
+
+  .matches{display:grid;gap:14px;margin-top:16px;}
+  .match{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px;}
+  .match.best{border-color:var(--blue);box-shadow:0 6px 18px rgba(21,26,54,.06);}
+  .match-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;}
+  .pill{font-size:11.5px;font-weight:600;border-radius:100px;padding:3px 10px;background:var(--steel);color:var(--ink-soft);}
+  .pill.best{background:var(--blue);color:#fff;}
+  .pill.active{background:var(--green-bg);color:var(--green);}
+  .pill.paused{background:var(--amber-bg);color:var(--amber);}
+  .pill.retired{background:var(--grey-bg);color:var(--ink-soft);}
+  .match h3{font-size:17px;line-height:1.35;word-break:break-word;}
+  .why{margin-top:6px;color:var(--ink-soft);font-size:14px;}
+  .details{
+    display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin:14px 0 0;padding-top:14px;
+    border-top:1px solid var(--steel);font-size:13.5px;
+  }
+  .details dt{color:var(--ink-soft);}
+  .details dd{margin:0;word-break:break-word;}
+  .match-actions{margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .open-link{
+    display:inline-block;padding:9px 14px;border-radius:var(--radius-sm);background:var(--navy);color:#fff;
+    font-size:13.5px;font-weight:600;text-decoration:none;
+  }
+  .open-link:hover{background:#262D57;}
+  .no-link{font-size:13px;color:var(--ink-soft);}
+  .missing{font-size:13px;color:var(--warn);margin-top:6px;}
+
+  .none{
+    background:var(--white);border:1px dashed var(--line);border-radius:var(--radius-lg);padding:18px 20px;color:var(--ink-soft);
+  }
+  .error{
+    background:#FBECEC;border:1px solid #EBC5C5;border-radius:var(--radius-lg);padding:14px 16px;color:var(--warn);
+  }
+  .restart{
+    margin-top:16px;padding:0;border:none;background:none;color:var(--blue);font-family:'Work Sans',sans-serif;
+    font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:underline;
+  }
+
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+  @media(max-width:860px){
+    .shell{flex-direction:column;}
+    .sidebar{width:100%;height:auto;position:relative;}
+    .sidebar-about{display:none;}
+    .workspace{padding:24px 16px 60px;}
+    .intro h1{font-size:24px;}
+  }
+  @media(max-width:560px){
+    .ask-row{flex-direction:column;}
+    .btn{align-self:stretch;}
+    .details{grid-template-columns:1fr;gap:2px;}
+    .details dd{margin-bottom:8px;}
+  }
+  @media (prefers-reduced-motion:reduce){.status.working::before{animation:none;}}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-scroll">
+      <div class="sidebar-brand">
+        <img src="../fuse-logo.png" alt="Fuse" class="sidebar-logo">
+        <h1>Automation Finder</h1>
+        <div class="tag">Bullhorn Automation register</div>
+      </div>
+
+      <div class="sidebar-block">
+        <a class="sidebar-nav-btn hub-back" href="../">&larr; Back to Fuse Hub</a>
+      </div>
+
+      <div class="sidebar-block sidebar-about">
+        <label>Where the answers come from</label>
+        <p>The Active Automation Register 2026 spreadsheet in Marketing &rsaquo; BH Automation (Herefish). It's read fresh every time you ask.</p>
+        <p>It covers Candidate, Sales Contact, Placement, Job and Submission automations.</p>
+        <p>If something's missing or out of date, update the spreadsheet. This page will pick it up straight away.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <div class="workspace-inner">
+      <div class="intro">
+        <h1>Do we already have an automation for that?</h1>
+        <p>Describe what you want an automation to do, in your own words. You'll get the closest matches from the automation register, with a link to open each one in Bullhorn Automation.</p>
+      </div>
+
+      <form class="ask" id="askForm" novalidate>
+        <label for="askInput">What should the automation do?</label>
+        <div class="ask-row">
+          <textarea id="askInput" rows="2" placeholder="e.g. Is there something that texts candidates when their email bounces?"></textarea>
+          <button class="btn" type="submit" id="askButton">Search</button>
+        </div>
+        <div class="examples" id="examples">
+          <span>Try:</span>
+        </div>
+        <div class="status" id="askStatus" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="results" id="results" aria-live="polite"></div>
+
+      <footer>
+        <span>Fuse Recruitment</span>
+        <span>Answers are AI-assisted. Check the automation itself before relying on it.</span>
+      </footer>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ===================== CONFIG ===================== */
+/* The Cloudflare Worker in ./worker/ forwards this to the Power Automate
+   flow described in FLOW_SPEC.md. Posts { conversation } and gets back
+   { reply, automations }: "reply" is the AI's JSON text, "automations" is
+   the register rows straight from the spreadsheet. Details and links are
+   always shown from "automations", never from what the AI wrote. */
+const FLOW_URL = 'https://bullhorn-automation-finder.marketing-1b3.workers.dev/api/ask';
+
+const EXAMPLES = [
+  'Do we have an automation that texts candidates when their email bounces?',
+  'Something that sets the candidate state from their address',
+  'Which automations add people to the Top Talent tearsheet?',
+  'Is there a reminder for placements with outstanding paperwork?'
+];
+
+/* ===================== HELPERS ===================== */
+
+const els = {
+  form: document.getElementById('askForm'),
+  input: document.getElementById('askInput'),
+  button: document.getElementById('askButton'),
+  status: document.getElementById('askStatus'),
+  results: document.getElementById('results'),
+  examples: document.getElementById('examples')
+};
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+/* Compare names loosely: case, spacing and stray punctuation differ between
+   what the AI repeats back and what's in the register. */
+function normalise(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+/* Only link out to real web addresses from the register. */
+function safeUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    return url.protocol === 'https:' ? url.href : null;
+  } catch { return null; }
+}
+
+function clean(value) {
+  const s = String(value == null ? '' : value).trim();
+  return s && s.toUpperCase() !== 'N/A' ? s : '';
+}
+
+/* Excel sends dates as ISO text when the flow's "DateTime Format" is set to
+   ISO 8601. Show them the Australian way; leave anything else as it came. */
+function formatDate(value) {
+  const s = clean(value);
+  if (!/^\d{4}-\d{2}-\d{2}/.test(s)) return s;
+  const d = new Date(s.slice(0, 10) + 'T00:00:00');
+  return isNaN(d) ? s : d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/* Time-only cells (e.g. 2:00pm) arrive as a date on 30 Dec 1899 when they're
+   real Excel times rather than text. Turn those back into a clock time. */
+function formatTime(value) {
+  const s = clean(value);
+  const m = s.match(/^1899-12-3[01]T(\d{2}):(\d{2})/);
+  if (!m) return s;
+  const h = Number(m[1]);
+  return (h % 12 || 12) + ':' + m[2] + (h < 12 ? 'am' : 'pm');
+}
+
+function findInRegister(automations, match) {
+  const name = normalise(match.name);
+  if (!name) return null;
+  const record = normalise(match.record);
+  const sameName = automations.filter(a => normalise(a.name) === name);
+  return sameName.find(a => normalise(a.record) === record) || sameName[0] || null;
+}
+
+function statusClass(status) {
+  const s = normalise(status);
+  if (s === 'active') return 'active';
+  if (s === 'paused') return 'paused';
+  if (s === 'retired' || s === 'hibernated') return 'retired';
+  return '';
+}
+
+/* ===================== RENDER ===================== */
+
+function renderDetails(a) {
+  const sendWindow = [formatTime(a.start), formatTime(a.end)].filter(Boolean).join(' to ');
+  const sends = [clean(a.days), sendWindow, clean(a.timezone) ? '(' + clean(a.timezone) + ')' : '']
+    .filter(Boolean).join(', ').replace(', (', ' (');
+  const reentry = [clean(a.reentry), clean(a.reentryFrequency)].filter(Boolean).join(', ');
+  const dates = [
+    clean(a.created) ? 'Created ' + formatDate(a.created) : '',
+    clean(a.modified) ? 'last changed ' + formatDate(a.modified) : ''
+  ].filter(Boolean).join(', ');
+
+  const rows = [
+    ['What it does', clean(a.purpose)],
+    ['Who goes in', clean(a.list)],
+    ['Who’s left out', clean(a.exclusion)],
+    ['When it runs', sends],
+    ['Re-entry', reentry],
+    ['Type', clean(a.activation)],
+    ['Groups', clean(a.groups)],
+    ['Dates', dates ? dates.charAt(0).toUpperCase() + dates.slice(1) : '']
+  ].filter(([, v]) => v);
+
+  if (!rows.length) return '';
+  return `<dl class="details">${rows.map(([k, v]) =>
+    `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('')}</dl>`;
+}
+
+function renderMatch(match, automation, index) {
+  const a = automation || {};
+  const name = a.name || match.name;
+  const record = a.record || match.record;
+  const url = safeUrl(a.url);
+  const status = clean(a.status);
+
+  return `
+    <article class="match${index === 0 ? ' best' : ''}">
+      <div class="match-top">
+        ${index === 0 ? '<span class="pill best">Closest match</span>' : ''}
+        ${record ? `<span class="pill">${escapeHtml(record)}</span>` : ''}
+        ${status ? `<span class="pill ${statusClass(status)}">${escapeHtml(status)}</span>` : ''}
+      </div>
+      <h3>${escapeHtml(name)}</h3>
+      ${match.why ? `<p class="why">${escapeHtml(match.why)}</p>` : ''}
+      ${automation ? renderDetails(a) : '<p class="missing">Couldn’t find this exact name in the register, so there are no details to show. Search for it in Bullhorn Automation.</p>'}
+      <div class="match-actions">
+        ${url
+          ? `<a class="open-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open in Bullhorn Automation &#8599;</a>`
+          : (automation ? '<span class="no-link">No link in the register for this one yet.</span>' : '')}
+      </div>
+    </article>`;
+}
+
+function renderResult(question, result, automations) {
+  const matches = Array.isArray(result.matches) ? result.matches.filter(m => m && m.name) : [];
+
+  const matchHtml = matches.length
+    ? `<div class="matches">${matches.map((m, i) => renderMatch(m, findInRegister(automations, m), i)).join('')}</div>`
+    : (result.question ? '' : '<div class="none">Nothing in the register looks like a match. It may be worth asking Marketing before building a new one.</div>');
+
+  els.results.innerHTML = `
+    <div class="asked">You asked: <strong>${escapeHtml(question)}</strong></div>
+    ${result.answer ? `<div class="answer">${escapeHtml(result.answer)}</div>` : ''}
+    ${result.question ? `
+      <div class="followup">
+        <div class="followup-label">To narrow this down</div>
+        <div class="followup-text">${escapeHtml(result.question)}</div>
+      </div>` : ''}
+    ${matchHtml}
+    <button type="button" class="restart" id="restart">Start a new search</button>`;
+
+  document.getElementById('restart').addEventListener('click', resetSearch);
+}
+
+function renderError() {
+  els.results.innerHTML = `
+    <div class="error">Something went wrong searching the register. Try again, or rephrase your question.</div>
+    <button type="button" class="restart" id="restart">Start a new search</button>`;
+  document.getElementById('restart').addEventListener('click', resetSearch);
+}
+
+/* ===================== SEARCH ===================== */
+
+/* Kept between searches so the AI can ask a follow-up question and see the
+   answer in context, the same way Bullhorn Categorisation does. */
+let conversation = [];
+
+function resetSearch() {
+  conversation = [];
+  els.results.innerHTML = '';
+  els.input.value = '';
+  els.input.placeholder = 'e.g. Is there something that texts candidates when their email bounces?';
+  els.input.focus();
+}
+
+async function search(text) {
+  const question = text.trim();
+  if (!question) { els.input.focus(); return; }
+
+  els.button.disabled = true;
+  els.status.textContent = 'Searching the automation register…';
+  els.status.classList.add('working');
+
+  conversation.push({ role: 'user', content: question });
+
+  try {
+    const response = await fetch(FLOW_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conversation })
+    });
+    if (!response.ok) throw new Error('Flow returned ' + response.status);
+
+    const data = await response.json();
+    const replyText = typeof data.reply === 'string' ? data.reply : '';
+    if (!replyText) throw new Error('No reply received.');
+
+    const result = JSON.parse(replyText.replace(/```json|```/g, '').trim());
+    conversation.push({ role: 'assistant', content: replyText });
+
+    renderResult(question, result, Array.isArray(data.automations) ? data.automations : []);
+    els.input.value = '';
+    els.input.placeholder = result.question ? 'Type your answer here…' : 'Ask something else, or refine your search…';
+  } catch (err) {
+    console.error('Automation search error:', err);
+    conversation.pop();
+    renderError();
+  } finally {
+    els.button.disabled = false;
+    els.status.textContent = '';
+    els.status.classList.remove('working');
+    els.input.focus();
+  }
+}
+
+els.form.addEventListener('submit', e => {
+  e.preventDefault();
+  search(els.input.value);
+});
+
+els.input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    search(els.input.value);
+  }
+});
+
+EXAMPLES.forEach(text => {
+  const chip = document.createElement('button');
+  chip.type = 'button';
+  chip.className = 'chip';
+  chip.textContent = text;
+  chip.addEventListener('click', () => {
+    conversation = [];
+    els.input.value = text;
+    search(text);
+  });
+  els.examples.appendChild(chip);
+});
+</script>
+</body>
+</html>
