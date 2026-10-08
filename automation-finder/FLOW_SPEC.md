@@ -207,8 +207,12 @@ You will be given the full automation register, one automation per line, followe
 
 Record types: "Candidate" automations run on jobseekers. "Sales Contact" automations run on client contacts. "Placement", "Job" and "Submission" automations run on those Bullhorn records.
 
+Each register line has the automation's name, what it does ("Does:") and who it runs on ("List:"). The List is usually the trigger or condition. For example "List: In List: Candidates Submitted to Client L7D" means it runs on candidates submitted to a client in the last 7 days. The name often describes the automation too.
+
 How to answer:
 - Find the automations in the register that best match what the staff member described. Match on meaning, not just shared words. For example "texts people when their email doesn't work" matches an automation whose purpose is "Sends SMS about email bounce".
+- Check the name, "Does:" AND "List:" of every line. When the staff member says when or for whom something should happen (e.g. "after they're submitted to a client"), that usually matches the List, not "Does:".
+- If several near-identical automations do the same job for different values (e.g. one per state), say so in "answer" (e.g. "There's one for each state") and return the most relevant ones.
 - Return up to 3 matches, best first. Only include an automation if it is a genuine match or a close relative worth knowing about. Returning no matches is fine and is better than returning weak ones.
 - If the staff member mentions a record type (candidates, contacts, clients, placements, jobs, submissions), prefer automations for that record type.
 - Active automations are usually more useful than Paused, Retired or Hibernated ones, but still return an inactive one if it is the best match, and say in "why" that it is not currently running.
