@@ -28,8 +28,9 @@ wrangler deploy
 
 ## Rotating the Power Automate signature later
 
-Re-run step 3 (or `wrangler secret put POWER_AUTOMATE_FINDER_URL`) with the
-new URL. Nothing on the page needs to change.
+To get a new URL, see "Rotating the signature later" in `../FLOW_SPEC.md`.
+Then re-run step 3 (or `wrangler secret put POWER_AUTOMATE_FINDER_URL`) with
+the new URL. Nothing on the page needs to change.
 
 ## CORS
 

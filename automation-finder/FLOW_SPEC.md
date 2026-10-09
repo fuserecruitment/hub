@@ -313,5 +313,37 @@ they only ever see what the flow sends back.
 
 ## Rotating the signature later
 
-If the trigger URL is regenerated, update the Worker secret with the new
-URL and redeploy. The page never needs to change.
+Do this if the trigger URL has been shared somewhere it shouldn't be. There's
+no button for it in Power Automate; it's done from the browser's Developer
+Tools ([Microsoft's guide](https://learn.microsoft.com/en-us/power-automate/regenerate-sas-key)).
+Last done 9 Oct 2026.
+
+1. Open the flow's **Details** page (not the designer), press **F12**, go to
+   the **Network** tab and press **Ctrl+R**.
+2. Filter for `runs?api-version` and click that request. Copy its
+   **Request URL** and its **Authorization** header (`Bearer …`).
+3. In the URL, change `/runs?` to `/regenerateAccessKey?`. It should look
+   like `https://…environment.api.powerplatform.com/powerautomate/flows/<flow id>/regenerateAccessKey?api-version=1`.
+4. In the **Console** tab, run (type `allow pasting` first if asked):
+
+   ```js
+   fetch('<regenerateAccessKey URL>', {
+     method: 'POST',
+     headers: {
+       'Content-type': 'application/json; charset=UTF-8',
+       'Authorization': '<Bearer value>'
+     }
+   })
+   .then(async r => console.log(r.status, await r.text()))
+   ```
+
+   A `200` or `204` with an empty body means it worked. (Microsoft's version
+   ends in `result.json()`, which throws "unexpected end of JSON input" on
+   that empty body even when it worked.)
+5. Open the trigger in the designer, check that `sig=` has changed, copy the
+   new URL, and straight away update the Worker's `POWER_AUTOMATE_FINDER_URL`
+   secret (see `worker/DEPLOY.md`). The old URL stops working immediately, so
+   the page is down until the secret is updated.
+
+Never paste the Bearer value or the new URL anywhere else. The page never
+needs to change.
