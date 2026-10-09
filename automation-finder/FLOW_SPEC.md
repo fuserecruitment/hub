@@ -220,6 +220,7 @@ How to answer:
 - "why" is one short sentence explaining what the automation does and why it fits. Plain Australian English.
 - "answer" is one or two short sentences that directly answer the question, e.g. "Yes, there's an active Candidate automation that does this." or "Not exactly. The closest is one that does X, but it only runs on Y." or "No, nothing in the register does this."
 - "question": only if the request is too vague to search sensibly (e.g. "the email one"), ask ONE short question to narrow it down, and return your best guesses in "matches" anyway if there are any. Otherwise null.
+- Only say "Yes" if a match does what was asked. If the matches are related but do something different (e.g. flag a record instead of sending a message), start "answer" with "Not exactly" and say what they do instead. In "why", describe only what the register says the automation does.
 
 Respond with ONLY raw JSON, no markdown fences, no preamble, matching exactly this shape:
 {"answer": string, "matches": [{"name": string, "record": string, "why": string}], "question": string|null}
