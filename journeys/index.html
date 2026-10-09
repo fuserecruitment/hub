@@ -257,6 +257,17 @@
     padding:0;border:none;background:none;color:var(--blue);font-family:'Work Sans',sans-serif;
     font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:underline;
   }
+  .mark-row{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;}
+  .mark{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;cursor:pointer;}
+  .mark input{width:18px;height:18px;accent-color:var(--green);cursor:pointer;margin:0;}
+  .mark .hint{font-weight:400;}
+  .mark-msg{font-size:13px;color:var(--ink-soft);}
+  .mark-msg.err{color:var(--warn);}
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:10;max-width:min(560px,calc(100vw - 32px));
+    background:var(--navy);color:#fff;border-radius:var(--radius-md);padding:12px 16px;font-size:14px;
+    box-shadow:0 8px 24px rgba(21,26,54,.25);
+  }
 
   footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 
@@ -328,6 +339,7 @@
       <section id="v-conn" hidden></section>
       <section id="v-flags" hidden></section>
       <section id="v-checks" hidden></section>
+      <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
       <footer>
         <span>Fuse Recruitment</span>
@@ -525,6 +537,9 @@ function placeAutomation(a) {
 const state = { view:'cand', q:'', show:{ Active:true, Paused:true, Retired:false } };
 let ITEMS = [];
 let BY_ID = {};
+/* The register rows as loaded, so a tick can update them (and the saved copy)
+   without reading the whole register again. */
+let RAW_ROWS = [];
 /* "Might need update" tab: its own filters, separate from the journey search.
    showChecked lists the ones hidden because of a recent "Last Checked" date. */
 const checkState = { group:'all', record:'all', q:'', showChecked:false };
@@ -550,10 +565,18 @@ const checkedText = c => 'Checked ' + AutomationChecks.formatDate(c.checkedOn) +
 function checkPill(i) {
   return flagged(i) ? `<span class="chk ${i.check.group}" title="${escapeHtml(CHECK_LABEL[i.check.group] + ': ' + i.check.reasons.map(r => r.title).join('; '))}">${escapeHtml(AutomationChecks.LABEL)}</span>` : '';
 }
+/* Tick box that writes today's date to Last Checked in the register. */
+function markBox(i) {
+  const days = AutomationChecks.LIMITS.recheckDays;
+  if (!AutomationChecks.canMark(i)) return `<p class="hint">To mark this one as checked from here, add its link to the register first.</p>`;
+  return `<label class="mark"><input type="checkbox" data-mark="${escapeHtml(AutomationChecks.keyFor(i))}"> Checked &ndash; looks fine <span class="hint">(hides it for ${days} days)</span></label>
+    <span class="mark-msg" role="status"></span>`;
+}
 function checkReasons(i) {
   if (!i.check) return '';
   if (i.check.recentlyChecked) return `<p class="hint">${escapeHtml(checkedText(i.check))}</p>`;
-  return `<ul class="why"><li><strong>${escapeHtml(AutomationChecks.LABEL)} (${escapeHtml(CHECK_LABEL[i.check.group].toLowerCase())}).</strong></li>${i.check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>`;
+  return `<ul class="why"><li><strong>${escapeHtml(AutomationChecks.LABEL)} (${escapeHtml(CHECK_LABEL[i.check.group].toLowerCase())}).</strong></li>${i.check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>
+    <div class="mark-row">${markBox(i)}</div>`;
 }
 function card(i, also) {
   const url = safeUrl(i.url);
@@ -673,6 +696,7 @@ function checkItem(i) {
     ${done ? `<p class="purpose"><strong>${escapeHtml(checkedText(i.check))}</strong></p>` : ''}
     <ul>${i.check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>
     ${i.purpose ? `<p class="purpose">${escapeHtml(i.purpose)}</p>` : ''}
+    ${done ? '' : `<div class="mark-row">${markBox(i)}</div>`}
     <div class="foot">
       ${url ? `<a class="open-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open in Bullhorn Automation</a>` : ''}
       ${stage ? `<button type="button" class="text-btn" data-go="${i.journey}:${i.stage}">Show on the ${i.journey === 'sales' ? 'sales contact' : 'candidate'} journey</button>` : ''}
@@ -699,7 +723,7 @@ function renderChecks() {
 
   document.getElementById('v-checks').innerHTML = `
     <div class="view-head"><h2>Might need update</h2><p>Worked out automatically from the register each time the page loads: automations that look out of date, unfinished or inconsistent. Retired ones are left out. It means &ldquo;worth a look&rdquo;, not &ldquo;broken&rdquo;.</p></div>
-    <p class="hint" style="max-width:72ch;margin-top:8px">Checked one and it&rsquo;s fine? Put today&rsquo;s date in its <strong>Last Checked</strong> column in the register. It drops off this list for ${days} days, or until it&rsquo;s changed. The register is read again after its weekly Monday update, or straight away with &ldquo;Refresh now&rdquo; below.</p>
+    <p class="hint" style="max-width:72ch;margin-top:8px">Checked one and it&rsquo;s fine? Tick <strong>Checked &ndash; looks fine</strong>. That writes today&rsquo;s date into its <strong>Last Checked</strong> column in the register, and it drops off this list for ${days} days, or until it&rsquo;s changed. Dates typed straight into the register show up after its weekly Monday update, or straight away with &ldquo;Refresh now&rdquo; below.</p>
     <div class="chk-stats">
       ${AutomationChecks.GROUPS.map(g => `<button type="button" class="chk-stat tone-${g.key}" data-cgroup="${g.key}" aria-pressed="${checkState.group === g.key}">
         <span class="k">${escapeHtml(g.title)}</span><span class="v">${byGroup(g.key)}</span><span class="d">${escapeHtml(g.short)}</span></button>`).join('')}
@@ -786,6 +810,40 @@ document.addEventListener('click', e => {
   if (e.target.closest('#checks-refresh')) { load(true); return; }
   if (e.target.closest('#checks-csv')) downloadChecks();
 });
+/* Tick box: write the date to the register, then update the rows we already
+   have (and the saved copy) so the flag disappears without a full reload. */
+document.addEventListener('change', async e => {
+  const box = e.target.closest('input[data-mark]');
+  if (!box) return;
+  const key = box.dataset.mark;
+  const item = ITEMS.find(i => AutomationChecks.keyFor(i) === key);
+  const msg = box.closest('.mark-row') && box.closest('.mark-row').querySelector('.mark-msg');
+  if (!item || !box.checked) return;
+  box.disabled = true;
+  if (msg) { msg.className = 'mark-msg'; msg.textContent = 'Saving to the register…'; }
+  try {
+    const date = await AutomationChecks.markChecked(item);
+    RAW_ROWS.forEach(r => { if (AutomationChecks.keyFor(r) === key) r.checked = date; });
+    writeCache(RAW_ROWS);
+    prepare(RAW_ROWS);
+    renderStats();
+    render();
+    showToast('Marked “' + item.name + '” as checked. It’s off the list for ' + AutomationChecks.LIMITS.recheckDays + ' days.');
+  } catch (err) {
+    console.error('Mark checked error:', err);
+    box.checked = false;
+    box.disabled = false;
+    if (msg) { msg.className = 'mark-msg err'; msg.textContent = 'Couldn’t save it to the register. Try again in a moment.'; }
+  }
+});
+let toastTimer = null;
+function showToast(text) {
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 5000);
+}
 document.addEventListener('input', e => {
   if (e.target.id === 'checks-q') {
     checkState.q = e.target.value.trim().toLowerCase();
@@ -863,6 +921,7 @@ async function load(force) {
   try {
     let rows = force ? null : readCache();
     if (!rows) { rows = await fetchRegister(); writeCache(rows); }
+    RAW_ROWS = rows;
     prepare(rows);
     status.hidden = true;
     document.getElementById('stats').hidden = false;

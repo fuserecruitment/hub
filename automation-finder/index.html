@@ -176,6 +176,13 @@
   .check-note ul{margin:0 0 6px;padding-left:18px;}
   .check-note li strong{font-weight:600;}
   .check-note a{color:var(--blue);font-weight:600;font-size:13px;}
+  .check-note.done{--tone:var(--green);background:var(--green-bg);}
+  .mark-row{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:2px 0 8px;}
+  .mark{display:inline-flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;}
+  .mark input{width:18px;height:18px;accent-color:var(--green);cursor:pointer;margin:0;}
+  .mark span{font-weight:400;color:var(--ink-soft);}
+  .mark-msg{font-size:13px;color:var(--ink-soft);}
+  .mark-msg.err{color:var(--warn);}
 
   .none{
     background:var(--white);border:1px dashed var(--line);border-radius:var(--radius-lg);padding:18px 20px;color:var(--ink-soft);
@@ -383,16 +390,50 @@ function renderDetails(a) {
 /* The flag from the shared checks (../shared/automation-checks.js), also
    shown on the Journey Map, which lists them all in its "Might need update"
    tab. Hidden when someone has put a recent date in its Last Checked column. */
-function renderCheck(check) {
+function renderCheck(check, automation) {
   if (!check || check.recentlyChecked) return '';
   const group = AutomationChecks.GROUPS.find(g => g.key === check.group);
+  const key = AutomationChecks.keyFor(automation);
   return `
     <div class="check-note ${check.group}">
       <div class="check-label">${escapeHtml(AutomationChecks.LABEL)} &middot; ${escapeHtml(group.label)}</div>
       <ul>${check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>
+      ${AutomationChecks.canMark(automation) ? `
+        <div class="mark-row">
+          <label class="mark"><input type="checkbox" data-mark="${escapeHtml(key)}"> Checked &ndash; looks fine <span>(hides this for ${AutomationChecks.LIMITS.recheckDays} days)</span></label>
+          <span class="mark-msg" role="status"></span>
+        </div>` : ''}
       <a href="../journeys/#checks">See everything that might need an update &rarr;</a>
     </div>`;
 }
+
+/* The automations behind the answer on screen, so a tick can find its row. */
+let shownAutomations = new Map();
+
+els.results.addEventListener('change', async e => {
+  const box = e.target.closest('input[data-mark]');
+  if (!box || !box.checked) return;
+  const automation = shownAutomations.get(box.dataset.mark);
+  const note = box.closest('.check-note');
+  const msg = note.querySelector('.mark-msg');
+  if (!automation) return;
+  box.disabled = true;
+  msg.className = 'mark-msg';
+  msg.textContent = 'Saving to the register…';
+  try {
+    await AutomationChecks.markChecked(automation);
+    note.className = 'check-note done';
+    note.innerHTML = `<div class="check-label">Checked</div>Marked as checked today. It won’t be flagged again for ${AutomationChecks.LIMITS.recheckDays} days, unless it’s changed.`;
+    const pill = note.closest('.match').querySelector('.pill.check');
+    if (pill) pill.remove();
+  } catch (err) {
+    console.error('Mark checked error:', err);
+    box.checked = false;
+    box.disabled = false;
+    msg.className = 'mark-msg err';
+    msg.textContent = 'Couldn’t save it to the register. Try again in a moment.';
+  }
+});
 
 function renderMatch(match, automation, index, checks) {
   const a = automation || {};
@@ -413,7 +454,7 @@ function renderMatch(match, automation, index, checks) {
       </div>
       <h3>${escapeHtml(name)}</h3>
       ${match.why ? `<p class="why">${escapeHtml(match.why)}</p>` : ''}
-      ${renderCheck(check)}
+      ${renderCheck(check, automation)}
       ${automation ? renderDetails(a) : '<p class="missing">Couldn’t find this exact name in the register, so there are no details to show. Search for it in Bullhorn Automation.</p>'}
       <div class="match-actions">
         ${url
@@ -426,6 +467,7 @@ function renderMatch(match, automation, index, checks) {
 function renderResult(question, result, automations) {
   const matches = Array.isArray(result.matches) ? result.matches.filter(m => m && m.name) : [];
   const checks = AutomationChecks.checkAll(automations);
+  shownAutomations = new Map(automations.map(a => [AutomationChecks.keyFor(a), a]));
 
   const matchHtml = matches.length
     ? `<div class="matches">${matches.map((m, i) => renderMatch(m, findInRegister(automations, m), i, checks)).join('')}</div>`

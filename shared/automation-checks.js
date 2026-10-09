@@ -240,5 +240,34 @@
     return check && check.checkedOn ? new Date(check.checkedOn.getTime() + LIMITS.recheckDays * 86400000) : null;
   }
 
-  window.AutomationChecks = { LABEL, GROUPS, ORDER, LIMITS, checkAll, keyFor, formatDate, recheckDate };
+  /* ---------- Marking as checked from the hub ---------- */
+  /* The worker's /api/check route forwards to the "Mark checked" flow
+     (../automation-finder/CHECK_FLOW_SPEC.md), which finds the row by its
+     Automation URL and writes today's date into Last Checked. */
+  const CHECK_URL = 'https://bullhorn-automation-finder.marketing-1b3.workers.dev/api/check';
+  const MARKABLE_RECORDS = ['Candidate', 'Sales Contact', 'Placement', 'Job', 'Submission'];
+
+  /* The flow looks the row up by link, so only automations with one can be marked. */
+  function canMark(a) {
+    return MARKABLE_RECORDS.includes(clean(a.record)) && hasLink(a.url);
+  }
+
+  /* Returns the date written to the register, as YYYY-MM-DD. Only counts as
+     saved if the flow's Response confirms the date: a flow that hasn't
+     reached its Response (or has none) answers "accepted" with no body
+     before the row is updated, which isn't proof of anything. */
+  async function markChecked(a) {
+    const response = await fetch(CHECK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ record: clean(a.record), url: clean(a.url) })
+    });
+    if (!response.ok) throw new Error('Check flow returned ' + response.status);
+    const data = await response.json().catch(() => ({}));
+    const written = clean(data.checked);
+    if (!/^\d{4}-\d{2}-\d{2}/.test(written)) throw new Error('Check flow did not confirm the date');
+    return written.slice(0, 10);
+  }
+
+  window.AutomationChecks = { LABEL, GROUPS, ORDER, LIMITS, checkAll, keyFor, formatDate, recheckDate, canMark, markChecked };
 })();

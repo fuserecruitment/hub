@@ -17,6 +17,10 @@ step-by-step instructions for anything she has to do outside the repo.
   Worker that holds the flow URL as a secret. See
   `automation-finder/FLOW_SPEC.md` and `*/worker/DEPLOY.md`.
 - Workers only accept requests from `https://fuserecruitment.github.io`.
+- The only thing the hub writes to the register is the Last Checked date,
+  through the worker's `/api/check` route and its own flow
+  (`automation-finder/CHECK_FLOW_SPEC.md`). The worker only passes on a known
+  record type and a Herefish automation link.
 - Links to SharePoint files are fine (they need a Fuse sign-in). The
   Automation Finder and Journey Map sidebars both link to the register.
 
@@ -67,10 +71,15 @@ Match `automation-finder/index.html`, the reference tool page.
 - Used by the Automation Finder (a label and reasons on each answer card) and
   the Journey Map (a label on each card, plus the "Might need update" tab with
   filters, CSV download and "Refresh now", `#checks`).
-- Marking one as checked: put the date in its **Last Checked** column in the
-  register. The flag is hidden for `LIMITS.recheckDays` (90) days, or until
-  the automation's Date Last Modified is after that date. The tab can show
-  the recently checked ones on request.
+- Marking one as checked: the **Checked – looks fine** tick box (Journey Map
+  tab and cards, Automation Finder answers) calls `markChecked()`, which goes
+  worker `/api/check` → "Mark checked" flow (`automation-finder/CHECK_FLOW_SPEC.md`)
+  → writes today's date to **Last Checked** in the register, matched by
+  Automation URL. A date typed into the register directly works too. The flag
+  is hidden for `LIMITS.recheckDays` (90) days, or until the automation's Date
+  Last Modified is after that date. The tab can show the recently checked ones
+  on request. Automations with no link can't be ticked (the flow needs the
+  link to find the row).
 - Thresholds are in `LIMITS`, word lists in `SENDS` / `SEASONAL`. Change them
   there; both pages pick it up. Automations are matched between pages with
   `keyFor()` (the number at the end of the Herefish URL).

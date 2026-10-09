@@ -1,16 +1,20 @@
 # Deploying the Automation Finder worker
 
 Same role as `bullhorn-category-proxy` plays for Bullhorn Categorisation:
-it sits between the static page (`../index.html`, on GitHub Pages) and the
-Power Automate flow (`../FLOW_SPEC.md`), holding the flow's signed
-HTTP-trigger URL (the one with `sig=...` in it) as a secret so it never has
-to be committed to this public repo.
+it sits between the static pages (on GitHub Pages) and two Power Automate
+flows, holding each flow's signed HTTP-trigger URL (the one with `sig=...`
+in it) as a secret so it never has to be committed to this public repo.
+
+| Route | Used for | Secret | Flow |
+|---|---|---|---|
+| `/api/ask` | Automation Finder questions, register reads (Journey Map) | `POWER_AUTOMATE_FINDER_URL` | `../FLOW_SPEC.md` |
+| `/api/check` | "Checked – looks fine" ticks | `POWER_AUTOMATE_CHECK_URL` | `../CHECK_FLOW_SPEC.md` |
 
 ## One-time setup — dashboard (no installs needed)
 
 1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Workers** → name it `bullhorn-automation-finder` → **Deploy** (the default "Hello World" is fine, you'll replace it next).
 2. Open the new Worker → **Edit code** → replace the whole file with the contents of `src/index.js` in this folder → **Deploy**.
-3. Back on the Worker's page → **Settings** → **Variables and Secrets** → **Add** → name `POWER_AUTOMATE_FINDER_URL`, type **Secret**, paste the flow's HTTP-trigger URL as the value → **Deploy**.
+3. Back on the Worker's page → **Settings** → **Variables and Secrets** → **Add** → name `POWER_AUTOMATE_FINDER_URL`, type **Secret**, paste the flow's HTTP-trigger URL as the value → **Deploy**. Do the same for `POWER_AUTOMATE_CHECK_URL` with the "Mark checked" flow's URL.
 4. The Worker's URL is shown at the top of its page. It should be
    `https://bullhorn-automation-finder.marketing-1b3.workers.dev`, which is
    what `FLOW_URL` in `../index.html` already points at. If it's
@@ -23,14 +27,20 @@ From this `worker/` folder:
 ```
 wrangler login
 wrangler secret put POWER_AUTOMATE_FINDER_URL
+wrangler secret put POWER_AUTOMATE_CHECK_URL
 wrangler deploy
 ```
+
+## Updating the code in the dashboard
+
+**Edit code** → select everything in `worker.js` → replace it with
+`src/index.js` → **Deploy**. Secrets stay as they are.
 
 ## Rotating the Power Automate signature later
 
 To get a new URL, see "Rotating the signature later" in `../FLOW_SPEC.md`.
-Then re-run step 3 (or `wrangler secret put POWER_AUTOMATE_FINDER_URL`) with
-the new URL. Nothing on the page needs to change.
+Then re-run step 3 (or `wrangler secret put …`) for that flow's secret with
+the new URL. Nothing on the pages needs to change.
 
 ## CORS
 
