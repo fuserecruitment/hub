@@ -165,6 +165,18 @@
   .no-link{font-size:13px;color:var(--ink-soft);}
   .missing{font-size:13px;color:var(--warn);margin-top:6px;}
 
+  .pill.check.first{background:#FBECEC;color:var(--warn);}
+  .pill.check.tidy{background:var(--amber-bg);color:var(--amber);}
+  .pill.check.later{background:var(--grey-bg);color:var(--ink-soft);}
+  .check-note{margin-top:12px;padding:12px 14px;border-radius:var(--radius-sm);border-left:4px solid var(--tone);background:var(--steel);font-size:13.5px;}
+  .check-note.first{--tone:var(--warn);}
+  .check-note.tidy{--tone:#C98A00;}
+  .check-note.later{--tone:var(--concrete);}
+  .check-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:4px;}
+  .check-note ul{margin:0 0 6px;padding-left:18px;}
+  .check-note li strong{font-weight:600;}
+  .check-note a{color:var(--blue);font-weight:600;font-size:13px;}
+
   .none{
     background:var(--white);border:1px dashed var(--line);border-radius:var(--radius-lg);padding:18px 20px;color:var(--ink-soft);
   }
@@ -252,6 +264,7 @@
   </main>
 </div>
 
+<script src="../shared/automation-checks.js"></script>
 <script>
 /* ===================== CONFIG ===================== */
 /* The Cloudflare Worker in ./worker/ forwards this to the Power Automate
@@ -367,12 +380,28 @@ function renderDetails(a) {
     `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('')}</dl>`;
 }
 
-function renderMatch(match, automation, index) {
+/* The flag from the shared checks (../shared/automation-checks.js), also
+   shown on the Journey Map, which lists them all in its "Might need update"
+   tab. Hidden when someone has put a recent date in its Last Checked column. */
+function renderCheck(check) {
+  if (!check || check.recentlyChecked) return '';
+  const group = AutomationChecks.GROUPS.find(g => g.key === check.group);
+  return `
+    <div class="check-note ${check.group}">
+      <div class="check-label">${escapeHtml(AutomationChecks.LABEL)} &middot; ${escapeHtml(group.label)}</div>
+      <ul>${check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>
+      <a href="../journeys/#checks">See everything that might need an update &rarr;</a>
+    </div>`;
+}
+
+function renderMatch(match, automation, index, checks) {
   const a = automation || {};
   const name = a.name || match.name;
   const record = a.record || match.record;
   const url = safeUrl(a.url);
   const status = clean(a.status);
+  const found = automation ? checks.get(AutomationChecks.keyFor(automation)) : null;
+  const check = found && !found.recentlyChecked ? found : null;
 
   return `
     <article class="match${index === 0 ? ' best' : ''}">
@@ -380,9 +409,11 @@ function renderMatch(match, automation, index) {
         ${index === 0 ? '<span class="pill best">Closest match</span>' : ''}
         ${record ? `<span class="pill">${escapeHtml(record)}</span>` : ''}
         ${status ? `<span class="pill ${statusClass(status)}">${escapeHtml(status)}</span>` : ''}
+        ${check ? `<span class="pill check ${check.group}">${escapeHtml(AutomationChecks.LABEL)}</span>` : ''}
       </div>
       <h3>${escapeHtml(name)}</h3>
       ${match.why ? `<p class="why">${escapeHtml(match.why)}</p>` : ''}
+      ${renderCheck(check)}
       ${automation ? renderDetails(a) : '<p class="missing">Couldn’t find this exact name in the register, so there are no details to show. Search for it in Bullhorn Automation.</p>'}
       <div class="match-actions">
         ${url
@@ -394,9 +425,10 @@ function renderMatch(match, automation, index) {
 
 function renderResult(question, result, automations) {
   const matches = Array.isArray(result.matches) ? result.matches.filter(m => m && m.name) : [];
+  const checks = AutomationChecks.checkAll(automations);
 
   const matchHtml = matches.length
-    ? `<div class="matches">${matches.map((m, i) => renderMatch(m, findInRegister(automations, m), i)).join('')}</div>`
+    ? `<div class="matches">${matches.map((m, i) => renderMatch(m, findInRegister(automations, m), i, checks)).join('')}</div>`
     : (result.question ? '' : '<div class="none">Nothing in the register looks like a match. It may be worth asking Marketing before building a new one.</div>');
 
   els.results.innerHTML = `

@@ -52,8 +52,28 @@ Match `automation-finder/index.html`, the reference tool page.
 |---|---|---|
 | `bullhorn-category/` | Works out industry / category / sub-category for Bullhorn records | AI lookup via `bullhorn-category/worker/` |
 | `automation-finder/` | Plain-English search of the Active Automation Register | `bullhorn-automation-finder` worker → Power Automate flow → register spreadsheet |
-| `journeys/` | Every automation placed on the candidate and sales contact journeys, with hand-offs and gaps | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
+| `journeys/` | Every automation placed on the candidate and sales contact journeys, with hand-offs, gaps and a "Needs a check" tab | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
 | `present-feedback/` | Static report on the Present survey (Sept 2026) | None (static) |
+| `shared/` | Code used by more than one tool (no page of its own) | None |
+
+### Automation checks (`shared/automation-checks.js`)
+
+- Works out which automations look out of date, unfinished or inconsistent
+  (old sends, temporary ones still running, long-paused or stale drafts,
+  missing register details, contradictory dates, past-FY names, duplicates).
+  Every flag is labelled "Might need update"; its colour and group (Check
+  first, Tidy up, When there's time) show how urgent. Retired automations
+  are never flagged.
+- Used by the Automation Finder (a label and reasons on each answer card) and
+  the Journey Map (a label on each card, plus the "Might need update" tab with
+  filters, CSV download and "Refresh now", `#checks`).
+- Marking one as checked: put the date in its **Last Checked** column in the
+  register. The flag is hidden for `LIMITS.recheckDays` (90) days, or until
+  the automation's Date Last Modified is after that date. The tab can show
+  the recently checked ones on request.
+- Thresholds are in `LIMITS`, word lists in `SENDS` / `SEASONAL`. Change them
+  there; both pages pick it up. Automations are matched between pages with
+  `keyFor()` (the number at the end of the Herefish URL).
 
 ### Automation Journey Map (`journeys/`)
 
@@ -77,9 +97,13 @@ Match `automation-finder/index.html`, the reference tool page.
 
 Active Automation Register 2026.xlsx, SharePoint Marketing site ›
 BH Automation (Herefish). Sheets read by the flow: Candidate, Sales Contact,
-Placement, Job, Submission (each formatted as an Excel table with the same
-name, minus spaces). The flow returns
-`{ reply, automations:[{record,name,status,activation,purpose,list,exclusion,days,start,end,timezone,reentry,reentryFrequency,groups,created,modified,url}] }`.
+Placement, Job, Submission (Excel tables `Table1`–`Table5`, in that order).
+The Hibernated sheet (about 1,400 hibernated automations, its own columns) is
+deliberately not read: it would swamp the AI prompt and the Journey Map.
+The flow returns
+`{ reply, automations:[{record,name,status,activation,purpose,list,exclusion,days,start,end,timezone,reentry,reentryFrequency,groups,created,modified,url,checked}] }`.
+`checked` is the register's **Last Checked** column (date someone last
+reviewed it), used by the shared checks to hide a flag for 90 days.
 
 ## Testing
 

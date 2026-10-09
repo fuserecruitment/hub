@@ -47,8 +47,18 @@ Open **Active Automation Register 2026.xlsx** (Marketing › BH Automation
 | Job | `Job` |
 | Submission | `Submission` |
 
+(In the live register these five tables are actually named `Table1`–`Table5`,
+in the same order. That's fine: pick whichever table is on the right sheet.)
+
 Leave **Candidate Insights** alone, it's a summary, not a list of
 automations.
+
+Leave **Hibernated** out too. It's a different shape (about 1,400 rows of
+hibernated automations of every record type, with Record Type, Date
+Hibernated, Date Last Activated and "What It Did" columns, but no Status or
+Purpose). Adding it would roughly quadruple what the AI reads on every
+question and flood the Journey Map. If it's ever needed, give it its own
+flow branch that skips the AI step.
 
 Things to know:
 
@@ -133,7 +143,8 @@ after each List rows action.
   "groups": "@{item()?['Groups']}",
   "created": "@{item()?['Date Created']}",
   "modified": "@{item()?['Date Last Modified']}",
-  "url": "@{item()?['Automation URL']}"
+  "url": "@{item()?['Automation URL']}",
+  "checked": "@{item()?['Last Checked']}"
 }
 ```
 
@@ -143,10 +154,19 @@ Name them `Select Candidate`, `Select SalesContact`, `Select Placement`,
 If a column is ever renamed in the spreadsheet, update the name in quotes
 here (e.g. `'Purpose'`) or that field will come through blank.
 
+`checked` (added 9 Oct 2026) reads a **Last Checked** column, the date
+someone last reviewed the automation. The "Might need update" flags on the
+Automation Finder and Journey Map are hidden for 90 days after that date (see
+`../shared/automation-checks.js`). Each of the five tables needs a column with
+exactly that header; a table without one just sends it blank. To add it to a
+flow that's already built, open each Select, and in text mode add a comma at
+the end of the `"url"` line and then the `"checked"` line above.
+
 ## 4. Compose "All automations"
 
-After all five branches (the Compose must come after the branches join).
-Inputs, in the expression editor (`fx`):
+After all five branches (the Compose must come after the branches join: in
+its **Settings → Run after**, tick all five Selects). Inputs, in the
+expression editor (`fx`):
 
 ```
 union(body('Select_Candidate'), body('Select_SalesContact'), body('Select_Placement'), body('Select_Job'), body('Select_Submission'))

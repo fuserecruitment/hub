@@ -216,6 +216,48 @@
   .sev{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sev);}
   .flagc p{font-size:14px;}
 
+  /* ---------- Needs a check ---------- */
+  .chk{font-size:11px;font-weight:700;border-radius:100px;padding:2px 9px;white-space:nowrap;}
+  .chk.first{background:var(--red-bg);color:var(--warn);}
+  .chk.tidy{background:var(--amber-bg);color:var(--amber);}
+  .chk.later{background:var(--grey-bg);color:var(--ink-soft);}
+  .why{margin:0;padding:10px 12px;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:13px;border-radius:var(--radius-sm);background:var(--steel);}
+  .why li strong{font-weight:600;}
+  .chk-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:14px 0 16px;max-width:960px;}
+  .chk-stat{
+    background:var(--white);border:1px solid var(--line);border-top:4px solid var(--tone);border-radius:var(--radius-lg);
+    padding:12px 16px;text-align:left;font-family:'Work Sans',sans-serif;color:var(--ink);cursor:pointer;
+  }
+  .chk-stat:hover{border-color:var(--blue);border-top-color:var(--tone);}
+  .chk-stat[aria-pressed="true"]{box-shadow:0 0 0 3px var(--blue);}
+  .chk-stat .k{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+  .chk-stat .v{display:block;font-size:24px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;}
+  .chk-stat .d{display:block;font-size:12.5px;color:var(--ink-soft);}
+  .chk-group{margin-bottom:26px;max-width:960px;}
+  .chk-group h3{font-size:18px;display:flex;gap:10px;align-items:baseline;}
+  .chk-group > p{font-size:14px;color:var(--ink-soft);margin:2px 0 12px;max-width:72ch;}
+  .chk-items{display:flex;flex-direction:column;gap:10px;}
+  .chk-item{
+    background:var(--white);border:1px solid var(--line);border-left:4px solid var(--tone);border-radius:var(--radius-lg);
+    padding:14px 18px;display:flex;flex-direction:column;gap:8px;
+  }
+  .chk-item h4{font-size:15.5px;line-height:1.35;overflow-wrap:anywhere;}
+  .chk-item .top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .chk-item ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;}
+  .chk-item li{font-size:14px;padding-left:16px;position:relative;}
+  .chk-item li::before{content:"";position:absolute;left:2px;top:.6em;width:7px;height:7px;border-radius:50%;background:var(--tone);}
+  .chk-item li strong{font-weight:600;}
+  .chk-item .purpose{font-size:13.5px;color:var(--ink-soft);}
+  .chk-item .foot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:12.5px;color:var(--ink-soft);}
+  .tone-first{--tone:var(--warn);}
+  .tone-tidy{--tone:#C98A00;}
+  .tone-later{--tone:var(--concrete);}
+  .tone-ok{--tone:var(--green);}
+  .text-btn{
+    padding:0;border:none;background:none;color:var(--blue);font-family:'Work Sans',sans-serif;
+    font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:underline;
+  }
+
   footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 
   @media(max-width:860px){
@@ -249,6 +291,7 @@
           <button type="button" class="sidebar-nav-btn" data-view="sales">Sales contact journey <span class="n" id="navSales"></span></button>
           <button type="button" class="sidebar-nav-btn" data-view="conn">How they connect</button>
           <button type="button" class="sidebar-nav-btn" data-view="flags">Gaps &amp; checks</button>
+          <button type="button" class="sidebar-nav-btn" data-view="checks">Might need update <span class="n" id="navChecks"></span></button>
         </nav>
       </div>
 
@@ -284,6 +327,7 @@
       <section id="v-sales" hidden></section>
       <section id="v-conn" hidden></section>
       <section id="v-flags" hidden></section>
+      <section id="v-checks" hidden></section>
 
       <footer>
         <span>Fuse Recruitment</span>
@@ -293,6 +337,7 @@
   </main>
 </div>
 
+<script src="../shared/automation-checks.js"></script>
 <script>
 /* ===================== CONFIG ===================== */
 /* Same Worker and flow as the Automation Finder (see ../automation-finder/FLOW_SPEC.md).
@@ -480,6 +525,9 @@ function placeAutomation(a) {
 const state = { view:'cand', q:'', show:{ Active:true, Paused:true, Retired:false } };
 let ITEMS = [];
 let BY_ID = {};
+/* "Might need update" tab: its own filters, separate from the journey search.
+   showChecked lists the ones hidden because of a recent "Last Checked" date. */
+const checkState = { group:'all', record:'all', q:'', showChecked:false };
 
 function matches(item) {
   if (!state.show[item.statusKey]) return false;
@@ -494,14 +542,27 @@ function itemsFor(j, k) {
 }
 
 /* ===================== RENDER ===================== */
+const CHECK_LABEL = Object.fromEntries(AutomationChecks.GROUPS.map(g => [g.key, g.label]));
+const flagged = i => i.check && !i.check.recentlyChecked;
+const checkedText = c => 'Checked ' + AutomationChecks.formatDate(c.checkedOn) + ', so it’s off the list until ' +
+  AutomationChecks.formatDate(AutomationChecks.recheckDate(c)) + ' (or until it’s changed).';
+
+function checkPill(i) {
+  return flagged(i) ? `<span class="chk ${i.check.group}" title="${escapeHtml(CHECK_LABEL[i.check.group] + ': ' + i.check.reasons.map(r => r.title).join('; '))}">${escapeHtml(AutomationChecks.LABEL)}</span>` : '';
+}
+function checkReasons(i) {
+  if (!i.check) return '';
+  if (i.check.recentlyChecked) return `<p class="hint">${escapeHtml(checkedText(i.check))}</p>`;
+  return `<ul class="why"><li><strong>${escapeHtml(AutomationChecks.LABEL)} (${escapeHtml(CHECK_LABEL[i.check.group].toLowerCase())}).</strong></li>${i.check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>`;
+}
 function card(i, also) {
   const url = safeUrl(i.url);
   const rows = [
     ['List', i.list], ['Excludes', i.exclusion], ['Groups', i.groups]
   ].filter(r => r[1]).map(r => `<dt>${r[0]}</dt><dd>${escapeHtml(r[1])}</dd>`).join('');
   return `<details class="card"><summary><span class="nm">${escapeHtml(i.name)}</span><span class="pill ${i.statusKey.toLowerCase()}">${escapeHtml(i.status || i.statusKey)}</span>
-    <span class="sub">${i.id ? '#' + escapeHtml(i.id) : 'No URL'}<span>· ${escapeHtml(i.record)}</span>${also ? `<span class="mini">Also on the ${also === 'sales' ? 'sales contact' : 'candidate'} journey</span>` : ''}</span></summary>
-    <div class="card-body">${i.purpose ? `<p>${escapeHtml(i.purpose)}</p>` : '<p class="hint">No purpose in the register yet.</p>'}
+    <span class="sub">${i.id ? '#' + escapeHtml(i.id) : 'No URL'}<span>· ${escapeHtml(i.record)}</span>${also ? `<span class="mini">Also on the ${also === 'sales' ? 'sales contact' : 'candidate'} journey</span>` : ''}${checkPill(i)}</span></summary>
+    <div class="card-body">${checkReasons(i)}${i.purpose ? `<p>${escapeHtml(i.purpose)}</p>` : '<p class="hint">No purpose in the register yet.</p>'}
     ${rows ? `<dl>${rows}</dl>` : ''}
     ${url ? `<a class="open-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open in Bullhorn Automation</a>` : '<span class="hint">No link in the register.</span>'}</div></details>`;
 }
@@ -588,6 +649,91 @@ function renderFlags() {
     <div class="flags">${FLAGS.map(f => `<div class="flagc" style="--sev:${SEV_COLOUR[f.sev]}"><h3><span class="sev">${escapeHtml(f.sev)}</span>${escapeHtml(f.t)}${f.count === 'paused' ? ` (${paused} today)` : ''}</h3>
       <p>${escapeHtml(f.p)}</p>${f.ids.length ? `<div class="ids">${idLinks(f.ids)}</div>` : ''}</div>`).join('')}</div>`;
 }
+/* Everything the shared checks flag (../shared/automation-checks.js), most
+   urgent first. Recently checked ones only when showChecked is on. */
+function flaggedItems(includeChecked) {
+  const order = AutomationChecks.ORDER;
+  return ITEMS.filter(i => includeChecked ? i.check : flagged(i)).sort((a, b) =>
+    order[a.check.group] - order[b.check.group] || (a.check.lastDate || 0) - (b.check.lastDate || 0));
+}
+function checkMatches(i) {
+  if (checkState.group !== 'all' && i.check.group !== checkState.group) return false;
+  if (checkState.record !== 'all' && i.record !== checkState.record) return false;
+  if (!checkState.q) return true;
+  const hay = (i.name + ' ' + i.purpose + ' ' + i.list + ' ' + i.id + ' ' + i.check.reasons.map(r => r.title).join(' ')).toLowerCase();
+  return checkState.q.split(/\s+/).every(w => hay.includes(w));
+}
+function checkItem(i) {
+  const url = safeUrl(i.url);
+  const stage = i.stage === 'new' ? null : (JOURNEYS[i.journey].stages.find(s => s.k === i.stage) || (i.stage === 'health' ? { t: BAND.t } : null));
+  const done = i.check.recentlyChecked;
+  return `<article class="chk-item tone-${done ? 'ok' : i.check.group}">
+    <div class="top"><span class="pill">${escapeHtml(i.record)}</span><span class="pill ${i.statusKey.toLowerCase()}">${escapeHtml(i.status || i.statusKey)}</span>${i.activation ? `<span class="pill">${escapeHtml(i.activation)}</span>` : ''}${done ? '<span class="pill active">Checked</span>' : ''}</div>
+    <h4>${escapeHtml(i.name)}</h4>
+    ${done ? `<p class="purpose"><strong>${escapeHtml(checkedText(i.check))}</strong></p>` : ''}
+    <ul>${i.check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>
+    ${i.purpose ? `<p class="purpose">${escapeHtml(i.purpose)}</p>` : ''}
+    <div class="foot">
+      ${url ? `<a class="open-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open in Bullhorn Automation</a>` : ''}
+      ${stage ? `<button type="button" class="text-btn" data-go="${i.journey}:${i.stage}">Show on the ${i.journey === 'sales' ? 'sales contact' : 'candidate'} journey</button>` : ''}
+      ${i.check.lastDate ? `<span>Last changed ${escapeHtml(AutomationChecks.formatDate(i.check.lastDate))}</span>` : ''}
+    </div></article>`;
+}
+function renderChecks() {
+  const open = flaggedItems(false);
+  const checked = ITEMS.filter(i => i.check && i.check.recentlyChecked);
+  const all = flaggedItems(checkState.showChecked);
+  const shown = all.filter(checkMatches);
+  const live = ITEMS.filter(i => i.statusKey !== 'Retired').length;
+  const byGroup = g => open.filter(i => i.check.group === g).length;
+  const days = AutomationChecks.LIMITS.recheckDays;
+  const recordOrder = ['Candidate', 'Sales Contact', 'Placement', 'Job', 'Submission'];
+  const records = [...new Set(all.map(i => i.record).filter(Boolean))]
+    .sort((x, y) => (recordOrder.indexOf(x) + 1 || 99) - (recordOrder.indexOf(y) + 1 || 99));
+
+  const groups = AutomationChecks.GROUPS.map(g => {
+    const list = shown.filter(i => i.check.group === g.key);
+    return list.length ? `<section class="chk-group"><h3>${escapeHtml(g.title)} <span class="cnt">${list.length}</span></h3>
+      <p>${escapeHtml(g.blurb)}</p><div class="chk-items">${list.map(checkItem).join('')}</div></section>` : '';
+  }).join('');
+
+  document.getElementById('v-checks').innerHTML = `
+    <div class="view-head"><h2>Might need update</h2><p>Worked out automatically from the register each time the page loads: automations that look out of date, unfinished or inconsistent. Retired ones are left out. It means &ldquo;worth a look&rdquo;, not &ldquo;broken&rdquo;.</p></div>
+    <p class="hint" style="max-width:72ch;margin-top:8px">Checked one and it&rsquo;s fine? Put today&rsquo;s date in its <strong>Last Checked</strong> column in the register. It drops off this list for ${days} days, or until it&rsquo;s changed. The register is read again after its weekly Monday update, or straight away with &ldquo;Refresh now&rdquo; below.</p>
+    <div class="chk-stats">
+      ${AutomationChecks.GROUPS.map(g => `<button type="button" class="chk-stat tone-${g.key}" data-cgroup="${g.key}" aria-pressed="${checkState.group === g.key}">
+        <span class="k">${escapeHtml(g.title)}</span><span class="v">${byGroup(g.key)}</span><span class="d">${escapeHtml(g.short)}</span></button>`).join('')}
+      <button type="button" class="chk-stat tone-ok" data-cchecked aria-pressed="${checkState.showChecked}"><span class="k">Checked recently</span><span class="v">${checked.length}</span><span class="d">${checkState.showChecked ? 'Shown below. Click to hide' : 'Hidden for ' + days + ' days. Click to show'}</span></button>
+      <div class="chk-stat tone-ok" style="cursor:default"><span class="k">Nothing flagged</span><span class="v">${live - open.length - checked.length}</span><span class="d">of ${live} not retired</span></div>
+    </div>
+    <div class="controls">
+      <input type="search" id="checks-q" placeholder="Search names, purposes and reasons" aria-label="Search flagged automations" value="${escapeHtml(checkState.q)}">
+      ${['all', ...records].map(r => `<button type="button" class="chip" data-crecord="${escapeHtml(r)}" aria-pressed="${checkState.record === r}">${r === 'all' ? 'All records' : escapeHtml(r)}</button>`).join('')}
+      <span class="hint">${shown.length} of ${all.length} shown</span>
+      <button type="button" class="text-btn" id="checks-csv">Download as CSV</button>
+      <button type="button" class="text-btn" id="checks-refresh">Refresh now</button>
+    </div>
+    ${groups || '<p class="empty">Nothing matches. Try another search or filter.</p>'}`;
+}
+function csvCell(value) {
+  const s = String(value == null ? '' : value);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadChecks() {
+  const title = Object.fromEntries(AutomationChecks.GROUPS.map(g => [g.key, g.title]));
+  const rows = [['Priority', 'Record', 'Automation', 'Status', 'Activation', 'Why it might need update', 'Last changed', 'Last checked', 'Link'],
+    ...flaggedItems(checkState.showChecked).filter(checkMatches).map(i => [
+      title[i.check.group], i.record, i.name, i.status, i.activation, i.check.reasons.map(r => r.title).join('; '),
+      i.check.lastDate ? AutomationChecks.formatDate(i.check.lastDate) : '',
+      i.check.checkedOn ? AutomationChecks.formatDate(i.check.checkedOn) : '', safeUrl(i.url) || ''])];
+  /* The BOM makes Excel open it as UTF-8. */
+  const blob = new Blob(['﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'automations-might-need-update-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
 function renderStats() {
   const count = j => {
     const a = ITEMS.filter(i => i.journey === j);
@@ -603,11 +749,13 @@ function renderStats() {
     <div class="stat"><div class="k">Not on the map yet</div><div class="v">${fresh}</div></div>`;
   document.getElementById('navCand').textContent = c.total;
   document.getElementById('navSales').textContent = s.total;
+  document.getElementById('navChecks').textContent = ITEMS.filter(flagged).length;
 }
 function render() {
-  for (const v of ['cand', 'sales', 'conn', 'flags']) document.getElementById('v-' + v).hidden = v !== state.view;
+  for (const v of ['cand', 'sales', 'conn', 'flags', 'checks']) document.getElementById('v-' + v).hidden = v !== state.view;
   document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
   if (state.view === 'cand' || state.view === 'sales') renderJourney(state.view);
+  if (state.view === 'checks') renderChecks();
 }
 function go(target) {
   const [j, k] = target.split(':');
@@ -629,9 +777,24 @@ document.addEventListener('click', e => {
   const goBtn = e.target.closest('[data-go]');
   if (goBtn) { go(goBtn.dataset.go); return; }
   const chip = e.target.closest('[data-status]');
-  if (chip) { state.show[chip.dataset.status] = !state.show[chip.dataset.status]; render(); }
+  if (chip) { state.show[chip.dataset.status] = !state.show[chip.dataset.status]; render(); return; }
+  const cgroup = e.target.closest('[data-cgroup]');
+  if (cgroup) { checkState.group = checkState.group === cgroup.dataset.cgroup ? 'all' : cgroup.dataset.cgroup; renderChecks(); return; }
+  const crecord = e.target.closest('[data-crecord]');
+  if (crecord) { checkState.record = crecord.dataset.crecord; renderChecks(); return; }
+  if (e.target.closest('[data-cchecked]')) { checkState.showChecked = !checkState.showChecked; renderChecks(); return; }
+  if (e.target.closest('#checks-refresh')) { load(true); return; }
+  if (e.target.closest('#checks-csv')) downloadChecks();
 });
 document.addEventListener('input', e => {
+  if (e.target.id === 'checks-q') {
+    checkState.q = e.target.value.trim().toLowerCase();
+    const pos = e.target.selectionStart;
+    renderChecks();
+    const box = document.getElementById('checks-q');
+    if (box) { box.focus(); try { box.setSelectionRange(pos, pos); } catch {} }
+    return;
+  }
   if (!e.target.id || !e.target.id.startsWith('q-')) return;
   state.q = e.target.value.trim().toLowerCase();
   const pos = e.target.selectionStart;
@@ -674,6 +837,7 @@ async function fetchRegister() {
 }
 function prepare(rows) {
   const seen = new Set();
+  const checks = AutomationChecks.checkAll(rows);
   ITEMS = [];
   for (const r of rows) {
     const name = clean(r.name);
@@ -684,7 +848,8 @@ function prepare(rows) {
     seen.add(key);
     const item = {
       id, name, record: clean(r.record), status: clean(r.status), statusKey: statusKey(r.status),
-      purpose: clean(r.purpose), list: clean(r.list), exclusion: clean(r.exclusion), groups: clean(r.groups), url: clean(r.url)
+      purpose: clean(r.purpose), list: clean(r.list), exclusion: clean(r.exclusion), groups: clean(r.groups), url: clean(r.url),
+      activation: clean(r.activation), check: checks.get(AutomationChecks.keyFor(r)) || null
     };
     Object.assign(item, placeAutomation(item));
     ITEMS.push(item);
@@ -710,7 +875,7 @@ async function load(force) {
 }
 
 const startView = location.hash.slice(1);
-if (['cand', 'sales', 'conn', 'flags'].includes(startView)) state.view = startView;
+if (['cand', 'sales', 'conn', 'flags', 'checks'].includes(startView)) state.view = startView;
 document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
 load(false);
 </script>
