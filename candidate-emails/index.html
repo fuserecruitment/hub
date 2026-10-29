@@ -247,6 +247,9 @@ td .bad { color: var(--sev-crit); font-weight: 600; }
 .journey { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
 @media (max-width: 1180px) { .journey { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.journey.tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.journey.tiers[hidden] { display: none; }
+@media (max-width: 640px) { .journey.tiers { grid-template-columns: minmax(0, 1fr); } }
 .jstep { font: inherit; text-align: left; cursor: pointer; background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--rule); border-radius: 0 0 10px 10px; padding: 10px 12px 12px; display: grid; gap: 3px; align-content: start; }
 .jstep:hover { border-top-color: var(--accent); }
 .jstep[aria-pressed="true"] { background: var(--band); color: var(--band-ink); border-color: var(--band); border-top-color: var(--accent); }
@@ -486,9 +489,10 @@ table.board td small { display: block; color: var(--ink-muted); }
   </section>
 
   <section id="s-stages" aria-labelledby="stages">
-    <div class="head"><p class="eyebrow">Proposed for the rebuild</p><h2 id="stages">One flow per journey stage</h2><p class="lede">Each stage starts from a Bullhorn event and ends by handing the candidate to the next stage. Steps reuse the best existing emails where they fit, add articles already on the Fuse blog that no email uses, and mark where new content is needed. Not looking (Passive) stays one long flow, since there's no event to react to, but it gains a check-in that moves people back into the journey.</p></div>
+    <div class="head"><p class="eyebrow">Proposed for the rebuild</p><h2 id="stages">One flow per journey stage</h2><p class="lede">Each stage starts from a Bullhorn event and ends by handing the candidate to the next stage. Steps reuse the best existing emails where they fit, add articles already on the Fuse blog that no email uses, and mark where new content is needed. Not looking (Passive) has no event to react to, so it's split into three tiers by how engaged people are: the more they click, the more often they hear from Fuse. Check-ins move people back into the journey.</p></div>
     <div class="journey" id="journey" aria-label="Journey stage"></div>
     <div class="flegend"><span class="badge reuse">Reuse</span>existing email or article, with its score <span class="badge blog">From the blog</span>published, not in any email yet <span class="badge new">New</span>needs writing <span class="badge action">Action</span>a non-article step</div>
+    <div class="journey tiers" id="ptiers" aria-label="Engagement tier" hidden></div>
     <div class="planwrap"><div class="flow" id="pflow" aria-live="polite"></div><aside class="planside" id="pside"></aside></div>
   </section>
 
@@ -709,23 +713,62 @@ const FLOWS = {
     exits: [["Contract ends in 3 weeks: 'what's next?' email", "registered"], ["One year in", "passive"]],
   },
   passive: {
-    trigger: "Status set to Passive, or no application in 6 months. One flow for everyone, every 3 weeks. Every email keeps the refer-a-friend block.",
-    steps: [
-      { d: "Week 0", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking" },
-      { d: "Week 3", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?" },
-      { d: "Week 6", k: "reuse", a: "10-questions-to-ask-yourself-to-support-long-term-career-growth", t: "10 questions worth asking yourself" },
-      { d: "Week 9", k: "action", t: "Check-in: where are you at?", why: "The engagement email (template 144587) is built but hasn't been sent yet. One-click answers route people: actively looking goes to New & registered, open to offers gets job picks." },
-      { d: "Week 12", k: "blog", a: "where-the-strongest-manufacturing-careers-are-in-2026", t: "Where your industry is heading (one version per discipline)", why: "7 recent industry career articles cover manufacturing, insurance, renewables, infrastructure and financial services. Send each discipline its own." },
-      { d: "Week 15", k: "reuse", a: "ai-is-not-coming-for-your-job-but-it-is-changing-it", t: "AI isn't coming for your job, but it is changing it" },
-      { d: "Week 18", k: "reuse", a: "5-signs-that-hint-it-s-time-to-leave-your-current-job", t: "5 signs it's time for a change", why: "From the retired workflow. A natural prompt to come back to the journey." },
-      { d: "Week 21", k: "reuse", a: "how-to-ask-for-a-pay-rise-and-actually-get-it", t: "How to ask for a pay rise" },
-      { d: "Week 24", k: "blog", a: "the-best-career-advice-youll-ever-receive-and-how-to-actually-use-it", t: "The best career advice you'll ever get" },
-      { d: "Week 27", k: "action", t: "Check-in again", why: "Same one-click check-in as Week 9." },
-      { d: "Week 30", k: "reuse", a: "ai-literacy-for-non-technical-professionals", t: "AI literacy for non-technical people" },
-      { d: "Week 33", k: "new", id: "salary-guide", t: "What people in your field are earning" },
-      { d: "By date", k: "action", t: "Seasonal emails, sent by calendar instead of week", why: "October: 'Spring clean your career' (blog, Oct 2026). May to July: 'Secure a pay rise this new financial year'. January: 'How to motivate yourself in the new year' (blog)." },
-    ],
-    exits: [["Answers 'looking' or applies", "registered"], ["After Week 30: new articles, not repeats", null]],
+    trigger: "Status set to Passive, or no application in 6 months. Then sorted into a tier by how engaged they are.",
+    tiers: {
+      engaged: {
+        name: "Engaged", cadence: "Every 2 weeks", per: "26 a year",
+        who: "Clicked a link, applied or updated their details in the last 90 days (or the top score band)",
+        steps: [
+          { d: "Week 0", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email." },
+          { d: "Week 2", k: "blog", a: "where-the-strongest-manufacturing-careers-are-in-2026", t: "Where your industry is heading (one version per discipline)", why: "7 recent industry career articles cover manufacturing, insurance, renewables, infrastructure and financial services. Send each discipline its own." },
+          { d: "Week 4", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?" },
+          { d: "Week 6", k: "action", t: "Check-in: where are you at?", why: "Engaged people are the likeliest to be ready to move, so they get the check-in early. The engagement email (template 144587) is built but hasn't been sent yet. One-click answers route people: actively looking goes to New & registered, open to offers gets job picks." },
+          { d: "Week 8", k: "reuse", a: "10-questions-to-ask-yourself-to-support-long-term-career-growth", t: "10 questions worth asking yourself" },
+          { d: "Week 10", k: "reuse", a: "ai-is-not-coming-for-your-job-but-it-is-changing-it", t: "AI isn't coming for your job, but it is changing it" },
+          { d: "Week 12", k: "new", id: "salary-guide", t: "What people in your field are earning" },
+          { d: "Week 14", k: "reuse", a: "6-green-flags-of-companies-you-ll-want-to-be-a-part-of", t: "6 green flags of companies worth joining" },
+          { d: "Week 16", k: "blog", a: "the-best-career-advice-youll-ever-receive-and-how-to-actually-use-it", t: "The best career advice you'll ever get" },
+          { d: "Week 18", k: "reuse", a: "5-signs-that-hint-it-s-time-to-leave-your-current-job", t: "5 signs it's time for a change", why: "From the retired workflow. A natural prompt to come back to the journey." },
+          { d: "Week 20", k: "reuse", a: "how-to-ask-for-a-pay-rise-and-actually-get-it", t: "How to ask for a pay rise" },
+          { d: "Week 22", k: "blog", a: "is-your-manufacturing-career-built-for-what-the-industry-is-becoming", t: "A second industry article (one per discipline)" },
+          { d: "Week 24", k: "action", t: "Check-in again", why: "Same one-click check-in as Week 6." },
+          { d: "Week 26", k: "new", id: "newest-article", t: "From here: the newest blog article + job picks, every 2 weeks", why: "Repeats don't work (47 → 3 in Active), so once the reused emails run out this tier runs on new articles." },
+          { d: "By date", k: "action", t: "Seasonal emails take that fortnight's slot", why: "October: 'Spring clean your career' (blog, Oct 2026). May to July: 'Secure a pay rise this new financial year'. January: 'How to motivate yourself in the new year' (blog)." },
+        ],
+        exits: [["Answers 'looking' or applies", "registered"], ["No click for 90 days", null, "warm"]],
+      },
+      warm: {
+        name: "Warm", cadence: "Every 4 weeks", per: "12 a year",
+        who: "Clicked in the last 12 months or opened in the last 6, but not Engaged",
+        steps: [
+          { d: "Week 0", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email." },
+          { d: "Week 4", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?" },
+          { d: "Week 8", k: "action", t: "Check-in: where are you at?", why: "The same one-click check-in as Engaged (template 144587)." },
+          { d: "Week 12", k: "blog", a: "where-the-strongest-manufacturing-careers-are-in-2026", t: "Where your industry is heading (one version per discipline)" },
+          { d: "Week 16", k: "reuse", a: "10-questions-to-ask-yourself-to-support-long-term-career-growth", t: "10 questions worth asking yourself" },
+          { d: "Week 20", k: "new", id: "salary-guide", t: "What people in your field are earning" },
+          { d: "Week 24", k: "reuse", a: "ai-is-not-coming-for-your-job-but-it-is-changing-it", t: "AI isn't coming for your job, but it is changing it" },
+          { d: "Week 28", k: "blog", a: "the-best-career-advice-youll-ever-receive-and-how-to-actually-use-it", t: "The best career advice you'll ever get" },
+          { d: "Week 32", k: "reuse", a: "6-green-flags-of-companies-you-ll-want-to-be-a-part-of", t: "6 green flags of companies worth joining" },
+          { d: "Week 36", k: "action", t: "Check-in again", why: "Same one-click check-in as Week 8." },
+          { d: "Week 40", k: "reuse", a: "how-to-ask-for-a-pay-rise-and-actually-get-it", t: "How to ask for a pay rise" },
+          { d: "Week 44", k: "reuse", a: "5-signs-that-hint-it-s-time-to-leave-your-current-job", t: "5 signs it's time for a change" },
+          { d: "Week 48", k: "new", id: "newest-article", t: "From here: the best new article of the month + job picks", why: "Same template as Engaged, once a month." },
+          { d: "By date", k: "action", t: "Seasonal emails take that month's slot", why: "The same October, May to July and January emails as Engaged. They replace the monthly email instead of adding one." },
+        ],
+        exits: [["Answers 'looking' or applies", "registered"], ["Clicks any link", null, "engaged"], ["No click in 12 months and no open in 6", null, "quiet"]],
+      },
+      quiet: {
+        name: "Quiet", cadence: "Twice a year", per: "2 a year",
+        who: "No clicks in 12 months and no opens in 6",
+        steps: [
+          { d: "February", w: "next February", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email, and the subject suits someone who has gone quiet. Add the one-click check-in buttons. If they've already had it, send '10 questions worth asking yourself' instead." },
+          { d: "August", w: "6 months later", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?", why: "The second-best Passive email, landing after the July pay reviews. With the check-in buttons too." },
+          { d: "After 2 years", w: "after 2 years with no opens or clicks", k: "new", id: "sunset", t: "Do you still want to hear from us?" },
+        ],
+        exits: [["Clicks any link", null, "engaged"], ["Opens again", null, "warm"], ["No answer to 'still want these?': stop marketing emails", null]],
+      },
+    },
   },
 };
 const GAPS = {
@@ -734,7 +777,7 @@ const GAPS = {
   interview: ["Nothing for after the interview.", "Prep tips and anxiety articles went out after Day 120 to people who mostly weren't interviewing, so their scores undersell them."],
   offer: ["No counter-offer content.", "The salary-negotiation article title still says 2023."],
   placed: ["No live content today. Every step here is new to this audience, so watch the first months' results closely.", "None of the audited workflows target contractors coming to the end of an assignment."],
-  passive: ["The best Passive email reaches 20.3, under a third of the top Active how-to.", "Leave out the Prime Super email (0.7, the lowest of any email) unless it's contractual.", "Repeats don't work (47 → 3 in Active). Keep adding new articles rather than looping."],
+  passive: ["Today everyone gets an email every 3 weeks (about 17 a year), whether they click or haven't opened in years.", "The best Passive email reaches 20.3, under a third of the top Active how-to.", "Leave out the Prime Super email (0.7, the lowest of any email) unless it's contractual.", "Repeats don't work (47 → 3 in Active). Keep adding new articles rather than looping."],
 };
 // content to create: new emails, articles, downloads and refreshes
 // pri: 1 = a step in a proposed flow depends on it, 2 = supporting, 3 = refresh of something that works
@@ -757,12 +800,15 @@ const CREATE = [
   { id: "review", stage: "placed", pri: 2, t: "Ask for a Google review", f: "Short email", to: "Fuse's Google review link", why: "Easy win a month into a successful placement." },
   { id: "contract-end", stage: "placed", pri: 1, t: "Your contract ends soon: what's next?", f: "Email only, with job picks", to: "Job picks and the recruiter's contact", why: "None of the audited workflows target contractors near the end of an assignment." },
   { id: "salary-guide", stage: "passive", pri: 1, t: "What people in your field are earning", f: "Download or landing page, one per discipline", to: "New page; can ask them to update their details to download", why: "Useful whether or not they're moving, and doubles as a way to refresh their profile." },
+  { id: "newest-article", stage: "passive", pri: 1, t: "Newest article + job picks email", f: "One reusable email template; swap in the newest blog article each time", to: "The newest candidate article on the Fuse blog", why: "Keeps Engaged (every 2 weeks) and Warm (monthly) on fresh content once the reused emails run out. Needs about two new candidate articles a month." },
+  { id: "sunset", stage: "passive", pri: 2, t: "Do you still want to hear from us?", f: "Short plain-text email with two buttons", to: "'Keep me posted' and 'No thanks'. Anyone who doesn't click stops getting marketing emails", why: "Stops emailing people who haven't opened or clicked anything in two years, which protects deliverability for everyone else." },
   { id: "hiring-trends", stage: "passive", pri: 2, t: "Hiring trends for next year", f: "Blog article, published each January", to: "New blog page", why: "Content about what's changing wins in Passive (AI and hiring: 20.3)." },
   { id: "dated-refresh", stage: "interview", pri: 3, t: "Refresh '18 interview prep tips' and 'Boost your online presence'", f: "Update the existing blog articles", to: "The same URLs", why: "Both titles still say 2023." },
 ];
 const PRI = { 1: "Needed for a flow", 2: "Supporting", 3: "Refresh" };
 const createOf = id => CREATE.find(c => c.id === id);
-const stepOf = id => { for (const [k, F] of Object.entries(FLOWS)) { const n = F.steps.find(x => x.id === id); if (n) return `${STAGENAME[k]}, ${n.d}`; } return id === "contract-end" ? "Placed, 3 weeks before a contract ends" : id === "hiring-trends" ? "Not looking, by date (January)" : id === "how-fuse-works" ? "New & registered, Day 2 (link)" : "Before reusing in any flow"; };
+const flowParts = F => F.tiers ? Object.values(F.tiers) : [F];
+const stepOf = id => { for (const [k, F] of Object.entries(FLOWS)) for (const T of flowParts(F)) { const n = T.steps.find(x => x.id === id); if (n) return `${STAGENAME[k]}${T.name ? ", " + T.name : ""}, ${n.d}`; } return id === "contract-end" ? "Placed, 3 weeks before a contract ends" : id === "hiring-trends" ? "Not looking, by date (January)" : id === "how-fuse-works" ? "New & registered, Day 2 (link)" : "Before reusing in any flow"; };
 let createStage = "all";
 function renderCreate() {
   const opts = [["all", "All stages", CREATE.length], ...DATA.stages.map(s => [s.key, s.name, CREATE.filter(c => c.stage === s.key).length])];
@@ -775,7 +821,7 @@ function renderCreate() {
 document.getElementById("createfilters").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) { createStage = b.dataset.s; renderCreate(); } });
 
 const blogOf = slug => DATA.blogs.find(b => b.slug === slug);
-const usedInFlows = new Set(Object.values(FLOWS).flatMap(f => f.steps.map(x => x.a).filter(Boolean)));
+const usedInFlows = new Set(Object.values(FLOWS).flatMap(f => flowParts(f).flatMap(t => t.steps.map(x => x.a).filter(Boolean))));
 function bestUse(slug) {
   const a = DATA.articles.find(x => x.slug === slug); if (!a) return null;
   const live = a.emails.filter(e => e.wf !== "retired");
@@ -808,40 +854,65 @@ function waitBetween(a, b) {
 }
 let curStage = "registered";
 try { const k = localStorage.getItem("audit-stage"); if (FLOWS[k]) curStage = k; } catch (e) {}
+let curTier = "engaged";
+try { const t = localStorage.getItem("audit-tier"); if (FLOWS.passive.tiers[t]) curTier = t; } catch (e) {}
 function renderStages() {
   document.getElementById("journey").innerHTML = DATA.stages.map((s, i) => {
-    const st = FLOWS[s.key].steps, cnt = k => st.filter(x => x.k === k).length;
+    const F0 = FLOWS[s.key], st = F0.steps || [], cnt = k => st.filter(x => x.k === k).length;
     return `<button class="jstep" data-stage="${s.key}" aria-pressed="${s.key === curStage}"><span class="k">Stage ${i + 1}</span><b>${esc(s.name)}</b>
-      <span class="c">${st.length} steps · ${cnt("reuse")} reused · ${cnt("blog") + cnt("new")} added</span></button>`;
+      <span class="c">${F0.tiers ? `${Object.keys(F0.tiers).length} tiers by how engaged they are` : `${st.length} steps · ${cnt("reuse")} reused · ${cnt("blog") + cnt("new")} added`}</span></button>`;
   }).join("");
   document.getElementById("side-stages").innerHTML = DATA.stages.map(s =>
     `<a class="sub${s.key === curStage ? " cur" : ""}" href="#s-stages" data-stage="${s.key}">${esc(s.name)}</a>`).join("");
-  const F = FLOWS[curStage], steps = F.steps;
-  let html = `<div class="fpill"><b>Starts when</b>${esc(F.trigger)}</div>`;
+  const S = FLOWS[curStage], tiered = !!S.tiers, F = tiered ? S.tiers[curTier] : S, steps = F.steps;
+  const tb = document.getElementById("ptiers");
+  tb.hidden = !tiered;
+  if (tiered) tb.innerHTML = Object.entries(S.tiers).map(([k, T]) => `<button class="jstep" data-tier="${k}" aria-pressed="${k === curTier}"><span class="k">${esc(T.cadence)} · ${esc(T.per)}</span><b>${esc(T.name)}</b><span class="c">${esc(T.who)}</span></button>`).join("");
+  let html = `<div class="fpill"><b>Starts when</b>${esc(S.trigger)}${tiered ? `<br><b>${esc(F.name)}</b>${esc(F.who)}` : ""}</div>`;
   steps.forEach((n, i) => {
-    const lab = i === 0 ? (n.d === "Day 0" || n.d === "Week 0" ? "straight away" : "then") : waitBetween(steps[i - 1].d, n.d);
+    const lab = n.w || (i === 0 ? (n.d === "Day 0" || n.d === "Week 0" ? "straight away" : "then") : waitBetween(steps[i - 1].d, n.d));
     html += `<div class="fconn${n.c ? " cond" : ""}"><span>${esc(n.c ? lab + " · " + n.c.toLowerCase() : lab)}</span></div>` + pnode(n);
   });
-  html += `<div class="fconn"><span>leaves the flow</span></div><div class="fexits">${F.exits.map(([l, k]) => k
-    ? `<button class="fexit" data-go="${k}">${esc(l)} → ${esc(STAGENAME[k])}</button>` : `<span class="fexit static">${esc(l)}</span>`).join("")}</div>`;
+  html += `<div class="fconn"><span>${tiered ? "moves on" : "leaves the flow"}</span></div><div class="fexits">${F.exits.map(([l, k, t]) => k
+    ? `<button class="fexit" data-go="${k}">${esc(l)} → ${esc(STAGENAME[k])}</button>` : t
+    ? `<button class="fexit" data-tier="${t}">${esc(l)} → ${esc(S.tiers[t].name)}</button>` : `<span class="fexit static">${esc(l)}</span>`).join("")}</div>`;
   document.getElementById("pflow").innerHTML = html;
   const more = [
     ...stageArticles(curStage).filter(a => !usedInFlows.has(a.slug) && callOf(a)[0] !== "drop").map(a => `<li><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a><span>Reuse · ${a.best} per 1,000${a.flag ? " · " + esc(a.flag) : ""}</span></li>`),
     ...DATA.blogs.filter(b => b.stage === curStage && !usedInFlows.has(b.slug)).map(b => `<li><a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.title)}</a><span>From the blog · ${esc(b.date)}${b.note ? " · " + esc(b.note) : ""}</span></li>`),
   ];
-  document.getElementById("pside").innerHTML = `
+  document.getElementById("pside").innerHTML = (tiered ? `
+    <div class="sbox"><h4>How people move between tiers</h4><ul class="bul">${TIER_RULES.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="sbox gaps"><h4>To decide before building</h4><ul class="bul">${TIER_DECIDE.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : "") + `
     <div class="sbox gaps"><h4>Gaps this stage has today</h4><ul class="bul">${GAPS[curStage].map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
     <div class="sbox"><h4>Also fits, if you need swaps<small>${more.length}</small></h4><ul class="mini">${more.join("") || "<li>Nothing else yet</li>"}</ul></div>`;
 }
 const stageArticles = k => DATA.articles.filter(a => (a.stage === k || a.also === k) && (a.live || callOf(a)[1] === "Bring back"));
+const TIER_RULES = [
+  "A click moves someone up to Engaged straight away. Moving down is checked once a month.",
+  "Moving tier doesn't restart the content: skip any email they've already had.",
+  "Answering 'looking' to a check-in, or applying, moves them out of Passive into New & registered or Applied.",
+  "Every email keeps 3 job picks and the refer-a-friend block.",
+];
+const TIER_DECIDE = [
+  "Score or activity? If the Bullhorn engagement score is set up, map its bands to the tiers. Make sure it counts clicks and applications more than opens: every Passive email opens at about 33%, so opens barely separate people (some mail apps open emails automatically).",
+  "With no score, each tier can be a list based on email clicks and opens in a date range. Check the list builder can filter on that.",
+  "One automation per tier, each on its own list, is the simplest to build and report on.",
+  "Expect Engaged to be small: each Passive email is clicked by 0.2% to 0.9% of the people it reaches. Most of the roughly 400,000 in Passive would be Quiet, which cuts send volume and protects deliverability.",
+];
+function pickTier(t) {
+  curTier = t; try { localStorage.setItem("audit-tier", t); } catch (e) {} renderStages();
+}
 function pickStage(k, scroll) {
   curStage = k; try { localStorage.setItem("audit-stage", k); } catch (e) {} renderStages();
   if (scroll) document.getElementById("s-stages").scrollIntoView({ behavior: "smooth" });
 }
 document.getElementById("journey").addEventListener("click", ev => { const b = ev.target.closest("button[data-stage]"); if (b) pickStage(b.dataset.stage); });
+document.getElementById("ptiers").addEventListener("click", ev => { const b = ev.target.closest("button[data-tier]"); if (b) pickTier(b.dataset.tier); });
 document.getElementById("side-stages").addEventListener("click", ev => { const a = ev.target.closest("a[data-stage]"); if (a) pickStage(a.dataset.stage); });
 document.getElementById("pflow").addEventListener("click", ev => {
   const g = ev.target.closest("button[data-go]"); if (g) { pickStage(g.dataset.go, true); return; }
+  const tt = ev.target.closest("button[data-tier]"); if (tt) { pickTier(tt.dataset.tier); document.getElementById("ptiers").scrollIntoView({ behavior: "smooth" }); return; }
   const j = ev.target.closest("button[data-jump]"); if (j) { const [wf, i] = j.dataset.jump.split(":"); jumpTo(wf, +i); }
 });
 
