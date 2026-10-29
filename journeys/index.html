@@ -37,6 +37,8 @@
     --amber-bg:#FBF0D9;
     --grey-bg:#EDEFF3;
     --red-bg:#FBECEC;
+    --sugg:#8A3FA0;
+    --sugg-bg:#F4E9F7;
     --radius-lg:10px;
     --radius-md:8px;
     --radius-sm:7px;
@@ -216,6 +218,100 @@
   .sev{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sev);}
   .flagc p{font-size:14px;}
 
+  /* ---------- Flowchart: one vertical line per journey, grouped by the journey stages ---------- */
+  #v-flow{--accent:var(--blue);--accent-bg:#E0F3FB;--other:var(--navy);}
+  #v-flow[data-j="sales"]{--accent:var(--navy);--accent-bg:var(--steel);--other:var(--blue);}
+  .fc-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-soft);align-items:center;margin-bottom:6px;}
+  .fc-legend span{display:inline-flex;gap:6px;align-items:center;}
+  .fc-lg{width:13px;height:13px;display:inline-block;border:2px solid var(--ink-soft);background:var(--white);}
+  .fc-lg.step{border-radius:50%;}
+  .fc-lg.dec{transform:rotate(45deg) scale(.8);}
+  .fc-lg.gap{border-color:var(--warn);background:var(--red-bg);border-radius:3px;}
+  .fc-lg.sugg{border:2px dashed var(--sugg);background:var(--sugg-bg);border-radius:3px;}
+  .fc-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none;align-self:center;display:inline-block;}
+  .fc-dot.paused{background:#C98A00;}
+  .fc-intro{color:var(--ink-soft);font-size:14px;max-width:72ch;}
+  .fc-flow{max-width:920px;margin-top:10px;}
+  .fc-node,.fc-link,.fc-stage{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:14px;}
+  .fc-rail{position:relative;}
+  .fc-rail::before{content:"";position:absolute;left:19px;top:0;bottom:0;width:2px;background:var(--accent);}
+  .fc-flow > :first-child .fc-rail::before{top:50%;}
+  .fc-node.last .fc-rail::before{bottom:auto;height:22px;}
+  .fc-mk{
+    position:absolute;left:20px;top:22px;transform:translate(-50%,-50%);display:grid;place-items:center;
+    background:var(--white);border:2px solid var(--accent);color:var(--accent);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  .fc-node.step .fc-mk{width:30px;height:30px;border-radius:50%;}
+  .fc-node.dec .fc-mk{width:22px;height:22px;transform:translate(-50%,-50%) rotate(45deg);background:var(--accent-bg);}
+  .fc-node.dec .fc-mk b{transform:rotate(-45deg);font-size:11px;}
+  .fc-node.start .fc-mk,.fc-node.end .fc-mk{width:36px;height:22px;border-radius:6px;background:var(--accent);color:#fff;font-size:10px;letter-spacing:.05em;}
+  .fc-node.gapnode .fc-mk{background:var(--warn);border-color:var(--warn);}
+  .fc-node.sugg .fc-mk{width:30px;height:30px;border-radius:50%;border-style:dashed;border-color:var(--sugg);color:var(--sugg);background:var(--sugg-bg);font-size:16px;}
+  .fc-stage .fc-mk{width:38px;height:38px;border-radius:10px;background:var(--accent);color:#fff;font-size:13px;top:50%;}
+  .fc-shead{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:22px 0 12px;border-bottom:1px solid var(--line);margin-bottom:12px;}
+  .fc-shead h3{font-size:19px;}
+  .fc-shead .ho{margin-left:auto;}
+  .fc-link .fc-rail{min-height:28px;}
+  .fc-link .fc-rail::after{content:"";position:absolute;left:20px;bottom:1px;transform:translateX(-50%);border:6px solid transparent;border-top:7px solid var(--accent);border-bottom:0;}
+  .fc-lab{align-self:center;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);}
+  .fc-after{display:flex;flex-direction:column;gap:6px;padding-block:6px;}
+  .fc-card{padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--white);display:flex;flex-direction:column;gap:8px;min-width:0;}
+  .fc-node.dec .fc-card{background:#F7FAFC;border-style:dashed;}
+  .fc-node.start .fc-card,.fc-node.end .fc-card{background:var(--accent-bg);border-color:transparent;}
+  .fc-node.gapnode .fc-card{background:var(--red-bg);}
+  .fc-node.sugg .fc-card{background:var(--sugg-bg);border:2px dashed var(--sugg);}
+  .fc-kick{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .fc-node.sugg .fc-kick,.fc-sg .fc-kick{color:var(--sugg);}
+  .fc-card h4{font-size:16.5px;line-height:1.3;}
+  .fc-card p{font-size:14px;color:var(--ink-soft);max-width:72ch;}
+  .fc-sets{display:flex;flex-wrap:wrap;gap:6px;}
+  .fc-set{font-size:12px;font-weight:600;padding:2px 8px;border-radius:var(--radius-sm);background:var(--accent-bg);color:var(--accent);}
+  .fc-node.sugg .fc-set,.fc-sg .fc-set{background:var(--white);color:var(--sugg);border:1px dashed var(--sugg);}
+  .fc-exits{display:flex;flex-direction:column;gap:6px;}
+  .fc-exit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:start;padding:8px 10px;border-radius:var(--radius-md);background:var(--white);border:1px solid var(--line);}
+  .fc-exit > :not(.fc-ans){grid-column:2;}
+  .fc-ans{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:100px;background:var(--grey-bg);color:var(--ink);white-space:nowrap;margin-top:1px;}
+  .fc-to{font-weight:600;font-size:14px;}
+  .fc-to::before{content:"↳ ";color:var(--ink-soft);}
+  .fc-exit.end .fc-ans{background:var(--ink-soft);color:#fff;}
+  .fc-exit.gap{border-color:#EBC5C5;background:var(--red-bg);}
+  .fc-exit.gap .fc-ans{background:var(--warn);color:#fff;}
+  .fc-sg{border:2px dashed var(--sugg);background:var(--sugg-bg);border-radius:var(--radius-md);padding:9px 11px;display:flex;flex-direction:column;gap:5px;}
+  .fc-sg b{font-size:14px;font-weight:600;}
+  .fc-sg p{font-size:13.5px;color:var(--ink);}
+  .fc-gos{display:flex;flex-wrap:wrap;gap:6px;}
+  .fc-go{
+    font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:600;text-align:left;cursor:pointer;justify-self:start;
+    border:1px dashed var(--accent);color:var(--accent);background:var(--white);border-radius:var(--radius-sm);padding:4px 9px;
+  }
+  .fc-go.x{border-color:var(--other);color:var(--other);}
+  .fc-go:hover{background:var(--steel);}
+  .fc-note{font-size:13px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--amber-bg);}
+  .fc-note b{color:var(--amber);}
+  .fc-note.gap{background:var(--red-bg);}
+  .fc-note.gap b{color:var(--warn);}
+  .fc-autos{display:flex;flex-wrap:wrap;gap:5px;}
+  .fc-chip{
+    display:inline-flex;gap:6px;align-items:baseline;font-size:12px;line-height:1.35;color:var(--ink);text-decoration:none;
+    border:1px solid var(--line);border-radius:var(--radius-sm);padding:2px 8px;background:var(--white);max-width:100%;overflow-wrap:anywhere;
+  }
+  .fc-chip:hover{border-color:var(--blue);}
+  .fc-chip .id{color:var(--ink-soft);font-size:11px;white-space:nowrap;}
+  #v-flow.no-autos .fc-autos{display:none;}
+  #v-flow.no-sugg .fc-sg,#v-flow.no-sugg .fc-node.sugg,#v-flow.no-sugg .fc-link.to-sugg{display:none;}
+  .fc-node.hl .fc-card{box-shadow:0 0 0 3px var(--blue);}
+  .fc-health{max-width:920px;margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--white);display:flex;flex-direction:column;gap:8px;}
+  .fc-health p{font-size:14px;color:var(--ink-soft);}
+  .fc-h2{font-size:20px;margin:32px 0 4px;}
+  @media(max-width:520px){
+    .fc-node,.fc-link,.fc-stage{grid-template-columns:30px minmax(0,1fr);column-gap:10px;}
+    .fc-rail::before{left:14px;}
+    .fc-mk,.fc-link .fc-rail::after{left:15px;}
+    .fc-node.step .fc-mk,.fc-node.sugg .fc-mk{width:26px;height:26px;}
+    .fc-stage .fc-mk{width:30px;height:30px;}
+    .fc-node.start .fc-mk,.fc-node.end .fc-mk{width:28px;font-size:8.5px;}
+  }
+
   /* ---------- Needs a check ---------- */
   .chk{font-size:11px;font-weight:700;border-radius:100px;padding:2px 9px;white-space:nowrap;}
   .chk.first{background:var(--red-bg);color:var(--warn);}
@@ -300,6 +396,7 @@
         <nav id="viewNav">
           <button type="button" class="sidebar-nav-btn active" data-view="cand">Candidate journey <span class="n" id="navCand"></span></button>
           <button type="button" class="sidebar-nav-btn" data-view="sales">Sales contact journey <span class="n" id="navSales"></span></button>
+          <button type="button" class="sidebar-nav-btn" data-view="flow">Flowchart</button>
           <button type="button" class="sidebar-nav-btn" data-view="conn">How they connect</button>
           <button type="button" class="sidebar-nav-btn" data-view="flags">Gaps &amp; checks</button>
           <button type="button" class="sidebar-nav-btn" data-view="checks">Might need update <span class="n" id="navChecks"></span></button>
@@ -336,6 +433,7 @@
 
       <section id="v-cand" hidden></section>
       <section id="v-sales" hidden></section>
+      <section id="v-flow" hidden></section>
       <section id="v-conn" hidden></section>
       <section id="v-flags" hidden></section>
       <section id="v-checks" hidden></section>
@@ -467,6 +565,182 @@ const FLAGS = [
 ];
 const SEV_COLOUR = { 'Bug':'var(--warn)', 'Gap':'var(--warn)', 'Check':'var(--amber)', 'Tidy-up':'var(--ink-soft)' };
 
+/* Flowchart view: one person's path down each journey, grouped by the stages above.
+   Node k: start | step | dec | end | sugg. Exit k: side | end | loop | gap.
+   sugg = suggested workflows that don't exist yet (shown in purple).
+   go / gos = [journey, node id, label], a jump within the flowchart.
+   Automation names and statuses come from the register at load time; only IDs live here.
+   Hand-written and reviewed 29 Oct 2026. */
+const FLOW = {
+ cand: {
+  intro: 'Follow one candidate down the line. Each block is a stage from the Candidate journey; decisions show which answer carries on down the line and where the others go. Purple dashed boxes are suggested workflows that don’t exist yet.',
+  stages: [
+   { k:'enter', nodes:[
+    { k:'start', id:'c-start', title:'New candidate record', text:'Created by a website (Applyflow) application, a RefeRec referral, a ZoomInfo import, or a consultant.' },
+    { k:'step', id:'c-source', title:'Source and owner set', text:'Candidate Source is filled in or corrected. RefeRec referrals take the submission owner as candidate owner, and the team gets a daily summary of new referrals. ZoomInfo records are set to Active.',
+      autos:[80709,104781,98484,98513,98854,104294,104784,102931,82657] },
+    { k:'dec', id:'c-intl', title:'Lives outside Australia?', next:'No',
+      exits:[{ a:'Yes', k:'end', to:'Archived', sets:['Status → Archive'], text:'A note records their country. The journey ends here.', autos:[101678] }] }
+   ]},
+   { k:'welcome', nodes:[
+    { k:'step', id:'c-welcome', title:'Welcome series', sets:['Status → Active'],
+      text:'Welcome email and SMS with the registration form. An enquiry creates a follow-up call task; a candidate who identifies as Indigenous triggers a heads-up to their owner.',
+      autos:[107533,60170,88095,74711],
+      note:['Check','Welcome Workflow FY25 and FY26 are both Active. Confirm FY25 has an end date so nobody is welcomed twice.'] },
+    { k:'dec', id:'c-reg', title:'Registration form done within 7 days?', next:'Yes',
+      exits:[{ a:'No', k:'side', to:'Reminder email on day 7', text:'Consultants can resend the form at any time with the Manual Reg Form Trigger tearsheet.', autos:[107534,106542],
+        sugg:[{ title:'Day 14: SMS nudge and consultant call task', text:'If the form still isn’t done a week after the reminder, send a short SMS with the form link and create a call task for the owner, so registrations don’t stall silently.' }] }] },
+    { k:'dec', id:'c-warn', title:'Do the form answers raise a warning?', next:'No',
+      exits:[{ a:'Yes', k:'side', to:'Held for review', sets:['Reg Compliance → Pending Review'], text:'A Registration Warning note is added for the consultant.', autos:[87035] }] },
+    { k:'step', id:'c-ready', title:'Registered and receiving content', sets:['Reg Compliance → Compliant'],
+      text:'Active candidate emails and fortnightly Top Jobs until they apply or are submitted.',
+      autos:[105823,80666,104255], gos:[['cand','c-nurture','How the nurture loop works ↓']] }
+   ]},
+   { k:'apply', nodes:[
+    { k:'dec', id:'c-apply', title:'Applies for a job on the website?', next:'Yes',
+      exits:[
+       { a:'No', k:'loop', to:'Stays in the nurture loop', go:['cand','c-nurture','Go to the nurture loop ↓'] },
+       { a:'Consultant submits them', k:'loop', to:'Skips screening', text:'A consultant can submit someone straight from the database.', go:['cand','c-submit','Jump to Submitted to a client ↓'] }] },
+    { k:'step', id:'c-screen', title:'Invited to the VR screener',
+      text:'The job already has AI-written screener questions from when it was opened. Web applicants get a “Next steps” email inviting them to the screener and are tagged so they aren’t invited twice. Automatch separately emails the job owner the top 10 matches from the database.',
+      autos:[99250,97579,100872,107006,105548,59884],
+      from:['sales','s-job','Starts when a client job is opened'] },
+    { k:'sugg', id:'c-s-screen', title:'Screener reminder', sets:['Trigger: invited, not completed after 3 days'],
+      text:'Send one reminder email and SMS with the screener link, then a final nudge 48 hours before the job’s screening cut-off.' },
+    { k:'dec', id:'c-screened', title:'Completes the screener?', next:'Completed', after:{ sets:['Acknowledgement email sent'], autos:[103019] },
+      exits:[{ a:'Rejected', k:'end', to:'Rejected by consultant', text:'They go back to the nurture loop.', autos:[101016], go:['cand','c-nurture','Go to the nurture loop ↓'],
+        sugg:[{ title:'“Not this time” email', text:'When an applicant is rejected or the job closes without them being submitted, send a short thank-you that points them to Top Jobs and keeps them Active. Today unsuccessful applicants hear nothing.' }] }] },
+    { k:'dec', id:'c-sub-q', title:'Submitted to a client?', next:'Yes',
+      exits:[{ a:'No', k:'loop', to:'Back to the nurture loop', go:['cand','c-nurture','Go to the nurture loop ↓'] }] }
+   ]},
+   { k:'submit', nodes:[
+    { k:'step', id:'c-submit', title:'Submitted to a client', sets:['Status → Active','TT Prompt Date → submission date','TT Status → Queued'],
+      text:'Passive candidates flip back to Active, and AI writes their Top Talent dot points.',
+      autos:[62899,83616,98652,106607],
+      note:['Check','Two automations set Active on submission. One can probably be retired.'] }
+   ]},
+   { k:'tt', nodes:[
+    { k:'step', id:'c-tt', title:'In the Top Talent pool', sets:['TT Status: Queued or Priority'],
+      text:'A consultant can also mark someone Priority, which writes their dot points straight away. Queued and Priority candidates are the people the weekly client shortlist emails show.',
+      autos:[106616], hand:['sales','s-tt','Featured in weekly Top Talent sends'] },
+    { k:'dec', id:'c-placed-q', title:'Placed within 8 weeks?', next:'Yes',
+      exits:[{ a:'No', k:'side', to:'Secondary Top Talent pool', sets:['TT Status → Secondary pool'], text:'Moved 8 weeks after the prompt date. They carry on in the nurture loop and can still be placed later.', autos:[106823,107635], go:['cand','c-nurture','Go to the nurture loop ↓'],
+        sugg:[{ title:'Secondary pool check-in', text:'When someone moves to the Secondary pool, email them “Still looking?” with a one-click yes or no. A yes re-queues them for Top Talent; a no sets them Passive.' }] }] }
+   ]},
+   { k:'placed', nodes:[
+    { k:'step', id:'c-placed', title:'Placed', sets:['TT Status → Exclude from TT'],
+      text:'Taken out of Top Talent with a note saying why. The same automation handles DNU and consultant exclusions.',
+      autos:[106625] },
+    { k:'dec', id:'c-type', title:'Permanent or on-hire?', next:'On-hire',
+      exits:[{ a:'Permanent', k:'side', to:'Permanent onboarding series', text:'Owner set to the placing recruiter, a congratulations email before the start date and check-ins after. Rejoins the line at the referral step.', autos:[91646], go:['cand','c-refer','Jump to the referral step ↓'] }] },
+    { k:'step', id:'c-onhire', title:'On-hire onboarding and compliance',
+      text:'Onboarding emails; host induction check with the candidate (consultants alerted if it isn’t done); Workforce Australia and wage subsidy follow-ups; safety and benefits emails; CEIS at 6 and 12 months; credential expiry alerts.',
+      autos:[92321,89095,89683,98835,98830,101401,90982,57075],
+      hand:['sales','s-placed','Client asked to confirm the host induction'] },
+    { k:'dec', id:'c-end-q', title:'Placement end date passes?', next:'Closed',
+      exits:[{ a:'Not closed', k:'side', to:'Recruiter task: close or extend', text:'A Compliance note is added and the recruiter is notified.', autos:[79210] }] },
+    { k:'sugg', id:'c-s-ending', title:'Contract ending workflow', sets:['Trigger: on-hire end date in 14 days','Status → Active','TT Status → Queued (if the consultant approves)'],
+      text:'Two weeks before an on-hire assignment ends, ask the candidate “What’s next for you?”. If they want more work, set them Active, put them back on Active content and create a task for the consultant to re-queue them for Top Talent. Closes the biggest gap on this journey.',
+      gos:[['cand','c-tt','Back to the Top Talent pool ↑']] }
+   ]},
+   { k:'refer', nodes:[
+    { k:'step', id:'c-refer', title:'Asked to refer friends',
+      text:'Placed candidates get RefeRec referral emails, sent as one-off blasts. When someone they referred starts, the team is told to order a gift card.',
+      autos:[104258,58602,81170],
+      gos:[['cand','c-start','Referred person starts at the top ↑']],
+      sugg:[{ title:'Always-on referral ask at day 30', text:'Replace the one-off blasts (ConnectMe is paused) with an automatic ask 30 days into every placement, when the candidate has settled in.' }] },
+    { k:'end', id:'c-end', gap:true, title:'Placement finished',
+      text:'Today nothing moves them back into Active content or the Top Talent pool. They only resurface if a consultant acts or the 12-month profile email catches them. The suggested contract ending workflow above would fix this.' }
+   ]}
+  ],
+  loop: { stage:'nurture', id:'c-nurture', nodes:[
+    { k:'step', id:'n-active', title:'Active candidate content', sets:['Status: Active'], text:'Active email series (2–4pm) plus fortnightly Top Jobs.', autos:[80666,104255],
+      note:['Check','Active content is still the FY25 series; Passive moved to a 2026 series.'],
+      sugg:[{ title:'FY27 Active candidate series', text:'Rebuild the Active series to match the 2026 Passive series (A/B tests, a check-in survey) so both streams are current.' }] },
+    { k:'dec', id:'n-decay', title:'No application or submission for 6 months, or survey says “not looking”?', next:'Yes',
+      exits:[{ a:'No', k:'loop', to:'Stays Active' }] },
+    { k:'step', id:'n-passive', title:'Passive candidate content', sets:['Status → Passive'], text:'Passive email series (11am–2pm) with a career check-in survey, plus Top Jobs.', autos:[102541,35684,105822,104255],
+      sugg:[{ title:'“Has anything changed?” at 6 months', text:'Six months after someone says they’re not looking, ask again with a one-click answer. A yes flips them to Active and alerts their owner.' }] },
+    { k:'dec', id:'n-stale', title:'No notes for 12 months?', next:'Yes',
+      exits:[{ a:'No', k:'loop', to:'Stays on Passive content' }] },
+    { k:'step', id:'n-refresh', title:'Profile update email', text:'“It’s been a while, let’s catch up” asks them to update their Fuse profile.', autos:[30476] },
+    { k:'end', id:'n-out', title:'Back on the main line',
+      text:'Any client submission flips a Passive candidate back to Active and puts them on the main line at “Submitted to a client”. Programmes (Future Insure) and one-off job campaigns also draw on this pool.',
+      autos:[62899,89718,89719,91772], gos:[['cand','c-submit','Jump to Submitted to a client ↑']] }
+  ]},
+  health: { text:'Runs underneath every stage: email and SMS bounces ask the candidate for new details, inactive owners are reassigned, invalid emails are re-parsed from the resume, and the state, postcode and category tools keep list criteria accurate.',
+    autos:[41014,59547,91569,105554] }
+ },
+
+ sales: {
+  intro: 'Follow one client contact down the line. Each block is a stage from the Sales contact journey. Contacts who don’t brief a job stay on the weekly shortlist and BD loop. Purple dashed boxes are suggested workflows that don’t exist yet.',
+  stages: [
+   { k:'enter', nodes:[
+    { k:'start', id:'s-start', title:'New client contact', text:'Imported from ZoomInfo, created as an Amplify prospect, or added by a consultant.', autos:[111088] },
+    { k:'dec', id:'s-dupe', title:'Duplicate with no notes, added 3+ months ago?', next:'No',
+      exits:[{ a:'Yes', k:'end', to:'Archived', text:'A note explains why. The journey ends here.', autos:[105469] }] },
+    { k:'step', id:'s-clean', title:'ZoomInfo clean-up checks',
+      text:'Contacts missing a category, missing an email, using a personal email, or with a bounced email go onto clean-up tearsheets, and come off automatically once fixed.',
+      autos:[107403,107436,107401,107434,105135,105136,107402,107437] }
+   ]},
+   { k:'categorise', nodes:[
+    { k:'step', id:'s-cat', title:'Categorised', sets:['Industry','Category','Sub-category'],
+      text:'Set with the bulk tearsheet tools or the Bullhorn Categorisation tool. These values decide which Top Talent list and nurture series the contact gets, and must match the candidate categories.',
+      gos:[['cand','c-tt','Uses the same categories as candidates']] },
+    { k:'dec', id:'s-multi', title:'In more than one client workflow?', next:'No',
+      exits:[{ a:'Yes', k:'side', to:'Weekly note and fix-it task', text:'Held out of Top Talent until the categories are fixed.', autos:[89220] }] }
+   ]},
+   { k:'nurture', nodes:[
+    { k:'dec', id:'s-gov', title:'Government client?', next:'No, or after the series',
+      exits:[{ a:'Yes', k:'side', to:'New Government client nurture', text:'A series of hiring-advice emails, then on to the shortlists.', autos:[89457] }],
+      note:['Gap','Every other industry gets no welcome or nurture. Employment reports and webinars are one-offs.'] },
+    { k:'sugg', id:'s-s-welcome', title:'Welcome and nurture series for every industry', sets:['Trigger: new categorised contact'],
+      text:'Copy the Government series for Insurance & FS, Manufacturing, Infrastructure & Renewables and Trades: an intro from the owner, then hiring advice and the relevant employment report. The existing report and webinar content can be reused.' }
+   ]},
+   { k:'tt', nodes:[
+    { k:'step', id:'s-tt', title:'Weekly Top Talent shortlist',
+      text:'A weekly email per industry showing Queued and Priority candidates: Insurance & FS, Infrastructure & Renewables, Trades and Manufacturing. Each send is a copy of a template.',
+      autos:[111206,110908,110909,110814,104790],
+      from:['cand','c-tt','Candidates come from the Top Talent pool'],
+      sugg:[{ title:'Technology & Transformation weekly shortlist', text:'Tech only has a template. Launch a weekly send so Tech clients get the same treatment as the other industries.' }] }
+   ]},
+   { k:'signals', nodes:[
+    { k:'step', id:'s-signals', title:'Engagement tracked for BD',
+      text:'Website visits add a note and alert the owner daily, with a weekly roll-up. Consultants get a weekly call list by industry and state, plus an alert for inactive clients who have placed with Fuse before.',
+      autos:[11722,87676,110213,98029],
+      sugg:[{ title:'Hot client alert', text:'When a contact clicks a candidate in a shortlist and visits the website in the same week, create a same-day call task for the owner instead of waiting for the weekly list.' }] },
+    { k:'dec', id:'s-reply', title:'Client replies or briefs a job?', next:'Yes',
+      exits:[{ a:'No', k:'loop', to:'Stays on weekly shortlists and BD alerts', go:['sales','s-tt','Back to the weekly shortlist ↑'] }],
+      note:['Check','Reply logging (TTP - Log Reply) is still being built, so replies aren’t recorded automatically yet.'] }
+   ]},
+   { k:'hiring', nodes:[
+    { k:'step', id:'s-job', title:'Job opened', sets:['VR Screener Status → Generate Questions'],
+      text:'The assigned user is notified, AI writes the screener questions and Automatch finds the top 10 candidates. Replacement jobs with no activity are chased.',
+      autos:[94648,99250,97579,59884,100093],
+      hand:['cand','c-screen','Candidates invited to the screener'],
+      sugg:[{ title:'No submission in 7 days alert', text:'Extend the replacement-job chaser to every open job: if nothing has been submitted after 7 days, alert the owner and their manager.' }] }
+   ]},
+   { k:'placed', nodes:[
+    { k:'dec', id:'s-ptype', title:'Candidate placed: on-hire or permanent?', next:'On-hire',
+      exits:[{ a:'Permanent', k:'gap', to:'No client follow-up', text:'Nothing goes to the hiring manager after a perm start.',
+        sugg:[{ title:'Perm client check-in', text:'Email the hiring manager 2 weeks and 3 months after a perm start to ask how the new starter is going, with a soft ask for the next role or a referral.' }] }] },
+    { k:'step', id:'s-placed', title:'Host induction check',
+      text:'2–5 days after the candidate starts, the client is asked to confirm the site induction, with reminders. Consultants get a list of the ones not confirmed.',
+      autos:[89686,106203,89684],
+      from:['cand','c-onhire','Triggered by the candidate’s start'] },
+    { k:'sugg', id:'s-s-ending', title:'Assignment ending: extend or rebrief', sets:['Trigger: on-hire end date in 14 days'],
+      text:'Two weeks before an assignment ends, ask the client whether they want to extend, or need someone else. Pairs with the candidate contract ending workflow.',
+      gos:[['cand','c-s-ending','See the candidate side']] },
+    { k:'end', id:'s-end', title:'Placement on record',
+      text:'After 3 months with no contact, past placements put the client on the weekly “inactive clients with past placements” BD alert.',
+      autos:[98029], gos:[['sales','s-signals','Back to BD tracking ↑']] }
+   ]}
+  ],
+  health: { text:'Runs underneath every stage: a hard bounce sets the contact to “Email has bounced” and takes them out of client marketing; once the email works again they go back to Active.',
+    autos:[33887,63467] }
+ }
+};
+
 /* ===================== HELPERS ===================== */
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, c => (
@@ -543,6 +817,8 @@ let RAW_ROWS = [];
 /* "Might need update" tab: its own filters, separate from the journey search.
    showChecked lists the ones hidden because of a recent "Last Checked" date. */
 const checkState = { group:'all', record:'all', q:'', showChecked:false };
+/* Flowchart tab: which journey, and whether automations and suggestions show. */
+const flowState = { j:'cand', autos:true, sugg:true };
 
 function matches(item) {
   if (!state.show[item.statusKey]) return false;
@@ -672,6 +948,99 @@ function renderFlags() {
     <div class="flags">${FLAGS.map(f => `<div class="flagc" style="--sev:${SEV_COLOUR[f.sev]}"><h3><span class="sev">${escapeHtml(f.sev)}</span>${escapeHtml(f.t)}${f.count === 'paused' ? ` (${paused} today)` : ''}</h3>
       <p>${escapeHtml(f.p)}</p>${f.ids.length ? `<div class="ids">${idLinks(f.ids)}</div>` : ''}</div>`).join('')}</div>`;
 }
+/* ---------- Flowchart ---------- */
+function flowChips(ids) {
+  const items = (ids || []).map(id => BY_ID[String(id)]).filter(i => i && i.statusKey !== 'Retired');
+  if (!items.length) return '';
+  return `<div class="fc-autos">${items.map(i => {
+    const url = safeUrl(i.url);
+    const inner = `<i class="fc-dot ${i.statusKey.toLowerCase()}"></i><span>${escapeHtml(i.name)}</span><span class="id">#${escapeHtml(i.id)}</span>`;
+    return url ? `<a class="fc-chip" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${escapeHtml(i.statusKey)}">${inner}</a>` : `<span class="fc-chip">${inner}</span>`;
+  }).join('')}</div>`;
+}
+const flowSets = list => list && list.length ? `<div class="fc-sets">${list.map(s => `<span class="fc-set">${escapeHtml(s)}</span>`).join('')}</div>` : '';
+const flowNote = n => n ? `<div class="fc-note${n[0] === 'Gap' ? ' gap' : ''}"><b>${escapeHtml(n[0])}:</b> ${escapeHtml(n[1])}</div>` : '';
+const flowSugg = list => (list || []).map(s => `<div class="fc-sg"><span class="fc-kick">Suggested workflow</span><b>${escapeHtml(s.title)}</b><p>${escapeHtml(s.text)}</p></div>`).join('');
+function flowGo(g, cur) {
+  const other = g[0] !== cur;
+  return `<button type="button" class="fc-go${other ? ' x' : ''}" data-fgo="${g[0]}:${g[1]}">${other ? '&rarr; ' + escapeHtml(JOURNEYS[g[0]].label) + ': ' : ''}${escapeHtml(g[2])}</button>`;
+}
+function flowExit(e, cur) {
+  return `<div class="fc-exit ${e.k}"><span class="fc-ans">${escapeHtml(e.a)}</span><span class="fc-to">${escapeHtml(e.to)}</span>
+    ${e.text ? `<p>${escapeHtml(e.text)}</p>` : ''}${flowSets(e.sets)}${flowChips(e.autos)}${e.go ? `<div>${flowGo(e.go, cur)}</div>` : ''}${flowSugg(e.sugg)}</div>`;
+}
+function flowNode(n, cur, num, last) {
+  const kick = { start:'Start', end:'End', dec:'Decision', step:'Step ' + num, sugg:'Suggested workflow' }[n.k];
+  const mark = { start:'IN', end:'END', dec:'<b>?</b>', step:num, sugg:'+' }[n.k];
+  const links = [
+    n.from && flowGo([n.from[0], n.from[1], 'From ' + n.from[2]], cur),
+    n.hand && flowGo(n.hand, cur),
+    ...(n.gos || []).map(g => flowGo(g, cur))
+  ].filter(Boolean);
+  return `<div class="fc-node ${n.k}${n.gap ? ' gapnode' : ''}${last ? ' last' : ''}" id="fc-${n.id}"><div class="fc-rail"><span class="fc-mk">${mark}</span></div>
+    <div class="fc-card"><span class="fc-kick">${kick}</span><h4>${escapeHtml(n.title)}</h4>${n.text ? `<p>${escapeHtml(n.text)}</p>` : ''}
+    ${n.exits ? `<div class="fc-exits">${n.exits.map(e => flowExit(e, cur)).join('')}</div>` : ''}
+    ${flowSets(n.sets)}${flowChips(n.autos)}${flowNote(n.note)}${flowSugg(n.sugg)}
+    ${links.length ? `<div class="fc-gos">${links.join('')}</div>` : ''}</div></div>`;
+}
+/* The arrow to the next node, labelled with the answer that carries on down the line. */
+function flowLink(n, next) {
+  const label = n.k === 'dec' ? `<span class="fc-lab">${escapeHtml(n.next)} &darr;</span>` : '';
+  const inner = n.after ? `<div class="fc-after">${label}${flowSets(n.after.sets)}${flowChips(n.after.autos)}</div>` : label;
+  return `<div class="fc-link${next && next.k === 'sugg' ? ' to-sugg' : ''}"><div class="fc-rail"></div>${inner}</div>`;
+}
+function flowStage(j, k, n) {
+  const s = JOURNEYS[j].stages.find(x => x.k === k);
+  const c = ITEMS.filter(i => i.journey === j && i.stage === k && i.statusKey !== 'Retired').length;
+  return `<div class="fc-stage"><div class="fc-rail"><span class="fc-mk">${String(n).padStart(2, '0')}</span></div>
+    <div class="fc-shead"><h3>${escapeHtml(s.t)}</h3><span class="cnt">${c} automation${c === 1 ? '' : 's'} in this stage</span><button type="button" class="ho" data-go="${j}:${k}">Open on the journey &rarr;</button></div></div>`;
+}
+function flowLine(j, groups) {
+  const order = JOURNEYS[j].stages.map(s => s.k);
+  const flat = groups.flatMap(g => g.nodes);
+  let step = 0, html = '';
+  for (const g of groups) {
+    html += flowStage(j, g.k, order.indexOf(g.k) + 1);
+    for (const n of g.nodes) {
+      const idx = flat.indexOf(n), last = idx === flat.length - 1;
+      html += flowNode(n, j, n.k === 'step' ? String(++step).padStart(2, '0') : '', last);
+      if (!last) html += flowLink(n, flat[idx + 1]);
+    }
+  }
+  return `<div class="fc-flow">${html}</div>`;
+}
+function renderFlow() {
+  const j = flowState.j, F = FLOW[j];
+  const el = document.getElementById('v-flow');
+  el.dataset.j = j;
+  el.classList.toggle('no-autos', !flowState.autos);
+  el.classList.toggle('no-sugg', !flowState.sugg);
+  el.innerHTML = `
+    <div class="view-head"><h2>Flowchart</h2><p>One person’s path through the journey, in a straight line.</p></div>
+    <div class="controls">
+      <button type="button" class="chip" data-fj="cand" aria-pressed="${j === 'cand'}">Candidate</button>
+      <button type="button" class="chip" data-fj="sales" aria-pressed="${j === 'sales'}">Sales contact</button>
+      <span class="hint">|</span>
+      <button type="button" class="chip" data-ft="autos" aria-pressed="${flowState.autos}">Show automations</button>
+      <button type="button" class="chip" data-ft="sugg" aria-pressed="${flowState.sugg}">Show suggestions</button>
+    </div>
+    <div class="fc-legend"><span><i class="fc-lg step"></i>Step</span><span><i class="fc-lg dec"></i>Decision</span><span><i class="fc-lg gap"></i>Gap: nothing automated</span><span><i class="fc-lg sugg"></i>Suggested workflow (not built)</span><span><i class="fc-dot"></i>Active</span><span><i class="fc-dot paused"></i>Paused</span></div>
+    <p class="fc-intro">${escapeHtml(F.intro)}</p>
+    ${flowLine(j, F.stages)}
+    ${F.loop ? `<div id="fc-${F.loop.id}"><h2 class="fc-h2">The nurture loop</h2><p class="fc-intro">Where candidates sit whenever they aren’t moving down the main line. Their status decides which content they get.</p>${flowLine(j, [{ k:F.loop.stage, nodes:F.loop.nodes }])}</div>` : ''}
+    <h2 class="fc-h2">${BAND.t}</h2><div class="fc-health"><p>${escapeHtml(F.health.text)}</p>${flowChips(F.health.autos)}</div>`;
+}
+function flowJump(target) {
+  const [j, id] = target.split(':');
+  flowState.j = j; state.view = 'flow'; render();
+  const el = document.getElementById('fc-' + id);
+  if (!el) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  const node = el.classList.contains('fc-node') ? el : el.querySelector('.fc-node');
+  if (node) { node.classList.add('hl'); setTimeout(() => node.classList.remove('hl'), 1600); }
+}
+
 /* Everything the shared checks flag (../shared/automation-checks.js), most
    urgent first. Recently checked ones only when showChecked is on. */
 function flaggedItems(includeChecked) {
@@ -776,9 +1145,10 @@ function renderStats() {
   document.getElementById('navChecks').textContent = ITEMS.filter(flagged).length;
 }
 function render() {
-  for (const v of ['cand', 'sales', 'conn', 'flags', 'checks']) document.getElementById('v-' + v).hidden = v !== state.view;
+  for (const v of ['cand', 'sales', 'flow', 'conn', 'flags', 'checks']) document.getElementById('v-' + v).hidden = v !== state.view;
   document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
   if (state.view === 'cand' || state.view === 'sales') renderJourney(state.view);
+  if (state.view === 'flow') renderFlow();
   if (state.view === 'checks') renderChecks();
 }
 function go(target) {
@@ -807,6 +1177,12 @@ document.addEventListener('click', e => {
   const crecord = e.target.closest('[data-crecord]');
   if (crecord) { checkState.record = crecord.dataset.crecord; renderChecks(); return; }
   if (e.target.closest('[data-cchecked]')) { checkState.showChecked = !checkState.showChecked; renderChecks(); return; }
+  const fj = e.target.closest('[data-fj]');
+  if (fj) { flowState.j = fj.dataset.fj; renderFlow(); return; }
+  const ft = e.target.closest('[data-ft]');
+  if (ft) { flowState[ft.dataset.ft] = !flowState[ft.dataset.ft]; renderFlow(); return; }
+  const fgo = e.target.closest('[data-fgo]');
+  if (fgo) { flowJump(fgo.dataset.fgo); return; }
   if (e.target.closest('#checks-refresh')) { load(true); return; }
   if (e.target.closest('#checks-csv')) downloadChecks();
 });
@@ -934,7 +1310,7 @@ async function load(force) {
 }
 
 const startView = location.hash.slice(1);
-if (['cand', 'sales', 'conn', 'flags', 'checks'].includes(startView)) state.view = startView;
+if (['cand', 'sales', 'flow', 'conn', 'flags', 'checks'].includes(startView)) state.view = startView;
 document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
 load(false);
 </script>

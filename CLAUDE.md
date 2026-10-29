@@ -95,6 +95,12 @@ Match `automation-finder/index.html`, the reference tool page.
 - `ALSO` lists automations shown on both journeys.
 - `CONNS` (hand-offs) and `FLAGS` (gaps & checks) are hand-written and were
   last reviewed 8 Oct 2026.
+- The Flowchart tab is hand-written in `FLOW` (reviewed 29 Oct 2026): one
+  person's path down each journey, grouped by the same stage keys as
+  `JOURNEYS`, with decisions, field changes and automation IDs at each step.
+  Names and statuses come from the register at load time, and retired or
+  missing IDs are skipped. Suggested workflows (`sugg`) aren't built yet and
+  show in purple (`--sugg`), a colour used only for suggestions.
 - It keeps the register in localStorage (`automationJourneys.register`) and
   treats it as stale once the latest weekly update has passed. The register's
   scheduled update runs Mondays 6:00 am Philippine time, so the cutoff is
