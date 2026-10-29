@@ -58,6 +58,7 @@ Match `automation-finder/index.html`, the reference tool page.
 | `automation-finder/` | Plain-English search of the Active Automation Register | `bullhorn-automation-finder` worker → Power Automate flow → register spreadsheet |
 | `journeys/` | Every automation placed on the candidate and sales contact journeys, with hand-offs, gaps and a "Needs a check" tab | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
 | `present-feedback/` | Static report on the Present survey (Sept 2026) | None (static) |
+| `candidate-emails/` | Static audit of the Active and Passive candidate email workflows (Oct 2026): click rates, proposed per-stage flows, content to create | None (static, data baked into the page) |
 | `shared/` | Code used by more than one tool (no page of its own) | None |
 
 ### Automation checks (`shared/automation-checks.js`)

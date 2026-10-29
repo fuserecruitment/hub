@@ -17,6 +17,7 @@ confidential content here.
 | Automation Finder | `automation-finder/` (worker in `automation-finder/worker/`, flow setup in `automation-finder/FLOW_SPEC.md`) | https://fuserecruitment.github.io/hub/automation-finder/ |
 | Automation Journey Map | `journeys/` (reads the register through the Automation Finder worker; stages are set in `STAGE_IDS` in its `index.html`; the "Might need update" flags come from `shared/automation-checks.js`, which the Automation Finder uses too) | https://fuserecruitment.github.io/hub/journeys/ |
 | Present Feedback Review | `present-feedback/` | https://fuserecruitment.github.io/hub/present-feedback/ |
+| Candidate Email Audit | `candidate-emails/` | https://fuserecruitment.github.io/hub/candidate-emails/ |
 
 Bullhorn Categorisation used to live in its own repo,
 [fuserecruitment/bullhorn-category](https://github.com/fuserecruitment/bullhorn-category).
