@@ -247,7 +247,7 @@ td .bad { color: var(--sev-crit); font-weight: 600; }
 .journey { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
 @media (max-width: 1180px) { .journey { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.journey.tiers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.journey.tiers { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
 .journey.tiers[hidden] { display: none; }
 @media (max-width: 640px) { .journey.tiers { grid-template-columns: minmax(0, 1fr); } }
 .jstep { font: inherit; text-align: left; cursor: pointer; background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--rule); border-radius: 0 0 10px 10px; padding: 10px 12px 12px; display: grid; gap: 3px; align-content: start; }
@@ -384,6 +384,17 @@ details.more > div { display: grid; gap: 8px; margin-top: 8px; font-size: 13.5px
 .toc { font-size: 13px; line-height: 1.5; padding: 8px 12px; border-radius: 8px; background: var(--sev-fix-bg); }
 .fnode.action .toc, .fnode.reuse .toc { background: var(--chip-bg); }
 .toc span { color: var(--ink-muted); }
+table.tiersum { min-width: 820px; }
+table.tiersum td:first-child { font-weight: 600; white-space: nowrap; }
+.brief { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; }
+.brief .panel h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+.brief .panel > p { margin: 0 0 12px; font-size: 14px; color: var(--ink-muted); }
+.brief ul.chk { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 14px; }
+.brief ul.chk li { display: grid; gap: 3px; }
+.brief ul.chk li > span { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.brief ul.chk small { color: var(--ink-muted); font-size: 12.5px; }
+.brief ul.chk a { color: var(--accent-ink); }
+.moves { margin: 0; padding-left: 18px; display: grid; gap: 7px; font-size: 14px; }
 table.create { min-width: 980px; }
 table.create td:first-child { min-width: 260px; }
 table.create td small { display: block; color: var(--ink-muted); font-size: 12.5px; margin-top: 2px; }
@@ -424,6 +435,7 @@ table.board td small { display: block; color: var(--ink-muted); }
   <ol>
     <li><a href="#s-glance">At a glance</a></li>
     <li><a href="#s-learn">Seven findings</a></li>
+    <li><a href="#s-brief">Project brief</a></li>
     <li class="grp"><a href="#s-now">How it works today</a></li>
     <li id="side-wfs"></li>
     <li><a href="#s-stages">Proposed flows</a></li>
@@ -469,6 +481,13 @@ table.board td small { display: block; color: var(--ink-muted); }
     </div>
   </section>
 
+  <section id="s-brief" aria-labelledby="brief">
+    <div class="head"><p class="eyebrow">Marketing Automation Projects brief</p><h2 id="brief">What the brief asks for, and where it's covered</h2><p class="lede">The brief splits Passive into four tiers by Herefish engagement score, moves candidates between Active and Passive by job-seeking status, and refreshes the Active workflow. The thresholds below are a starting point to test against the real score.</p></div>
+    <div class="tablewrap"><table class="tiersum"><thead><tr><th>Passive tier</th><th>Starting rule until score bands are set</th><th>Emails</th><th>Content focus</th></tr></thead><tbody id="tiersum"></tbody></table></div>
+    <div class="panel"><h3 style="margin:0 0 10px;font-size:17px;font-weight:600">Moving between Active and Passive</h3><ul class="moves" id="moves"></ul></div>
+    <div class="brief" id="brieflist"></div>
+  </section>
+
   <section id="s-learn" aria-labelledby="learn">
     <div class="head"><p class="eyebrow">What the numbers say</p><h2 id="learn">Seven things to carry into the rebuild</h2></div>
     <div class="insights" id="insights"></div>
@@ -489,7 +508,7 @@ table.board td small { display: block; color: var(--ink-muted); }
   </section>
 
   <section id="s-stages" aria-labelledby="stages">
-    <div class="head"><p class="eyebrow">Proposed for the rebuild</p><h2 id="stages">One flow per journey stage</h2><p class="lede">Each stage starts from a Bullhorn event and ends by handing the candidate to the next stage. Steps reuse the best existing emails where they fit, add articles already on the Fuse blog that no email uses, and mark where new content is needed. Placed has two flows, on-hire and permanent, built on the two placement series running today. Not looking (Passive) has no event to react to, so it's split into three tiers by how engaged people are: the more they click, the more often they hear from Fuse. Check-ins move people back into the journey.</p></div>
+    <div class="head"><p class="eyebrow">Proposed for the rebuild</p><h2 id="stages">One flow per journey stage</h2><p class="lede">Each stage starts from a Bullhorn event and ends by handing the candidate to the next stage. Steps reuse the best existing emails where they fit, add articles already on the Fuse blog that no email uses, and mark where new content is needed. Placed has two flows, on-hire and permanent, built on the two placement series running today. Not looking (Passive) has no event to react to, so it's split into four tiers by Herefish engagement score, as the project brief sets out: the more engaged people are, the more often they hear from Fuse. Check-ins move people back into the journey.</p></div>
     <div class="journey" id="journey" aria-label="Journey stage"></div>
     <div class="flegend"><span class="badge reuse">Reuse</span>existing email or article, with its score <span class="badge blog">From the blog</span>published, not in any email yet <span class="badge new">New</span>needs writing <span class="badge action">Action</span>a non-article step</div>
     <div class="journey tiers" id="ptiers" aria-label="Choose a flow" hidden></div>
@@ -552,7 +571,7 @@ table.board td small { display: block; color: var(--ink-muted); }
         <li>Keep the Prime Super emails? They get the fewest clicks in either workflow. Are they sponsored or contractual?</li>
         <li>Test bigger changes than subject lines? All 22 Active A/B tests finished within 2 points of each other.</li>
       </ol></div>
-      <div class="panel"><h3><span>Logic and data</span>For Nicole</h3><ol>
+      <div class="panel"><h3><span>Logic and data</span>For the automation team</h3><ol>
         <li>Can Bullhorn submission and placement statuses trigger stage workflows directly (New Lead, Client Submission, Interview Scheduled, Offer, Placed)?</li>
         <li>Should both workflows remove candidates who stop matching, instead of pausing them?</li>
         <li>Which automation owns Active → Passive (Day 173 step or No App L6M), and which owns Passive → Active (62899 or 83616)?</li>
@@ -625,6 +644,44 @@ const INSIGHTS = [
 ];
 document.getElementById("insights").innerHTML = INSIGHTS.map(([k, h, p, d]) =>
   `<div class="ins"><div class="k">${esc(k)}</div><h3>${esc(h)}</h3><p>${esc(p)}</p><p class="do"><b>For the rebuild:</b> ${esc(d)}</p></div>`).join("");
+
+// project brief
+const TIERSUM = [
+  ["Highly engaged", "2 or more clicks, an application or a details update in the last 90 days", "Every 2 weeks (26 a year)", "Priority content: check-in first, industry and salary content, job picks for anyone open to offers"],
+  ["Engaged", "At least 1 click in the last 6 months", "Every 4 weeks (12 a year)", "Tailored to job-seeking status: job picks if open to offers, career content if happy where they are"],
+  ["Low engagement", "No clicks in 6 months, opened in the last 12", "Every 3 months (4 a year)", "Re-engagement: '5 signs it's time for a change', update your details, the salary download"],
+  ["Dormant", "No opens or clicks in 12 months", "Twice a year (2 a year)", "Minimal contact, a yearly database review, then 'Do you still want to hear from us?' after 2 years"],
+];
+const MOVES = [
+  "<b>Passive to Active:</b> answering 'actively looking' to a check-in, applying for a role, or a recruiter setting the status to Active. They join New & registered at Day 5, skipping the welcome they've already had. Applying goes straight to Applied.",
+  "<b>Active to Passive:</b> no application in 60 days after registering, answering 'happy where I am', or a recruiter setting the status to Passive. They start in the tier their score puts them in.",
+  "<b>Placed:</b> a placement moves them into the Placed flows from either workflow. When an on-hire assignment ends, 'what's next?' sends them to Active or Passive by their answer.",
+  "<b>One owner each way:</b> today two automations can move someone to Passive (the Active Day 173 step and No App L6M) and two back to Active (62899 and 83616). Keep one of each so candidates aren't moved twice.",
+  "<b>Job-seeking status:</b> store the check-in answer in one Bullhorn field (Looking, Open to offers, Happy where I am) so both workflows and recruiters read the same value.",
+];
+const BRIEF = [
+  ["Passive", "Four tiers by engagement score", [
+    ["Define segmentation criteria and thresholds per tier", "proposed", "Starting rules in the table above; score bands to set", "#s-brief"],
+    ["Map frequency and content per segment", "done", "A flowchart for each tier", "#s-stages"],
+    ["Configure Herefish segmentation and branching in Amplify", "build", "One automation per tier, each on its own list, is the simplest to build and report on", "#s-stages"],
+    ["Define transition criteria between Active and Passive", "proposed", "'Moving between Active and Passive' above", "#s-brief"],
+    ["Automate transitions on job-seeking status", "build", "Needs the check-in email (template 144587) and one status field", "#s-rel"],
+    ["Test and validate before go-live", "build", "Start each tier on a small list and compare clicks per 1,000 with today's 0.7 to 20.3", "#s-board"],
+  ]],
+  ["Active", "Refresh the active candidate workflow", [
+    ["Audit existing Active emails", "done", "All 27 emails with subject, link and results", "#s-now"],
+    ["Identify content gaps and outdated material", "done", "Gaps for each stage, dated titles and broken links", "#s-fix"],
+    ["Rewrite or update email copy", "proposed", "Content to create lists every new email, article and refresh", "#s-create"],
+    ["Adjust frequency and sequencing", "proposed", "Short flows triggered by journey events replace the 25-week drip", "#s-stages"],
+    ["Align with the Chatbot Redesign project (Card 2)", "open", "Not covered yet: check what the chatbot will ask and send, so emails don't repeat it", null],
+    ["Test the updated workflow in Bullhorn and Amplify", "build", "Fix the paused Day 68 step first: 28,118 candidates are stuck there", "#s-fix"],
+  ]],
+];
+const BSTAT = { done: ["reuse", "In this report"], proposed: ["refresh", "Proposed, to confirm"], build: ["test", "At build"], open: ["drop", "Not covered yet"] };
+document.getElementById("tiersum").innerHTML = TIERSUM.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("");
+document.getElementById("moves").innerHTML = MOVES.map(x => `<li>${x}</li>`).join("");
+document.getElementById("brieflist").innerHTML = BRIEF.map(([k, h, items]) => `<div class="panel"><h3>${esc(k)}: ${esc(h)}</h3><p>Checklist from the brief</p><ul class="chk">${items.map(([t, s, n, href]) =>
+  `<li><span><span class="call ${BSTAT[s][0]}">${BSTAT[s][1]}</span><b>${esc(t)}</b></span><small>${href ? `<a href="${href}">${esc(n)}</a>` : esc(n)}</small></li>`).join("")}</ul></div>`).join("");
 
 // calls: what to do with each article
 function dayOf(e) { const m = (e.when || "").match(/(Day|Week)\s+(\d+)/); return m ? (m[1] === "Week" ? +m[2] * 7 : +m[2]) : 0; }
@@ -744,61 +801,76 @@ const FLOWS = {
     },
   },
   passive: {
-    trigger: "Status set to Passive, or no application in 6 months. Then sorted into a tier by how engaged they are.",
-    tierNote: "tiers by how engaged they are",
+    trigger: "Status set to Passive, or no application in 60 days. Then sorted into a tier by their Herefish engagement score.",
+    tierNote: "tiers by engagement score",
     tiers: {
-      engaged: {
-        name: "Engaged", tag: "Every 2 weeks · 26 a year", cadence: "Every 2 weeks", per: "26 a year",
-        who: "Clicked a link, applied or updated their details in the last 90 days (or the top score band)",
+      high: {
+        name: "Highly engaged", tag: "Every 2 weeks · 26 a year",
+        who: "Top score band. To start: 2 or more clicks, an application or a details update in the last 90 days",
         steps: [
-          { d: "Week 0", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email." },
-          { d: "Week 2", k: "blog", a: "where-the-strongest-manufacturing-careers-are-in-2026", t: "Where your industry is heading (one version per discipline)", why: "7 recent industry career articles cover manufacturing, insurance, renewables, infrastructure and financial services. Send each discipline its own." },
-          { d: "Week 4", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?" },
-          { d: "Week 6", k: "action", t: "Check-in: where are you at?", why: "Engaged people are the likeliest to be ready to move, so they get the check-in early. The engagement email (template 144587) is built but hasn't been sent yet. One-click answers route people: actively looking goes to New & registered, open to offers gets job picks." },
-          { d: "Week 8", k: "reuse", a: "10-questions-to-ask-yourself-to-support-long-term-career-growth", t: "10 questions worth asking yourself" },
-          { d: "Week 10", k: "reuse", a: "ai-is-not-coming-for-your-job-but-it-is-changing-it", t: "AI isn't coming for your job, but it is changing it" },
-          { d: "Week 12", k: "new", id: "salary-guide", t: "What people in your field are earning" },
+          { d: "Week 0", k: "action", t: "Check-in: where are you at?", why: "Highly engaged people are the likeliest to be ready to move, so they're asked first. The engagement email (template 144587) is built but hasn't been sent yet. 'Actively looking' moves them to Active; 'open to offers' keeps job picks at the top of every email." },
+          { d: "Week 2", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email." },
+          { d: "Week 4", k: "blog", a: "where-the-strongest-manufacturing-careers-are-in-2026", t: "Where your industry is heading (one version per discipline)", why: "7 recent industry career articles cover manufacturing, insurance, renewables, infrastructure and financial services. Send each discipline its own." },
+          { d: "Week 6", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?" },
+          { d: "Week 8", k: "new", id: "salary-guide", t: "What people in your field are earning" },
+          { d: "Week 10", k: "reuse", a: "10-questions-to-ask-yourself-to-support-long-term-career-growth", t: "10 questions worth asking yourself" },
+          { d: "Week 12", k: "reuse", a: "ai-is-not-coming-for-your-job-but-it-is-changing-it", t: "AI isn't coming for your job, but it is changing it" },
           { d: "Week 14", k: "reuse", a: "6-green-flags-of-companies-you-ll-want-to-be-a-part-of", t: "6 green flags of companies worth joining" },
-          { d: "Week 16", k: "blog", a: "the-best-career-advice-youll-ever-receive-and-how-to-actually-use-it", t: "The best career advice you'll ever get" },
-          { d: "Week 18", k: "reuse", a: "5-signs-that-hint-it-s-time-to-leave-your-current-job", t: "5 signs it's time for a change", why: "From the retired workflow. A natural prompt to come back to the journey." },
-          { d: "Week 20", k: "reuse", a: "how-to-ask-for-a-pay-rise-and-actually-get-it", t: "How to ask for a pay rise" },
-          { d: "Week 22", k: "blog", a: "is-your-manufacturing-career-built-for-what-the-industry-is-becoming", t: "A second industry article (one per discipline)" },
-          { d: "Week 24", k: "action", t: "Check-in again", why: "Same one-click check-in as Week 6." },
+          { d: "Week 16", k: "action", t: "Check-in again", why: "Same one-click check-in as Week 0." },
+          { d: "Week 18", k: "blog", a: "the-best-career-advice-youll-ever-receive-and-how-to-actually-use-it", t: "The best career advice you'll ever get" },
+          { d: "Week 20", k: "reuse", a: "5-signs-that-hint-it-s-time-to-leave-your-current-job", t: "5 signs it's time for a change", why: "From the retired workflow. A natural prompt to come back to the journey." },
+          { d: "Week 22", k: "reuse", a: "how-to-ask-for-a-pay-rise-and-actually-get-it", t: "How to ask for a pay rise" },
+          { d: "Week 24", k: "blog", a: "is-your-manufacturing-career-built-for-what-the-industry-is-becoming", t: "A second industry article (one per discipline)" },
           { d: "Week 26", k: "new", id: "newest-article", t: "From here: the newest blog article + job picks, every 2 weeks", why: "Repeats don't work (47 → 3 in Active), so once the reused emails run out this tier runs on new articles." },
           { d: "By date", k: "action", t: "Seasonal emails take that fortnight's slot", why: "October: 'Spring clean your career' (blog, Oct 2026). May to July: 'Secure a pay rise this new financial year'. January: 'How to motivate yourself in the new year' (blog)." },
         ],
-        exits: [["Answers 'looking' or applies", "registered"], ["No click for 90 days", null, "warm"]],
+        exits: [["Answers 'looking' or applies", "registered"], ["Score drops a band (checked monthly)", null, "engaged"]],
       },
-      warm: {
-        name: "Warm", tag: "Every 4 weeks · 12 a year", cadence: "Every 4 weeks", per: "12 a year",
-        who: "Clicked in the last 12 months or opened in the last 6, but not Engaged",
+      engaged: {
+        name: "Engaged", tag: "Every 4 weeks · 12 a year",
+        who: "Second score band. To start: clicked at least once in the last 6 months. Content depends on their job-seeking status",
         steps: [
-          { d: "Week 0", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email." },
-          { d: "Week 4", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?" },
-          { d: "Week 8", k: "action", t: "Check-in: where are you at?", why: "The same one-click check-in as Engaged (template 144587)." },
+          { d: "Week 0", k: "action", t: "Check-in: where are you at?", why: "Their answer sets the job-seeking status the rest of this tier uses: open to offers, or happy where they are. Same template as Highly engaged." },
+          { d: "Week 4", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email." },
+          { d: "Week 8", k: "new", c: "If open to offers", id: "job-picks", t: "Roles worth a look this month" },
+          { d: "Week 8", w: "or, same week", k: "reuse", c: "If happy where they are", a: "10-questions-to-ask-yourself-to-support-long-term-career-growth", t: "10 questions worth asking yourself" },
           { d: "Week 12", k: "blog", a: "where-the-strongest-manufacturing-careers-are-in-2026", t: "Where your industry is heading (one version per discipline)" },
-          { d: "Week 16", k: "reuse", a: "10-questions-to-ask-yourself-to-support-long-term-career-growth", t: "10 questions worth asking yourself" },
+          { d: "Week 16", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?" },
           { d: "Week 20", k: "new", id: "salary-guide", t: "What people in your field are earning" },
-          { d: "Week 24", k: "reuse", a: "ai-is-not-coming-for-your-job-but-it-is-changing-it", t: "AI isn't coming for your job, but it is changing it" },
-          { d: "Week 28", k: "blog", a: "the-best-career-advice-youll-ever-receive-and-how-to-actually-use-it", t: "The best career advice you'll ever get" },
-          { d: "Week 32", k: "reuse", a: "6-green-flags-of-companies-you-ll-want-to-be-a-part-of", t: "6 green flags of companies worth joining" },
-          { d: "Week 36", k: "action", t: "Check-in again", why: "Same one-click check-in as Week 8." },
+          { d: "Week 24", k: "action", t: "Check-in again", why: "Same one-click check-in. Updates the job-seeking status if it has changed." },
+          { d: "Week 28", k: "new", c: "If open to offers", id: "job-picks", t: "Roles worth a look this month" },
+          { d: "Week 28", w: "or, same week", k: "reuse", c: "If happy where they are", a: "6-green-flags-of-companies-you-ll-want-to-be-a-part-of", t: "6 green flags of companies worth joining" },
+          { d: "Week 32", k: "reuse", a: "ai-is-not-coming-for-your-job-but-it-is-changing-it", t: "AI isn't coming for your job, but it is changing it" },
+          { d: "Week 36", k: "blog", a: "the-best-career-advice-youll-ever-receive-and-how-to-actually-use-it", t: "The best career advice you'll ever get" },
           { d: "Week 40", k: "reuse", a: "how-to-ask-for-a-pay-rise-and-actually-get-it", t: "How to ask for a pay rise" },
           { d: "Week 44", k: "reuse", a: "5-signs-that-hint-it-s-time-to-leave-your-current-job", t: "5 signs it's time for a change" },
-          { d: "Week 48", k: "new", id: "newest-article", t: "From here: the best new article of the month + job picks", why: "Same template as Engaged, once a month." },
-          { d: "By date", k: "action", t: "Seasonal emails take that month's slot", why: "The same October, May to July and January emails as Engaged. They replace the monthly email instead of adding one." },
+          { d: "Week 48", k: "new", id: "newest-article", t: "From here: the best new article of the month", why: "Same template as Highly engaged, once a month. Job picks lead for anyone open to offers." },
+          { d: "By date", k: "action", t: "Seasonal emails take that month's slot", why: "The same October, May to July and January emails as Highly engaged. They replace the monthly email instead of adding one." },
         ],
-        exits: [["Answers 'looking' or applies", "registered"], ["Clicks any link", null, "engaged"], ["No click in 12 months and no open in 6", null, "quiet"]],
+        exits: [["Answers 'looking' or applies", "registered"], ["Score rises a band", null, "high"], ["Score drops a band (checked monthly)", null, "low"]],
       },
-      quiet: {
-        name: "Quiet", tag: "Twice a year · 2 a year", cadence: "Twice a year", per: "2 a year",
-        who: "No clicks in 12 months and no opens in 6",
+      low: {
+        name: "Low engagement", tag: "Every 3 months · 4 a year",
+        who: "Third score band. To start: no clicks in 6 months, but opened in the last 12. Re-engagement focus",
         steps: [
-          { d: "February", w: "next February", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email, and the subject suits someone who has gone quiet. Add the one-click check-in buttons. If they've already had it, send '10 questions worth asking yourself' instead." },
+          { d: "Month 0", w: "straight away", k: "reuse", a: "5-signs-that-hint-it-s-time-to-leave-your-current-job", t: "5 signs it's time for a change", why: "Written to bring people back. With the one-click check-in buttons." },
+          { d: "Month 3", w: "wait 3 months", k: "new", id: "update-details", t: "Is this still you? Update your details in a minute" },
+          { d: "Month 6", w: "wait 3 months", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The best Passive email. Skip it if they've already had it, and send 'Is your role giving you what you think it is?' instead." },
+          { d: "Month 9", w: "wait 3 months", k: "new", id: "salary-guide", t: "What people in your field are earning", why: "A useful download is the strongest reason to click and update a profile." },
+          { d: "Month 12", w: "wait 3 months", k: "new", id: "newest-article", t: "From here: the best article of the quarter", why: "Same template as the other tiers. Every email keeps the check-in buttons." },
+        ],
+        exits: [["Answers 'looking' or applies", "registered"], ["Clicks any link", null, "engaged"], ["No opens or clicks in 12 months", null, "dormant"]],
+      },
+      dormant: {
+        name: "Dormant", tag: "Twice a year · 2 a year",
+        who: "Bottom band. To start: no opens or clicks in 12 months. Minimal contact and a database review",
+        steps: [
+          { d: "February", w: "next February", k: "reuse", a: "how-ai-is-changing-hiring-processes", t: "How hiring has changed while you weren't looking", why: "The subject suits someone who has gone quiet. Add the one-click check-in buttons. If they've already had it, send '10 questions worth asking yourself' instead." },
           { d: "August", w: "6 months later", k: "reuse", a: "evaluate-job-offer-beyond-salary-australia", t: "Is your role giving you what you think it is?", why: "The second-best Passive email, landing after the July pay reviews. With the check-in buttons too." },
+          { d: "After 1 year", w: "after a year in Dormant", k: "action", id: "db-review", t: "Database review" },
           { d: "After 2 years", w: "after 2 years with no opens or clicks", k: "new", id: "sunset", t: "Do you still want to hear from us?" },
         ],
-        exits: [["Clicks any link", null, "engaged"], ["Opens again", null, "warm"], ["No answer to 'still want these?': stop marketing emails", null]],
+        exits: [["Clicks any link", null, "engaged"], ["Opens again", null, "low"], ["No answer to 'still want these?': stop marketing emails", null]],
       },
     },
   },
@@ -833,8 +905,11 @@ const CREATE = [
   { id: "review", stage: "placed", pri: 2, t: "Ask for a Google review", f: "Short text with the link (texts out-click emails here)", to: "Fuse's Google review link", why: "Neither placement series asks for one. Six weeks in, the placement is settled." },
   { id: "contract-end", stage: "placed", pri: 1, t: "Your assignment ends soon: what's next?", f: "Text + email with job picks, and a task for the recruiter", to: "Job picks and the recruiter's contact", why: "3,088 of 3,541 on-hire placements leave the series early, and nothing moves them back into the journey." },
   { id: "salary-guide", stage: "passive", pri: 1, t: "What people in your field are earning", f: "Download or landing page, one per discipline", to: "New page; can ask them to update their details to download", why: "Useful whether or not they're moving, and doubles as a way to refresh their profile." },
-  { id: "newest-article", stage: "passive", pri: 1, t: "Newest article + job picks email", f: "One reusable email template; swap in the newest blog article each time", to: "The newest candidate article on the Fuse blog", why: "Keeps Engaged (every 2 weeks) and Warm (monthly) on fresh content once the reused emails run out. Needs about two new candidate articles a month." },
-  { id: "sunset", stage: "passive", pri: 2, t: "Do you still want to hear from us?", f: "Short plain-text email with two buttons", to: "'Keep me posted' and 'No thanks'. Anyone who doesn't click stops getting marketing emails", why: "Stops emailing people who haven't opened or clicked anything in two years, which protects deliverability for everyone else." },
+  { id: "newest-article", stage: "passive", pri: 1, t: "Newest article + job picks email", f: "One reusable email template; swap in the newest blog article each time", to: "The newest candidate article on the Fuse blog", why: "Keeps Highly engaged (every 2 weeks), Engaged (monthly) and Low engagement (quarterly) on fresh content once the reused emails run out. Needs about two new candidate articles a month." },
+  { id: "job-picks", stage: "passive", pri: 1, t: "Roles worth a look this month", f: "Email with 5 job picks for their discipline, no article", to: "Job ads matched to their discipline and location", why: "For Engaged candidates who said they're open to offers. Job picks earn a third of Active clicks, but Passive emails have none today." },
+  { id: "update-details", stage: "passive", pri: 1, t: "Is this still you? Update your details in a minute", f: "Short email with a one-click link to their profile", to: "The candidate profile or registration update page", why: "Re-engages Low engagement candidates and keeps the database current, which the brief asks for." },
+  { id: "db-review", stage: "passive", pri: 2, t: "Dormant database review", f: "Monthly report or list, not an email", to: "A list of Dormant candidates for review: bounced emails, duplicates, no placement or note in years", why: "The brief asks Dormant to support database management. Fix, merge or archive records before the sunset email goes." },
+  { id: "sunset", stage: "passive", pri: 2, t: "Do you still want to hear from us?", f: "Short plain-text email with two buttons", to: "'Keep me posted' and 'No thanks'. Anyone who doesn't click stops getting marketing emails", why: "Stops emailing Dormant people who haven't opened or clicked anything in two years, which protects deliverability for everyone else." },
   { id: "hiring-trends", stage: "passive", pri: 2, t: "Hiring trends for next year", f: "Blog article, published each January", to: "New blog page", why: "Content about what's changing wins in Passive (AI and hiring: 20.3)." },
   { id: "dated-refresh", stage: "interview", pri: 3, t: "Refresh '18 interview prep tips' and 'Boost your online presence'", f: "Update the existing blog articles", to: "The same URLs", why: "Both titles still say 2023." },
 ];
@@ -923,16 +998,17 @@ function renderStages() {
 }
 const stageArticles = k => DATA.articles.filter(a => (a.stage === k || a.also === k) && (a.live || callOf(a)[1] === "Bring back"));
 const TIER_RULES = [
-  "A click moves someone up to Engaged straight away. Moving down is checked once a month.",
+  "Each tier is a band of the Herefish engagement score. Until the thresholds are set, the activity rules on each tier button are a starting point.",
+  "A click moves someone up straight away. Moving down is checked once a month, one band at a time.",
   "Moving tier doesn't restart the content: skip any email they've already had.",
   "Answering 'looking' to a check-in, or applying, moves them out of Passive into New & registered or Applied.",
   "Every email keeps 3 job picks and the refer-a-friend block.",
 ];
 const TIER_DECIDE = [
-  "Score or activity? If the Bullhorn engagement score is set up, map its bands to the tiers. Make sure it counts clicks and applications more than opens: every Passive email opens at about 33%, so opens barely separate people (some mail apps open emails automatically).",
-  "With no score, each tier can be a list based on email clicks and opens in a date range. Check the list builder can filter on that.",
+  "Set the score thresholds for each tier, and check the score counts clicks and applications more than opens. Every Passive email opens at about 33%, so opens barely separate people (some mail apps open emails automatically).",
+  "If the score can't be used in a list filter, each tier can be a list based on email clicks and opens in a date range instead.",
   "One automation per tier, each on its own list, is the simplest to build and report on.",
-  "Expect Engaged to be small: each Passive email is clicked by 0.2% to 0.9% of the people it reaches. Most of the roughly 400,000 in Passive would be Quiet, which cuts send volume and protects deliverability.",
+  "Expect Highly engaged to be small: each Passive email is clicked by 0.2% to 0.9% of the people it reaches. Most of the roughly 400,000 in Passive would be Low engagement or Dormant, which cuts send volume and protects deliverability.",
 ];
 const SIDE = {
   passive: { h: "How people move between tiers", rules: TIER_RULES, decide: TIER_DECIDE },
