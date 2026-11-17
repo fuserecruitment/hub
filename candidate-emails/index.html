@@ -406,6 +406,8 @@ table.trans td:first-child { min-width: 200px; }
 table.trans td small { display: block; color: var(--ink-muted); font-size: 12.5px; margin-top: 2px; }
 table.trans ul { margin: 0; padding-left: 16px; display: grid; gap: 3px; }
 table.trans td.res { min-width: 150px; font-variant-numeric: tabular-nums; }
+table.trans p.says { margin: 8px 0 0; padding-left: 10px; border-left: 2px solid var(--rule); color: var(--ink-muted); font-size: 12.5px; }
+table.trans td:nth-child(3) { min-width: 300px; }
 table.trans tr.tflag td:last-child { color: var(--sev-fix); }
 .sbox.trans { border-left: 4px solid var(--accent); }
 table.create { min-width: 980px; }
@@ -557,9 +559,10 @@ table.board td small { display: block; color: var(--ink-muted); }
   </section>
 
   <section id="s-trans" aria-labelledby="trans">
-    <div class="head"><p class="eyebrow">Alongside the nurture emails</p><h2 id="trans">Transactional emails at each step</h2><p class="lede">The screener, shortlist, rejection, registration and placement emails and texts candidates get from other automations. The rebuilt stage flows have to fit around these, so nobody gets three emails on the same day. Read from Bullhorn Automation on 17 Nov 2026; results are since January 2025.</p></div>
+    <div class="head"><p class="eyebrow">Alongside the nurture emails</p><h2 id="trans">Transactional emails at each step</h2><p class="lede">The screener, shortlist, rejection, registration and placement emails and texts candidates get from other automations. The rebuilt stage flows have to fit around these, so nobody gets three emails on the same day. Read from Bullhorn Automation on 17 Nov 2026; results are since January 2025. "What it says" summarises each email and text from its template.</p></div>
     <div class="chips" id="transfilters"></div>
     <div class="tablewrap"><table class="trans" id="transtable"><thead><tr><th>Automation</th><th>Sends when</th><th>What the candidate gets</th><th>Results</th><th>For the rebuild</th></tr></thead><tbody></tbody></table></div>
+    <div class="panel"><h3 style="margin:0 0 10px;font-size:17px;font-weight:600">What the wording tells us</h3><ul class="moves" id="transwording"></ul></div>
     <div class="panel"><h3 style="margin:0 0 10px;font-size:17px;font-weight:600">Not sent from Bullhorn Automation</h3><ul class="moves" id="transmissing"></ul></div>
   </section>
 
@@ -753,7 +756,7 @@ const TRANS = [
   { stage: "applied", n: "Shortlisted: recruiter booking link", id: 106700, when: "Submission status set to Shortlist",
     gets: ["Applied: email 'We've reviewed your {job} application!' with the recruiter's booking link, then a text 15 minutes later", "Sourced by a recruiter: email 'I think you'd be a great fit for our {job} role!' with the booking link, then a text"],
     res: "Applied version 5,327 sent, 53.9% click. Sourced version 1,031 sent, 24.5% click",
-    note: "The best click rate of any email in this audit. Keep it as the hand-off from Applied to Interview." },
+    note: "The best click rate of any email in this audit. Keep it as the hand-off from Applied to Interview, and add the booking link to the text." },
   { stage: "applied", n: "Rejected: Not Suitable", id: 106922, when: "Submission set to Not Suitable (applications, not records created by Bullhorn or Bullhorn Automation)",
     gets: ["Email: 'An update on your {job} application'"],
     res: "25,306 sent. 83.5% open, 0 clicks",
@@ -793,12 +796,42 @@ const TRANS_MISSING = [
   "<b>Offer and contracts:</b> nothing in Bullhorn Automation. Offer letters and onboarding paperwork go out some other way.",
   "<b>Internal only:</b> the compliance alert at interview (105983), credential expiry, refer-a-friend and overdue-placement notifications go to recruiters, not candidates.",
 ];
+// what each one says, from the templates (17 Nov 2026)
+const SAYS = {
+  107533: "Thanks for applying through Fuse. Two steps to set up your profile: a registration chatbot, and a few screening questions. Explains Fuse texts often (reply STOP). The text that follows says: if the email isn't in your junk folder, you've probably opted out of emails.",
+  106973: "Text and email: thanks for applying, please do a short audio chat with Alice, our AI agent, about your experience; it keeps things fair and can match you to other roles. The reminder says it's a required step and to reply if the audio won't work. The final reminder says ignore it if you're no longer interested, or browse other jobs. Signed by the job owner.",
+  103019: "Thanks for doing the screening. The team is reviewing all screeners, volumes are high, and if you progress we'll be in touch shortly. Get in touch if you haven't heard. Link to browse other jobs. Signed by the submission owner.",
+  106700: "Applied: thanks for applying, we've reviewed your application and would love to hear about your experience, book a time in my calendar. Sourced: I think this role suits your background, book a time to chat. The texts only say 'we've sent you an email with more details' and have no link.",
+  106922: "Thanks for applying; you haven't been selected for this role. Your skills make you a strong candidate for the future, we'll keep your profile and reach out when something suitable comes up. No link, no job suggestions.",
+  110212: "Thanks for applying; the process has moved on and we won't progress your application this time. Your profile stays in our database. Link to browse the latest jobs.",
+  101016: "Thanks for applying and completing the virtual screening; due to strong applications we won't progress you. Reply for feedback on your application. Link to current jobs. The only rejection that offers feedback.",
+  106467: "Please complete the registration form: emergency contact, right to work, references and safety questions. Takes about 10 to 15 minutes; it speeds things up when we introduce you to clients.",
+  89095: "Congratulations again on your new role. Your safety is our priority: confirm you've been inducted by the host employer (site address, what you were inducted on, that you understood it). Reply or call your recruiter. The first three emails are word for word the same. The texts escalate to 'you MUST complete' and the last email says it must be done by end of day.",
+  101401: "Five topics in one email: the Safety Hub, the free counselling service (EAP) with its number and booking link, refer a friend ($500 perm, $50 temp), a team-photo competition, and Prime Super. Also has an email link to a named person at another company.",
+  98835: "Settling in? Are you registered with a Workforce Australia provider (APM, MAX Solutions and others)? You may get free training and help with tools, uniforms or transport. Reply Yes, No or Not sure.",
+  90982: "Fair Work requires us to give you the Casual Employment Information Statement; here it is on the Fair Work website. Signed by the placing recruiter.",
+  111651: "Friendly fortnightly check-ins: how's work going, let me know if you need anything.",
+  30476: "It's been a while and a lot can change in a year. Update your profile and CV, see the latest jobs, or visit the Advice Hub. Signed by the Fuse team.",
+};
+const WORDING = [
+  "<b>Three asks in the first hour.</b> A screener job sends the Alice audio screening (text and email) straight away, then an hour later the Welcome email asks for the registration chatbot and 'a few screening questions'. Candidates can reasonably think that's the same screening twice. Make one message ask for one thing: screening first, registration after they've been shortlisted.",
+  "<b>Two different sizes for the registration form.</b> The Welcome email calls it 'a quick chatbot'; the registration email, which links to the same form, says it takes 10 to 15 minutes and needs references and right-to-work details. Set expectations the same way in both.",
+  "<b>Shortlist texts have no link.</b> 'We've sent you an email with more details' gets 0 clicks, while texts with a link get 58% to 72% here. Put the booking link in the text.",
+  "<b>Rejections sound like three different companies.</b> One offers feedback, one has a jobs link, the most-sent one has neither. Use one template: thanks, one line on why, 3 similar roles, and the offer of feedback.",
+  "<b>Different senders in one process.</b> The screener emails are signed by the job owner, the screening-complete, shortlist and rejection emails by the submission owner. Several emails also show one staff member's name as the From name while being signed by the candidate's recruiter. Pick one sender per stage, ideally the recruiter who signs it.",
+  "<b>The induction emails repeat themselves.</b> The first three are identical apart from 'RE:' in the subject, and the texts get blunt ('you MUST'). Vary the reminders and keep the tone firm but friendly; it's sent to people in their first week.",
+  "<b>The Welcome text reads oddly.</b> 'If the email is not in your junk folder, it is likely you have opted out' sounds like an accusation. Say 'Check your junk folder, or use this link'.",
+  "<b>Text links are tracked as email.</b> The screener and Welcome texts use utm_medium=Email, so website reports count text clicks as email clicks.",
+  "<b>Safety and benefits tries to do too much.</b> Five topics in one email gets 4.3% clicks. It also contains an email link to a named person at another company, which looks left over from an old template. Remove it, and split safety and EAP from the referral and super content.",
+  "<b>Signatures don't match.</b> Some end 'Melbourne | Brisbane | Sydney', others 'Insurance | Wealth Management | Manufacturing | Infrastructure | Utilities', others 'It pays to be connected'. Use one signature block.",
+];
+document.getElementById("transwording").innerHTML = WORDING.map(x => `<li>${x}</li>`).join("");
 let transStage = "all";
 function renderTrans() {
   const opts = [["all", "All stages", TRANS.length], ...DATA.stages.map(s => [s.key, s.name, TRANS.filter(t => t.stage === s.key).length]).filter(o => o[2])];
   document.getElementById("transfilters").innerHTML = opts.map(([k, l, n]) => `<button class="chip" data-s="${k}" aria-pressed="${transStage === k}">${esc(l)} ${n}</button>`).join("");
   document.querySelector("#transtable tbody").innerHTML = TRANS.filter(t => transStage === "all" || t.stage === transStage).map(t =>
-    `<tr${t.flag ? ' class="tflag"' : ""}><td><b>${esc(t.n)}</b><small>${esc(STAGENAME[t.stage])} · ID ${t.id}</small></td><td>${esc(t.when)}</td><td><ul>${t.gets.map(g => `<li>${esc(g)}</li>`).join("")}</ul></td><td class="res">${esc(t.res)}</td><td>${esc(t.note)}</td></tr>`).join("");
+    `<tr${t.flag ? ' class="tflag"' : ""}><td><b>${esc(t.n)}</b><small>${esc(STAGENAME[t.stage])} · ID ${t.id}</small></td><td>${esc(t.when)}</td><td><ul>${t.gets.map(g => `<li>${esc(g)}</li>`).join("")}</ul>${SAYS[t.id] ? `<p class="says"><b>What it says:</b> ${esc(SAYS[t.id])}</p>` : ""}</td><td class="res">${esc(t.res)}</td><td>${esc(t.note)}</td></tr>`).join("");
 }
 document.getElementById("transfilters").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) { transStage = b.dataset.s; renderTrans(); } });
 document.getElementById("transmissing").innerHTML = TRANS_MISSING.map(x => `<li>${x}</li>`).join("");
