@@ -401,6 +401,13 @@ table.tiersum td:first-child { font-weight: 600; white-space: nowrap; }
 .routes ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; }
 .routes ol b { font-weight: 600; }
 .routes .gap { margin: 14px 0 0; padding: 10px 12px; border-left: 4px solid var(--sev-fix); background: var(--sev-fix-bg); border-radius: 0 8px 8px 0; font-size: 14px; }
+table.trans { min-width: 1040px; }
+table.trans td:first-child { min-width: 200px; }
+table.trans td small { display: block; color: var(--ink-muted); font-size: 12.5px; margin-top: 2px; }
+table.trans ul { margin: 0; padding-left: 16px; display: grid; gap: 3px; }
+table.trans td.res { min-width: 150px; font-variant-numeric: tabular-nums; }
+table.trans tr.tflag td:last-child { color: var(--sev-fix); }
+.sbox.trans { border-left: 4px solid var(--accent); }
 table.create { min-width: 980px; }
 table.create td:first-child { min-width: 260px; }
 table.create td small { display: block; color: var(--ink-muted); font-size: 12.5px; margin-top: 2px; }
@@ -445,6 +452,7 @@ table.board td small { display: block; color: var(--ink-muted); }
     <li class="grp"><a href="#s-now">How it works today</a></li>
     <li id="side-wfs"></li>
     <li><a href="#s-entry">How candidates enter</a></li>
+    <li><a href="#s-trans">Transactional emails</a></li>
     <li><a href="#s-stages">Proposed flows</a></li>
     <li id="side-stages"></li>
     <li><a href="#s-create">Content to create</a></li>
@@ -546,6 +554,13 @@ table.board td small { display: block; color: var(--ink-muted); }
         <li>Check which status Bullhorn gives a new candidate when the record is created, and the Active list's date rule (it couldn't be read from the data and may keep some older or manual records out).</li>
       </ol></div>
     </div>
+  </section>
+
+  <section id="s-trans" aria-labelledby="trans">
+    <div class="head"><p class="eyebrow">Alongside the nurture emails</p><h2 id="trans">Transactional emails at each step</h2><p class="lede">The screener, shortlist, rejection, registration and placement emails and texts candidates get from other automations. The rebuilt stage flows have to fit around these, so nobody gets three emails on the same day. Read from Bullhorn Automation on 17 Nov 2026; results are since January 2025.</p></div>
+    <div class="chips" id="transfilters"></div>
+    <div class="tablewrap"><table class="trans" id="transtable"><thead><tr><th>Automation</th><th>Sends when</th><th>What the candidate gets</th><th>Results</th><th>For the rebuild</th></tr></thead><tbody></tbody></table></div>
+    <div class="panel"><h3 style="margin:0 0 10px;font-size:17px;font-weight:600">Not sent from Bullhorn Automation</h3><ul class="moves" id="transmissing"></ul></div>
   </section>
 
   <section id="s-stages" aria-labelledby="stages">
@@ -723,6 +738,72 @@ document.getElementById("moves").innerHTML = MOVES.map(x => `<li>${x}</li>`).joi
 document.getElementById("brieflist").innerHTML = BRIEF.map(([k, h, items]) => `<div class="panel"><h3>${esc(k)}: ${esc(h)}</h3><p>Checklist from the brief</p><ul class="chk">${items.map(([t, s, n, href]) =>
   `<li><span><span class="call ${BSTAT[s][0]}">${BSTAT[s][1]}</span><b>${esc(t)}</b></span><small>${href ? `<a href="${href}">${esc(n)}</a>` : esc(n)}</small></li>`).join("")}</ul></div>`).join("");
 
+// transactional emails, read 17 Nov 2026 (results since Jan 2025)
+const TRANS = [
+  { stage: "applied", n: "Welcome Workflow [FY26]", id: 107533, when: "First application (added after 31 May 2026), 1 hour later",
+    gets: ["Email: Welcome to Fuse, let's find your next role (registration chatbot)", "Text pointing to the email", "Sets the candidate to Active"],
+    res: "39,025 entered", note: "Already covered under How candidates enter. Lands the same hour as the screener text and email." },
+  { stage: "applied", n: "VR screener invite (V3)", id: 106973, when: "Applies, or is shortlisted, for a job set to use the screener",
+    gets: ["Straight away: text asking them to complete the screening", "Straight away: email 'Next steps for {job} application'", "Day 1: 'RE: Next steps' reminder", "Day 4: 'Final reminder: Screening required'"],
+    res: "15,301 entered. Text 72.2% click; emails 32.7%, 24.9% and 23.7%",
+    note: "The same messages also run in 3 more automations: V2 (105503, still on for jobs using the older setting: 16,473 sent), Internship (106129) and Invited (107005). Merge into one. 13.5% of the texts bounce (19.3% in V2), so mobile numbers need cleaning.", flag: 1 },
+  { stage: "applied", n: "Screening complete", id: 103019, when: "Screening status set to Complete",
+    gets: ["Email: 'Screening complete for {job}' with a latest-jobs link"],
+    res: "15,099 sent. 89.5% open, 10.7% click", note: "The real 'we've got your application' moment for screener jobs. A good place for the 'What happens to your application now' content." },
+  { stage: "applied", n: "Shortlisted: recruiter booking link", id: 106700, when: "Submission status set to Shortlist",
+    gets: ["Applied: email 'We've reviewed your {job} application!' with the recruiter's booking link, then a text 15 minutes later", "Sourced by a recruiter: email 'I think you'd be a great fit for our {job} role!' with the booking link, then a text"],
+    res: "Applied version 5,327 sent, 53.9% click. Sourced version 1,031 sent, 24.5% click",
+    note: "The best click rate of any email in this audit. Keep it as the hand-off from Applied to Interview." },
+  { stage: "applied", n: "Rejected: Not Suitable", id: 106922, when: "Submission set to Not Suitable (applications, not records created by Bullhorn or Bullhorn Automation)",
+    gets: ["Email: 'An update on your {job} application'"],
+    res: "25,306 sent. 83.5% open, 0 clicks",
+    note: "No link at all, so 21,000 people read it and have nowhere to go. Replace it with the proposed 'Not this time: 3 similar roles' email instead of sending both.", flag: 1 },
+  { stage: "applied", n: "No response after 28 days", id: 110212, when: "Application still New Lead 28 days later, then 1 day",
+    gets: ["Email: 'An update on your {job} application', with a jobs link"],
+    res: "9,787 sent. 84.4% open, 2.1% click", note: "Same subject as the Not Suitable email but a different template that has a jobs link. Use one template with job picks for both." },
+  { stage: "applied", n: "VR screener rejected", id: 101016, when: "Submission set to VR Screener - Rejected after screening",
+    gets: ["15 minutes later: email 'Update on your application for {job}'"],
+    res: "Nobody has entered yet", note: "A third rejection template. Fold into the single rejection email." },
+  { stage: "applied", n: "Client submission: registration form", id: 106467, when: "Submitted to a client with registration fields empty",
+    gets: ["Email: 'Complete our registration form'", "2 days later: notification to the recruiter"],
+    res: "1,116 sent. 42.4% click", note: "Already listed under Related automations." },
+  { stage: "placed", n: "Host induction checklist (on-hire)", id: 89095, when: "On-hire placement that needs a host induction, from Day 1 after the start until it's done",
+    gets: ["Day 1: email 'Have you been inducted?'", "Day 2: text from their recruiter", "Days 3 to 7: two more emails, two texts and an 'URGENT' email, then a task for the recruiter"],
+    res: "2,162 entered. First email 68.9% click, texts 65% to 70%", note: "Compliance, not marketing. Count it when spacing the On-hire flow's first week: someone who hasn't done the induction can get 7 messages on top of the welcome texts." },
+  { stage: "placed", n: "On-hire safety and benefits", id: 101401, when: "On-hire placement started in the last 12 days, 15 minutes after",
+    gets: ["Email: 'Safety, support & benefits for you'"],
+    res: "638 sent. 4.3% click", note: "Repeats the On-hire series' Day 7 Safety Hub email (4.7%). Keep one.", flag: 1 },
+  { stage: "placed", n: "Workforce Australia follow-up", id: 98835, when: "On-hire placement where Workforce Australia registration is No, Day 4",
+    gets: ["Email: 'Are you registered with a Workforce Australia provider?'"],
+    res: "1,315 sent. 81% open, 0.9% click", note: "Admin for wage subsidies. Leave as is, but count it in the first week." },
+  { stage: "placed", n: "Casual Employment Information Statement", id: 90982, when: "On-hire placement at 26 weeks, then yearly",
+    gets: ["Email: 'Casual Employment Information Statement (CEIS)' linking the Fair Work statement"],
+    res: "476 sent. 37.1% click", note: "Required information, not marketing. Leave as is." },
+  { stage: "placed", n: "Client-specific safety texts", id: 111651, when: "Placed with one client, every 2 weeks",
+    gets: ["Check-in texts from the recruiter"],
+    res: "27 entered", note: "One client only. Exclude these people from the On-hire check-in texts so they don't get both." },
+  { stage: "passive", n: "Candidate Fuse Profile Update [2026]", id: 30476, when: "Last note 12 to 24 months ago, not Placed, Unavailable, unsubscribed or Do Not Use",
+    gets: ["Email: 'It's been a while, {first name}. Let's catch up.'"],
+    res: "597,488 entered, 105,828 sent. Results report timed out",
+    note: "A re-engagement email to largely the same people as Passive. Fold it into the Low engagement and Dormant tiers, or count it in their frequency.", flag: 1 },
+];
+const TRANS_MISSING = [
+  "<b>Application received:</b> nothing for jobs that don't use the screener. First-time candidates get the Welcome email; anyone else hears nothing until they're shortlisted, rejected or 28 days pass. Check whether the career site or job boards send their own.",
+  "<b>Interview:</b> no confirmation, time, address or reminder is sent from Bullhorn Automation. These seem to come from recruiters, Outlook or the booking page. Check before adding the Interview flow's day-before and on-the-day emails.",
+  "<b>Offer and contracts:</b> nothing in Bullhorn Automation. Offer letters and onboarding paperwork go out some other way.",
+  "<b>Internal only:</b> the compliance alert at interview (105983), credential expiry, refer-a-friend and overdue-placement notifications go to recruiters, not candidates.",
+];
+let transStage = "all";
+function renderTrans() {
+  const opts = [["all", "All stages", TRANS.length], ...DATA.stages.map(s => [s.key, s.name, TRANS.filter(t => t.stage === s.key).length]).filter(o => o[2])];
+  document.getElementById("transfilters").innerHTML = opts.map(([k, l, n]) => `<button class="chip" data-s="${k}" aria-pressed="${transStage === k}">${esc(l)} ${n}</button>`).join("");
+  document.querySelector("#transtable tbody").innerHTML = TRANS.filter(t => transStage === "all" || t.stage === transStage).map(t =>
+    `<tr${t.flag ? ' class="tflag"' : ""}><td><b>${esc(t.n)}</b><small>${esc(STAGENAME[t.stage])} · ID ${t.id}</small></td><td>${esc(t.when)}</td><td><ul>${t.gets.map(g => `<li>${esc(g)}</li>`).join("")}</ul></td><td class="res">${esc(t.res)}</td><td>${esc(t.note)}</td></tr>`).join("");
+}
+document.getElementById("transfilters").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) { transStage = b.dataset.s; renderTrans(); } });
+document.getElementById("transmissing").innerHTML = TRANS_MISSING.map(x => `<li>${x}</li>`).join("");
+renderTrans();
+
 // calls: what to do with each article
 function dayOf(e) { const m = (e.when || "").match(/(Day|Week)\s+(\d+)/); return m ? (m[1] === "Week" ? +m[2] * 7 : +m[2]) : 0; }
 function callOf(a) {
@@ -759,10 +840,10 @@ const FLOWS = {
   applied: {
     trigger: "A submission is created in Bullhorn (New Lead or Client Submission).",
     steps: [
-      { d: "Day 0", k: "reuse", a: "wondering-what-happens-to-your-resume-after-you-apply-and-how-to-improve", t: "What happens to your application now", why: "Scored 47.3 as a timed email on Day 4. Sent the day they apply, it should do even better." },
+      { d: "Day 0", k: "reuse", a: "wondering-what-happens-to-your-resume-after-you-apply-and-how-to-improve", t: "What happens to your application now", why: "Scored 47.3 as a timed email on Day 4. Sent the day they apply, it should do even better. For jobs using the screener, put this in the 'Screening complete' email instead: they already get a text and an email the moment they apply." },
       { d: "Day 3", k: "blog", a: "how-to-follow-up-after-a-job-application", t: "How to follow up without being pushy" },
       { d: "Day 5", k: "new", id: "timeline", t: "Your application timeline at Fuse" },
-      { d: "Day 10", k: "reuse", id: "not-this-time", c: "If not progressed", a: "7-reasons-you-didnt-get-that-interview-and-how-to-stop-being-overlooked", t: "Not this time: 3 similar roles to look at", why: "A new, kinder email built around this article, with job picks." },
+      { d: "Day 10", k: "reuse", id: "not-this-time", c: "If not progressed", a: "7-reasons-you-didnt-get-that-interview-and-how-to-stop-being-overlooked", t: "Not this time: 3 similar roles to look at", why: "A new, kinder email built around this article, with job picks. It replaces today's Not Suitable email (25,306 sent, 0 clicks: it has no links)." },
       { d: "Day 14", k: "reuse", a: "why-you-should-submit-a-job-application-even-if-you-don-t-meet-the-job-description", t: "Apply even if you don't tick every box + job picks", at: "Why you should apply even if you don't meet the job description", why: "Only linked by mistake today. Pair with 'How transferable skills help you get a new job' (blog)." },
     ],
     exits: [["Interview booked", "interview"], ["Not progressed, no new application", "registered"]],
@@ -931,7 +1012,7 @@ const CREATE = [
   { id: "how-fuse-works", stage: "registered", pri: 2, t: "How Fuse works: what happens after you register", f: "Blog article or landing page", to: "New page; link it from the welcome email and the recruiter blog article", why: "Sets expectations for every later email. No page explains this today." },
   { id: "cv-checklist", stage: "registered", pri: 1, t: "Your resume and LinkedIn checklist", f: "Download (PDF or landing page) + email", to: "New download, in the same format as the Job Seeking Checklist", why: "Checklists are the format that gets clicked most." },
   { id: "timeline", stage: "applied", pri: 1, t: "Your application timeline at Fuse", f: "Blog article + email", to: "New blog page", why: "How long each step takes and when to expect a call. The second-best article overall ('What happens after you apply') shows candidates want this." },
-  { id: "not-this-time", stage: "applied", pri: 1, t: "Not this time: 3 similar roles to look at", f: "Email only, with job picks", to: "Job picks, plus '7 reasons you didn't get that interview'", why: "Turns a rejection into the next application." },
+  { id: "not-this-time", stage: "applied", pri: 1, t: "Not this time: 3 similar roles to look at", f: "Email only, with job picks", to: "Job picks, plus '7 reasons you didn't get that interview'", why: "Turns a rejection into the next application. Replaces the three rejection templates running today (Not Suitable, 28 days with no response, screener rejected); the Not Suitable one has no links and got 0 clicks from 25,306." },
   { id: "prep-call", stage: "interview", pri: 2, t: "Book a prep call with your recruiter", f: "Button in an email", to: "Reply-to the recruiter, or a booking link if recruiters use one", why: "A personal touch at the moment candidates most want help." },
   { id: "interview-checklist", stage: "interview", pri: 1, t: "Your interview-day checklist", f: "Download (PDF or landing page) + email", to: "New download, in the same format as the Job Seeking Checklist", why: "What to bring, what to research, questions to ask. Checklists get the most clicks." },
   { id: "after-interview", stage: "interview", pri: 1, t: "After the interview: thank-you note and follow-up", f: "Blog article with a message they can copy", to: "New blog page", why: "Nothing covers the time after an interview." },
@@ -1033,6 +1114,7 @@ function renderStages() {
   document.getElementById("pside").innerHTML = (tiered ? `
     <div class="sbox"><h4>${esc(SIDE[curStage].h)}</h4><ul class="bul">${SIDE[curStage].rules.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
     <div class="sbox gaps"><h4>To decide before building</h4><ul class="bul">${SIDE[curStage].decide.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : "") + `
+    ${(() => { const tr = TRANS.filter(t => t.stage === curStage); return tr.length ? `<div class="sbox trans"><h4>Also sent at this stage<small>${tr.length} transactional</small></h4><ul class="bul">${tr.map(t => `<li><b>${esc(t.n)}:</b> ${esc(t.when.charAt(0).toLowerCase() + t.when.slice(1))}</li>`).join("")}</ul><a class="more" href="#s-trans">See what each sends</a></div>` : ""; })()}
     <div class="sbox gaps"><h4>Gaps this stage has today</h4><ul class="bul">${GAPS[curStage].map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
     <div class="sbox"><h4>Also fits, if you need swaps<small>${more.length}</small></h4><ul class="mini">${more.join("") || "<li>Nothing else yet</li>"}</ul></div>`;
 }
