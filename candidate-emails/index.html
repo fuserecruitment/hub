@@ -395,6 +395,12 @@ table.tiersum td:first-child { font-weight: 600; white-space: nowrap; }
 .brief ul.chk small { color: var(--ink-muted); font-size: 12.5px; }
 .brief ul.chk a { color: var(--accent-ink); }
 .moves { margin: 0; padding-left: 18px; display: grid; gap: 7px; font-size: 14px; }
+.routes { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; }
+.routes .panel h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+.routes .panel > p { margin: 0 0 12px; font-size: 14px; color: var(--ink-muted); }
+.routes ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; }
+.routes ol b { font-weight: 600; }
+.routes .gap { margin: 14px 0 0; padding: 10px 12px; border-left: 4px solid var(--sev-fix); background: var(--sev-fix-bg); border-radius: 0 8px 8px 0; font-size: 14px; }
 table.create { min-width: 980px; }
 table.create td:first-child { min-width: 260px; }
 table.create td small { display: block; color: var(--ink-muted); font-size: 12.5px; margin-top: 2px; }
@@ -438,6 +444,7 @@ table.board td small { display: block; color: var(--ink-muted); }
     <li><a href="#s-brief">Project brief</a></li>
     <li class="grp"><a href="#s-now">How it works today</a></li>
     <li id="side-wfs"></li>
+    <li><a href="#s-entry">How candidates enter</a></li>
     <li><a href="#s-stages">Proposed flows</a></li>
     <li id="side-stages"></li>
     <li><a href="#s-create">Content to create</a></li>
@@ -505,6 +512,40 @@ table.board td small { display: block; color: var(--ink-muted); }
     </div>
     <p class="wf-meta" id="wfmeta"></p>
     <div class="flow" id="timeline" role="tabpanel"></div>
+  </section>
+
+  <section id="s-entry" aria-labelledby="entry">
+    <div class="head"><p class="eyebrow">Entry routes</p><h2 id="entry">How candidates enter today</h2><p class="lede">The two ways a candidate starts, traced through every automation they touch. New Lead is the status of the application (the submission), not the candidate. The Welcome workflow is what sets the candidate to Active.</p></div>
+    <div class="routes">
+      <div class="panel"><h3>They apply for a job</h3><p>Most new candidates start here</p><ol>
+        <li><b>Application:</b> Bullhorn creates the candidate (if new) and a submission with status New Lead.</li>
+        <li><b>Welcome Workflow [FY26] (107533):</b> if they were added after 31 May 2026. Waits 1 hour, sends the welcome email (registration chatbot and screening questions) and a text, then sets the candidate to Active.</li>
+        <li><b>Active Candidate FY25 (80666):</b> starts because they're now Active. Day 2 is the job-hunting checklist, sent 2pm to 4pm.</li>
+        <li><b>Registration reminder (107534):</b> if the registration fields are still empty 7 days later.</li>
+        <li><b>Submitted to a client:</b> 106467 invites them to register if they haven't. If they're Passive, 62899 or 83616 sets them to Active.</li>
+        <li><b>No application or submission in 6 months:</b> 102541 sets them to Passive (the Active workflow also does at Day 173), and the Passive workflow starts.</li>
+      </ol><p class="gap"><b>Gap:</b> a Passive, Placed or Unavailable candidate who applies again stays in that status. The automation that moved them to Active (107568) has been paused since June 2026, and about 1,968 people match it now. Only a client submission moves them back.</p></div>
+      <div class="panel"><h3>A recruiter adds them in Bullhorn</h3><p>No application, so no New Lead submission</p><ol>
+        <li><b>No welcome:</b> Welcome FY26 needs a New Lead submission, so it never starts.</li>
+        <li><b>Status Active:</b> they go straight into Active Candidate FY25 (if subscribed, with a valid email and not excluded) and get the Day 2 checklist with no welcome first.</li>
+        <li><b>Any other status:</b> nothing happens.</li>
+        <li><b>Registration form:</b> only if the recruiter adds the note that triggers Manual Reg Form Trigger (106542, used 14 times in total), or they're later submitted to a client (106467).</li>
+      </ol><p class="gap"><b>Gap:</b> manually added candidates get no welcome and usually no registration form.</p></div>
+    </div>
+    <div class="qs">
+      <div class="panel"><h3><span>In the rebuild</span>How each route changes</h3><ol>
+        <li><b>Applies:</b> Welcome for first-time candidates, then the Applied flow timed from the submission. Status set to Active as today.</li>
+        <li><b>Added manually:</b> the New & registered flow, entered on status Active with no submission. They get the welcome, registration form and job alerts.</li>
+        <li><b>Comes back by applying:</b> one Passive to Active automation that catches applications (New Lead) as well as client submissions.</li>
+      </ol></div>
+      <div class="panel"><h3><span>Before building</span>Things to settle</h3><ol>
+        <li>Applied runs once per submission, so someone who applies for 3 jobs gets it 3 times. Exclude anyone who has been through Applied in the last 14 days.</li>
+        <li>Most people register by applying, so they'd enter New & registered and Applied at once. Keep people with a submission out of New & registered, or fold its welcome and job-alert emails into Applied for first-time applicants.</li>
+        <li>Offer runs from the offer, but the day-before-start steps belong in the Placed flows, which are timed from the start date.</li>
+        <li>Set the Passive tiers to remove people who stop matching instead of pausing them. Pausing is what left about 530,000 people frozen in the retired Passive workflow.</li>
+        <li>Check which status Bullhorn gives a new candidate when the record is created, and the Active list's date rule (it couldn't be read from the data and may keep some older or manual records out).</li>
+      </ol></div>
+    </div>
   </section>
 
   <section id="s-stages" aria-labelledby="stages">
