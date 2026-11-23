@@ -56,7 +56,7 @@ Match `automation-finder/index.html`, the reference tool page.
 |---|---|---|
 | `bullhorn-category/` | Works out industry / category / sub-category for Bullhorn records | AI lookup via `bullhorn-category/worker/` |
 | `automation-finder/` | Plain-English search of the Active Automation Register | `bullhorn-automation-finder` worker → Power Automate flow → register spreadsheet |
-| `journeys/` | Every automation placed on the candidate and sales contact journeys, with hand-offs, gaps and a "Needs a check" tab | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
+| `journeys/` | Candidate and sales contact journeys as flowcharts (steps, hand-offs, gaps, suggestions, every automation by stage), plus a "Might need update" tab | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
 | `present-feedback/` | Static report on the Present survey (Sept 2026) | None (static) |
 | `candidate-emails/` | Static audit of the Active and Passive candidate email workflows (Oct 2026): click rates, proposed per-stage flows, content to create | None (static, data baked into the page) |
 | `shared/` | Code used by more than one tool (no page of its own) | None |
@@ -92,16 +92,22 @@ Match `automation-finder/index.html`, the reference tool page.
   category tools, Map to New Categories, Top Talent sends) are grouped by
   name in `placeAutomation()`.
 - Anything not in `STAGE_IDS` and not matched by a name rule appears in a
-  "Not on the map yet" column. To place it, add its ID to the right stage.
+  "Not on the map yet" list at the top of its journey. To place it, add its
+  ID to the right stage.
 - `ALSO` lists automations shown on both journeys.
-- `CONNS` (hand-offs) and `FLAGS` (gaps & checks) are hand-written and were
-  last reviewed 8 Oct 2026.
-- The Flowchart tab is hand-written in `FLOW` (reviewed 29 Oct 2026): one
-  person's path down each journey, grouped by the same stage keys as
-  `JOURNEYS`, with decisions, field changes and automation IDs at each step.
-  Names and statuses come from the register at load time, and retired or
-  missing IDs are skipped. Suggested workflows (`sugg`) aren't built yet and
-  show in purple (`--sugg`), a colour used only for suggestions.
+- Three views: Candidate journey, Sales contact journey (`#cand`, `#sales`)
+  and Might need update (`#checks`). Each journey is a flowchart,
+  hand-written in `FLOW` (reviewed 29 Oct 2026): one person's path, grouped
+  by the stage keys in `JOURNEYS`, with decisions, field changes, hand-offs
+  to the other journey, gaps and checks (`note`) at each step. Under each
+  stage heading, "All N automations" folds out the stage's full list from
+  the register; the search box opens the stages with matches.
+- Automation names and statuses come from the register at load time;
+  retired or missing IDs are skipped. Suggested workflows (`sugg`) aren't
+  built yet and show in purple (`--sugg`), a colour used only for suggestions.
+- The separate column view, "How they connect" and "Gaps & checks" tabs were
+  removed in Nov 2026 as duplicates of the flowchart; old `#flow`, `#conn`
+  and `#flags` links open the candidate journey.
 - It keeps the register in localStorage (`automationJourneys.register`) and
   treats it as stale once the latest weekly update has passed. The register's
   scheduled update runs Mondays 6:00 am Philippine time, so the cutoff is

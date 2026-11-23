@@ -101,12 +101,6 @@
   .intro h1{font-size:28px;line-height:1.25;margin:0 0 10px;}
   .intro p{color:var(--ink-soft);font-size:15px;max-width:72ch;}
 
-  .stats{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
-  .stat{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:12px 16px;min-width:0;}
-  .stat .k{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
-  .stat .v{font-size:22px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;}
-  .stat .v small{font-size:12.5px;font-weight:500;color:var(--ink-soft);margin-left:6px;}
-
   .status{min-height:22px;font-size:13.5px;color:var(--ink-soft);}
   .status.working::before{
     content:"";display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px;
@@ -136,25 +130,7 @@
   .chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600;}
   .hint{font-size:13px;color:var(--ink-soft);}
 
-  /* ---------- Journey track ---------- */
-  .track-scroll{overflow-x:auto;padding-bottom:10px;}
-  .track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(272px,1fr);gap:14px;min-width:min-content;}
-  .stage{
-    background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px;
-    display:flex;flex-direction:column;gap:10px;min-width:0;border-top:4px solid var(--accent);
-  }
-  .stage.new{border-top-color:var(--amber);background:#FFFCF5;}
-  .stage.hl{box-shadow:0 0 0 3px var(--blue);}
-  .stage-top{display:flex;align-items:baseline;gap:10px;}
-  .num{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
-  .stage h3{font-size:16.5px;line-height:1.3;}
-  .blurb{font-size:13.5px;color:var(--ink-soft);}
-  .handoffs{display:flex;flex-wrap:wrap;gap:6px;}
-  .ho{
-    font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:600;text-align:left;cursor:pointer;
-    border:1px dashed var(--other);color:var(--other);background:var(--white);border-radius:var(--radius-sm);padding:4px 9px;
-  }
-  .ho:hover{background:var(--steel);}
+  /* ---------- Automation cards ---------- */
   .cnt{font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums;}
   .cards{display:flex;flex-direction:column;gap:6px;}
 
@@ -185,42 +161,21 @@
   details.card.ext{border-style:dashed;}
   .empty{font-size:13px;color:var(--ink-soft);font-style:italic;}
 
-  .band{margin-top:14px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px;}
-  .band-head{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;margin-bottom:12px;}
-  .band-head h3{font-size:16.5px;}
-  .band > .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px;align-items:start;}
-
-  /* ---------- Connections ---------- */
-  .lanes{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:14px;overflow-x:auto;}
-  .lane{display:flex;align-items:center;gap:8px;min-width:min-content;}
-  .lane-label{width:118px;flex-shrink:0;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
-  .lane-step{
-    font-family:'Work Sans',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;
-    border:none;border-radius:var(--radius-sm);padding:7px 11px;
-  }
-  .lane-step.c{background:#E0F3FB;color:#00658F;}
-  .lane-step.s{background:var(--navy);color:#fff;}
-  .lane-arrow{color:var(--concrete);font-weight:700;}
-  .lane-note{font-size:12.5px;color:var(--ink-soft);}
-  .conn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:16px;}
-  .conn{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0;}
-  .conn h3{font-size:16px;}
-  .route{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-  .conn p{font-size:14px;color:var(--ink-soft);}
-  .ids{display:flex;flex-wrap:wrap;gap:6px;}
-  .ids a{font-size:12px;color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);border-radius:100px;padding:2px 9px;}
-  .ids a:hover{border-color:var(--blue);color:var(--ink);}
-
-  /* ---------- Gaps ---------- */
-  .flags{display:flex;flex-direction:column;gap:12px;max-width:960px;}
-  .flagc{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--sev);border-radius:var(--radius-lg);padding:14px 18px;display:flex;flex-direction:column;gap:8px;}
-  .flagc h3{font-size:16px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;}
-  .sev{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sev);}
-  .flagc p{font-size:14px;}
-
   /* ---------- Flowchart: one vertical line per journey, grouped by the journey stages ---------- */
-  #v-flow{--accent:var(--blue);--accent-bg:#E0F3FB;--other:var(--navy);}
-  #v-flow[data-j="sales"]{--accent:var(--navy);--accent-bg:var(--steel);--other:var(--blue);}
+  #v-cand{--accent:var(--blue);--accent-bg:#E0F3FB;--other:var(--navy);}
+  #v-sales{--accent:var(--navy);--accent-bg:var(--steel);--other:var(--blue);}
+  .fc-shead-wrap{min-width:0;padding-bottom:12px;}
+  .fc-all{margin-top:-4px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--white);}
+  .fc-all > summary{cursor:pointer;padding:8px 12px;font-size:13px;font-weight:600;color:var(--ink-soft);list-style:none;}
+  .fc-all > summary::-webkit-details-marker{display:none;}
+  .fc-all > summary::before{content:"▸ ";}
+  .fc-all[open] > summary::before{content:"▾ ";}
+  .fc-all > summary:hover{color:var(--ink);}
+  .fc-all > .cards{padding:0 10px 10px;}
+  .fc-all.hl{box-shadow:0 0 0 3px var(--blue);}
+  .fc-none{font-size:12.5px;color:var(--ink-soft);font-style:italic;}
+  .fc-new{max-width:920px;margin-top:12px;}
+  .fc-new > p{font-size:14px;color:var(--ink-soft);margin-bottom:10px;}
   .fc-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-soft);align-items:center;margin-bottom:6px;}
   .fc-legend span{display:inline-flex;gap:6px;align-items:center;}
   .fc-lg{width:13px;height:13px;display:inline-block;border:2px solid var(--ink-soft);background:var(--white);}
@@ -235,7 +190,7 @@
   .fc-node,.fc-link,.fc-stage{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:14px;}
   .fc-rail{position:relative;}
   .fc-rail::before{content:"";position:absolute;left:19px;top:0;bottom:0;width:2px;background:var(--accent);}
-  .fc-flow > :first-child .fc-rail::before{top:50%;}
+  .fc-flow > :first-child .fc-rail::before{top:34px;}
   .fc-node.last .fc-rail::before{bottom:auto;height:22px;}
   .fc-mk{
     position:absolute;left:20px;top:22px;transform:translate(-50%,-50%);display:grid;place-items:center;
@@ -247,10 +202,9 @@
   .fc-node.start .fc-mk,.fc-node.end .fc-mk{width:36px;height:22px;border-radius:6px;background:var(--accent);color:#fff;font-size:10px;letter-spacing:.05em;}
   .fc-node.gapnode .fc-mk{background:var(--warn);border-color:var(--warn);}
   .fc-node.sugg .fc-mk{width:30px;height:30px;border-radius:50%;border-style:dashed;border-color:var(--sugg);color:var(--sugg);background:var(--sugg-bg);font-size:16px;}
-  .fc-stage .fc-mk{width:38px;height:38px;border-radius:10px;background:var(--accent);color:#fff;font-size:13px;top:50%;}
+  .fc-stage .fc-mk{width:38px;height:38px;border-radius:10px;background:var(--accent);color:#fff;font-size:13px;top:34px;}
   .fc-shead{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:22px 0 12px;border-bottom:1px solid var(--line);margin-bottom:12px;}
   .fc-shead h3{font-size:19px;}
-  .fc-shead .ho{margin-left:auto;}
   .fc-link .fc-rail{min-height:28px;}
   .fc-link .fc-rail::after{content:"";position:absolute;left:20px;bottom:1px;transform:translateX(-50%);border:6px solid transparent;border-top:7px solid var(--accent);border-bottom:0;}
   .fc-lab{align-self:center;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);}
@@ -297,8 +251,8 @@
   }
   .fc-chip:hover{border-color:var(--blue);}
   .fc-chip .id{color:var(--ink-soft);font-size:11px;white-space:nowrap;}
-  #v-flow.no-autos .fc-autos{display:none;}
-  #v-flow.no-sugg .fc-sg,#v-flow.no-sugg .fc-node.sugg,#v-flow.no-sugg .fc-link.to-sugg{display:none;}
+  .no-autos .fc-card .fc-autos,.no-autos .fc-after .fc-autos{display:none;}
+  .no-sugg .fc-sg,.no-sugg .fc-node.sugg,.no-sugg .fc-link.to-sugg{display:none;}
   .fc-node.hl .fc-card{box-shadow:0 0 0 3px var(--blue);}
   .fc-health{max-width:920px;margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--white);display:flex;flex-direction:column;gap:8px;}
   .fc-health p{font-size:14px;color:var(--ink-soft);}
@@ -396,9 +350,6 @@
         <nav id="viewNav">
           <button type="button" class="sidebar-nav-btn active" data-view="cand">Candidate journey <span class="n" id="navCand"></span></button>
           <button type="button" class="sidebar-nav-btn" data-view="sales">Sales contact journey <span class="n" id="navSales"></span></button>
-          <button type="button" class="sidebar-nav-btn" data-view="flow">Flowchart</button>
-          <button type="button" class="sidebar-nav-btn" data-view="conn">How they connect</button>
-          <button type="button" class="sidebar-nav-btn" data-view="flags">Gaps &amp; checks</button>
           <button type="button" class="sidebar-nav-btn" data-view="checks">Might need update <span class="n" id="navChecks"></span></button>
         </nav>
       </div>
@@ -412,7 +363,7 @@
       <div class="sidebar-block sidebar-about">
         <label>Where the data comes from</label>
         <p>The Active Automation Register 2026 spreadsheet in Marketing &rsaquo; BH Automation (Herefish). The register is updated every Monday morning, and this page picks up the new copy after that. It's the same source as the <a href="../automation-finder/">Automation Finder</a>.</p>
-        <p>The journey stages, hand-offs and gaps were mapped on 8 October 2026. Automations added after that show up in a "Not on the map yet" column until they're given a stage.</p>
+        <p>The journey stages and gaps were mapped on 8 October 2026 and the steps on 29 October 2026. Automations added after that show up under "Not on the map yet" until they're given a stage.</p>
       </div>
     </div>
   </aside>
@@ -421,10 +372,9 @@
     <div class="workspace-inner">
       <div class="intro">
         <h1>How our automations fit together</h1>
-        <p>Every Bullhorn Automation in the register, placed on the candidate and sales contact journeys, with the points where one journey hands off to the other. Open any card to see what it does and jump to it in Bullhorn Automation.</p>
+        <p>Follow a candidate or a client contact from start to finish. Each step shows what happens, which automations do it and where people branch off. Open “All automations” under any stage for the full list from the register.</p>
       </div>
 
-      <div class="stats" id="stats" hidden></div>
       <div class="status working" id="loadStatus" role="status" aria-live="polite">Reading the automation register…</div>
       <div class="error" id="loadError" hidden>
         <span>Couldn't load the automation register. Check your connection and try again.</span>
@@ -433,9 +383,6 @@
 
       <section id="v-cand" hidden></section>
       <section id="v-sales" hidden></section>
-      <section id="v-flow" hidden></section>
-      <section id="v-conn" hidden></section>
-      <section id="v-flags" hidden></section>
       <section id="v-checks" hidden></section>
       <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -496,74 +443,36 @@ const STAGE_IDS = {
    also in this stage of the other journey. */
 const ALSO = { '59884':['sales','hiring'], '106625':['sales','tt'], '106607':['sales','tt'], '106616':['sales','tt'] };
 
+/* The stages of each journey, in order. The steps inside each stage are in FLOW below.
+   ext = tools outside the register, listed with that stage's automations. */
 const JOURNEYS = {
- cand:{ label:'Candidate', accent:'var(--blue)', other:'var(--navy)', stages:[
-  {k:'enter',t:'Arrive in Bullhorn',b:'Website (Applyflow) applications, RefeRec referrals and ZoomInfo imports create the record. Source and owner get set; overseas records are archived.',
-   ho:[['sales','enter','ZoomInfo import also feeds clients']]},
-  {k:'welcome',t:'Welcome & register',b:'Welcome email and SMS, status set to Active, registration form with a 7-day reminder. Form answers set Registration Compliance Status.'},
-  {k:'apply',t:'Apply & screen',b:'Open jobs get AI-written VR screener questions; web applicants are invited to the screener, then acknowledged or rejected. Automatch suggests the top 10 candidates per job.',
-   ho:[['sales','hiring','Starts when a client job is opened']],
+ cand:{ label:'Candidate', stages:[
+  {k:'enter',t:'Arrive in Bullhorn'},
+  {k:'welcome',t:'Welcome & register'},
+  {k:'apply',t:'Apply & screen',
    ext:[{name:'Applicant scoring workflow',purpose:'Planned: fit score, fit category and plain-English summary on Web Response submissions; Silver Medal pool; Proven Similar Placement flag.',status:'Planned'}]},
-  {k:'submit',t:'Submitted to a client',b:'Submission flips Passive to Active, stamps the Top Talent Prompt Date and has AI write Top Talent dot points (status Queued).',
-   ho:[['sales','tt','Queued candidates become shortlist content']]},
-  {k:'tt',t:'Top Talent pool',b:'Queued and Priority candidates are marketed to clients for 8 weeks, then move to the Secondary pool. Placed or DNU candidates are excluded.',
-   ho:[['sales','tt','Feeds weekly Top Talent sends']]},
-  {k:'placed',t:'Placed & onboarded',b:'Perm and on-hire onboarding series, host induction checks, CEIS at 6 and 12 months, credential expiry alerts and overdue placement tasks.',
-   ho:[['sales','placed','Client host induction check'],['sales','signals','Past placements drive BD alerts']],
+  {k:'submit',t:'Submitted to a client'},
+  {k:'tt',t:'Top Talent pool'},
+  {k:'placed',t:'Placed & onboarded',
    ext:[{name:'Amplify reference check workflow',purpose:'Aircall transcript → Bullhorn Note → Amplify Enrich → Reference Check Report.',status:'Outside register'}]},
-  {k:'refer',t:'Refer & advocate',b:'Referral asks to placed candidates and gift-card notifications when a referred person starts. Referrals come back in at step 01 through RefeRec.'},
-  {k:'nurture',t:'Nurture & re-engage',b:'Active and Passive content, fortnightly Top Jobs, status decay (Active to Passive after 6 months), 12-month profile refresh, programmes and targeted job campaigns.'}
+  {k:'refer',t:'Refer & advocate'},
+  {k:'nurture',t:'Nurture & re-engage'}
  ]},
- sales:{ label:'Sales contact', accent:'var(--navy)', other:'var(--blue)', stages:[
-  {k:'enter',t:'Arrive in Bullhorn',b:'ZoomInfo imports and Amplify-created prospects. Clean-up tearsheets catch missing category, missing or personal email and bounces; duplicates are archived.'},
-  {k:'categorise',t:'Categorise',b:'Industry, Category and Sub-category decide which Top Talent list and nurture series a client gets. Contacts in more than one client workflow get a weekly fix-it task.',
-   ho:[['cand','tt','Same categories as candidates']],
+ sales:{ label:'Sales contact', stages:[
+  {k:'enter',t:'Arrive in Bullhorn'},
+  {k:'categorise',t:'Categorise',
    ext:[{name:'Bullhorn Categorisation',purpose:'Works out Industry, Category and Sub-category from who the contact recruits for. Being moved into Bullhorn Amplify.',status:'Fuse Hub tool',url:'../bullhorn-category/'}]},
-  {k:'nurture',t:'Nurture',b:'The new Government client series is the only always-on client nurture. Employment reports, webinars and Project Fusion sends are one-offs.'},
-  {k:'tt',t:'Top Talent shortlists',b:'Weekly sends by industry (Insurance & FS, Manufacturing, Infrastructure & Renewables, Trades) built from the candidate Top Talent pool. Each send is a copied template.',
-   ho:[['cand','tt','Candidates come from the TT pool'],['cand','submit','AI dot points written at submission']],
+  {k:'nurture',t:'Nurture'},
+  {k:'tt',t:'Top Talent shortlists',
    ext:[{name:'Top Talent Planner',purpose:'SharePoint Lists, Power Automate and an HTML app that plan and track the shortlist campaigns: status, branches, candidate profiles, metrics and subject line A/B winners.',status:'Outside register'},
         {name:'TTP - Log Reply',purpose:'In progress: logs client replies to shortlist emails from Contact Owners\' mailboxes into the TopTalentReplies list.',status:'In progress'}]},
-  {k:'signals',t:'Engagement signals → BD',b:'Daily and weekly website-visit alerts, the weekly BD call list by industry and state, and alerts for inactive clients who have placed with Fuse before.',
-   ho:[['cand','placed','Uses placement history']]},
-  {k:'hiring',t:'Job on',b:'Assigned users are told about new jobs; replacement jobs with no activity are chased. Opening a job starts the candidate screening flow.',
-   ho:[['cand','apply','VR questions and Automatch']]},
-  {k:'placed',t:'Placement (client side)',b:'2–5 days after an on-hire start, the client is asked to confirm the host induction, with reminders and a consultant chase list.',
-   ho:[['cand','placed','Triggered by the candidate\'s start']]}
+  {k:'signals',t:'Engagement signals → BD'},
+  {k:'hiring',t:'Job on'},
+  {k:'placed',t:'Placement (client side)'}
  ]}
 };
-const BAND = { t:'Always-on data health', b:'Runs underneath every stage: keeps state, category, email, phone and owner data clean so the lists above pick the right people.' };
+const BAND = { t:'Always-on data health' };
 const NEW_STAGE = { k:'new', t:'Not on the map yet', b:'In the register but added after the map was drawn on 8 Oct 2026. Give each one a stage in STAGE_IDS in this page.' };
-
-const CONNS = [
- {t:'Submission becomes shortlist content', r:[['c','submit','Submitted'],['c','tt','TT pool'],['s','tt','Weekly TT send']],
-  p:'A client submission stamps the Top Talent Prompt Date and AI writes dot points (Queued). Consultants can also mark someone Priority. Those candidates are what the weekly Top Talent emails show clients.', ids:['106607','98652','106616','106823']},
- {t:'Client replies turn into roles', r:[['s','tt','TT send'],['s','hiring','Job on'],['c','apply','Apply & screen']],
-  p:'A reply to a shortlist or a new job order opens a job. The job gets VR screener questions and Automatch, which starts candidate screening. Reply logging (TTP - Log Reply) is still being built.', ids:['99250','97579','59884','100872']},
- {t:'Placement closes two loops', r:[['c','placed','Placed'],['c','tt','Exclude from TT'],['s','placed','Client induction']],
-  p:'When a candidate is placed they are excluded from Top Talent, the on-hire host induction check goes to the client contact, and the placement history later drives the "inactive clients with past placements" BD alert.', ids:['106625','89686','106203','98029']},
- {t:'Referral loop', r:[['c','placed','Placed'],['c','refer','Refer'],['c','enter','New candidate']],
-  p:'Placed candidates are asked to refer people through RefeRec. Referred candidates arrive as RefeRec submissions, take the submission owner as candidate owner, and a gift card is ordered once they start.', ids:['102640','104294','104784','102931','58602','81170']},
- {t:'One set of categories for both sides', r:[['s','categorise','Client categories'],['c','tt','Candidate categories']],
-  p:'Matching a Top Talent shortlist to the right clients depends on candidates and clients using the same category values. The "Update Category / Industry" tools exist for both, and clients in conflicting workflows are held out of Top Talent until fixed.', ids:['89220','106701','106702']},
- {t:'Website visits prompt BD', r:[['s','signals','Visit alert'],['s','hiring','Job on']],
-  p:'Client website visits add a note and alert the owner daily, with a weekly roll-up. With the weekly BD call list, this is the main automated path from interest to a conversation.', ids:['11722','87676','110213']}
-];
-
-const FLAGS = [
- {sev:'Bug',t:'Candidate category tool writes the wrong value',p:'The Candidate "Update Category to Administration and Business Support" automation adds Accounting & Finance instead (found 8 Oct 2026).',ids:['106702']},
- {sev:'Gap',t:'Only Government clients get an always-on nurture',p:'"New Government Client into Database (FY26)" is the only active client nurture series. Employment reports, webinars and Project Fusion are one-offs, so new Insurance, Manufacturing, Infrastructure or Trades clients get Top Talent sends but no welcome or nurture.',ids:['89457','105904','106160']},
- {sev:'Gap',t:'No path back to "available" when a contract ends',p:'Nothing moves a candidate back into Active content or the Top Talent pool when an on-hire placement finishes. "Overdue Placements Notification" only asks the recruiter to close or extend it.',ids:['79210','106625']},
- {sev:'Gap',t:'No client follow-up after a permanent placement',p:'The client side of a placement is covered for on-hire (host induction) only. There\'s no check-in with the hiring manager after a perm start, which is a natural BD and referral moment.',ids:['91646','89686']},
- {sev:'Check',t:'Two welcome workflows are both Active',p:'Welcome Workflow (FY25) and Welcome Workflow [FY26] both welcome new candidates and set status to Active. FY26 targets candidates added since 31 May 2026. Confirm the FY25 list has an end date so nobody gets welcomed twice.',ids:['60170','107533']},
- {sev:'Check',t:'Two automations set Active on client submission',p:'"Change Passive to Active from Client Submission (FY25)" and "Change status to ACTIVE based on client submission (FY25)" do the same job from different lists. One can probably be retired.',ids:['62899','83616']},
- {sev:'Check',t:'Active Candidate content is still the FY25 series',p:'Passive candidates moved to a 2026 series; Active candidates are still on "Active Candidate FY25 [2pm-4pm]".',ids:['80666','105822']},
- {sev:'Check',t:'Sept 25 category migration still switched on',p:'The "Map to New Categories - SEPT 25" automations are still Active. If the migration is finished they can be retired.',ids:['101404','101421']},
- {sev:'Check',t:'Technology & Transformation has no live Top Talent send',p:'Insurance & FS, Manufacturing, Infrastructure and Trades all have recent Top Talent sends. Technology only has a template.',ids:['104790']},
- {sev:'Check',t:'Register notes that need a decision',p:'"Update Sub-Category to Facades…" is Active but has no trigger list, so it picks nobody up. "Map to New Categories - Marketing & Communications" was corrected but not turned back on. "Candidate Owner is Not Active" has some industry and location combinations with no owner.',ids:['108642','101413','91569']},
- {sev:'Tidy-up',t:'Paused automations',p:'Many Paused automations are finished one-off campaigns (client-specific sends, temp broking, dated Top Talent sends). Moving finished ones to Retired keeps this map and the Automation Finder cleaner.',ids:[],count:'paused'}
-];
-const SEV_COLOUR = { 'Bug':'var(--warn)', 'Gap':'var(--warn)', 'Check':'var(--amber)', 'Tidy-up':'var(--ink-soft)' };
 
 /* Flowchart view: one person's path down each journey, grouped by the stages above.
    Node k: start | step | dec | end | sugg. Exit k: side | end | loop | gap.
@@ -573,7 +482,7 @@ const SEV_COLOUR = { 'Bug':'var(--warn)', 'Gap':'var(--warn)', 'Check':'var(--am
    Hand-written and reviewed 29 Oct 2026. */
 const FLOW = {
  cand: {
-  intro: 'Follow one candidate down the line. Each block is a stage from the Candidate journey; decisions show which answer carries on down the line and where the others go. Purple dashed boxes are suggested workflows that don’t exist yet.',
+  intro: 'Follow one candidate from top to bottom. At each decision, the answer on the arrow carries on down the line; the other answers show where people branch off.',
   stages: [
    { k:'enter', nodes:[
     { k:'start', id:'c-start', title:'New candidate record', text:'Created by a website (Applyflow) application, a RefeRec referral, a ZoomInfo import, or a consultant.' },
@@ -669,11 +578,14 @@ const FLOW = {
       autos:[62899,89718,89719,91772], gos:[['cand','c-submit','Jump to Submitted to a client ↑']] }
   ]},
   health: { text:'Runs underneath every stage: email and SMS bounces ask the candidate for new details, inactive owners are reassigned, invalid emails are re-parsed from the resume, and the state, postcode and category tools keep list criteria accurate.',
-    autos:[41014,59547,91569,105554] }
+    autos:[41014,59547,91569,105554],
+    note:[['Bug','The Candidate “Update Category to Administration and Business Support” automation adds Accounting & Finance instead (found 8 Oct 2026).'],
+      ['Check','The “Map to New Categories - SEPT 25” automations are still Active. If the migration is finished they can be retired. Marketing & Communications was corrected but not turned back on.'],
+      ['Check','“Candidate Owner is Not Active” has some industry and location combinations with no owner.']] }
  },
 
  sales: {
-  intro: 'Follow one client contact down the line. Each block is a stage from the Sales contact journey. Contacts who don’t brief a job stay on the weekly shortlist and BD loop. Purple dashed boxes are suggested workflows that don’t exist yet.',
+  intro: 'Follow one client contact from top to bottom. Contacts who don’t brief a job stay on the weekly shortlist and BD loop.',
   stages: [
    { k:'enter', nodes:[
     { k:'start', id:'s-start', title:'New client contact', text:'Imported from ZoomInfo, created as an Amplify prospect, or added by a consultant.', autos:[111088] },
@@ -686,7 +598,8 @@ const FLOW = {
    { k:'categorise', nodes:[
     { k:'step', id:'s-cat', title:'Categorised', sets:['Industry','Category','Sub-category'],
       text:'Set with the bulk tearsheet tools or the Bullhorn Categorisation tool. These values decide which Top Talent list and nurture series the contact gets, and must match the candidate categories.',
-      gos:[['cand','c-tt','Uses the same categories as candidates']] },
+      gos:[['cand','c-tt','Uses the same categories as candidates']],
+      note:['Check','“Update Sub-Category to Facades…” is Active but has no trigger list, so it picks nobody up.'] },
     { k:'dec', id:'s-multi', title:'In more than one client workflow?', next:'No',
       exits:[{ a:'Yes', k:'side', to:'Weekly note and fix-it task', text:'Held out of Top Talent until the categories are fixed.', autos:[89220] }] }
    ]},
@@ -883,71 +796,6 @@ function renderList(list) {
   }
   return html;
 }
-function stageColumn(j, s, n) {
-  const list = itemsFor(j, s.k);
-  const ho = (s.ho || []).map(([oj, os, txt]) => `<button type="button" class="ho" data-go="${oj}:${os}">&rarr; ${escapeHtml(JOURNEYS[oj].label)}: ${escapeHtml(txt)}</button>`).join('');
-  const ext = state.q ? '' : (s.ext || []).map(extCard).join('');
-  return {
-    count: list.length,
-    html: `<div class="stage${s.k === 'new' ? ' new' : ''}" id="${j}-${s.k}"><div class="stage-top">${n ? `<span class="num">${n}</span>` : ''}<h3>${escapeHtml(s.t)}</h3></div>
-      <p class="blurb">${escapeHtml(s.b)}</p>${ho ? `<div class="handoffs">${ho}</div>` : ''}
-      <div class="cnt">${list.length} automation${list.length === 1 ? '' : 's'} shown</div>
-      <div class="cards">${renderList(list) || '<p class="empty">Nothing matches the filters.</p>'}${ext}</div></div>`
-  };
-}
-function renderJourney(j) {
-  const J = JOURNEYS[j];
-  const el = document.getElementById('v-' + j);
-  el.style.setProperty('--accent', J.accent);
-  el.style.setProperty('--other', J.other);
-  let total = 0;
-  const cols = J.stages.map((s, idx) => { const c = stageColumn(j, s, String(idx + 1).padStart(2, '0')); total += c.count; return c.html; });
-  if (ITEMS.some(i => i.journey === j && i.stage === 'new')) { const c = stageColumn(j, NEW_STAGE, ''); total += c.count; cols.push(c.html); }
-  const band = itemsFor(j, 'health'); total += band.length;
-  const other = j === 'cand' ? 'sales' : 'cand';
-  el.innerHTML = `
-    <div class="view-head"><h2>${escapeHtml(J.label)} journey</h2><p>Scroll sideways through the stages. Dashed buttons jump to the matching stage on the ${escapeHtml(JOURNEYS[other].label.toLowerCase())} journey.</p></div>
-    <div class="controls">
-      <input type="search" id="q-${j}" placeholder="Search name, purpose, list or ID" aria-label="Search automations" value="${escapeHtml(state.q)}">
-      ${['Active','Paused','Retired'].map(s => `<button type="button" class="chip" data-status="${s}" aria-pressed="${state.show[s]}">${s}</button>`).join('')}
-      <span class="hint">${total} shown</span>
-    </div>
-    <div class="track-scroll"><div class="track">${cols.join('')}</div></div>
-    <div class="band" id="${j}-health"><div class="band-head"><h3>${BAND.t}</h3><span class="blurb">${BAND.b}</span><span class="cnt">${band.length} shown</span></div>
-      <div class="cards">${renderList(band) || '<p class="empty">Nothing matches the filters.</p>'}</div></div>`;
-}
-function stageTitle(code, k) {
-  const s = JOURNEYS[code === 'c' ? 'cand' : 'sales'].stages.find(x => x.k === k);
-  return s ? s.t : k;
-}
-function idLinks(ids) {
-  return ids.map(id => {
-    const i = BY_ID[id]; if (!i) return '';
-    const url = safeUrl(i.url);
-    return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${escapeHtml(i.name)}">#${id}</a>` : '';
-  }).join('');
-}
-function renderConn() {
-  const lane = (j, code) => JOURNEYS[j].stages.map((s, n) =>
-    `${n ? '<span class="lane-arrow">&rsaquo;</span>' : ''}<button type="button" class="lane-step ${code}" data-go="${j}:${s.k}">${String(n + 1).padStart(2, '0')} ${escapeHtml(s.t)}</button>`).join('');
-  document.getElementById('v-conn').innerHTML = `
-    <div class="view-head"><h2>How the two journeys connect</h2><p>They meet at four places: the Top Talent pool, a client opening a job, a placement starting, and the shared categories.</p></div>
-    <div class="lanes">
-      <div class="lane"><span class="lane-label">Candidate</span>${lane('cand', 'c')}</div>
-      <div class="lane"><span class="lane-label">Sales contact</span>${lane('sales', 's')}</div>
-      <p class="lane-note">Click any step to open it on its journey.</p>
-    </div>
-    <div class="conn-grid">${CONNS.map(c => `<div class="conn"><h3>${escapeHtml(c.t)}</h3>
-      <div class="route">${c.r.map(([code, k, label], n) => `${n ? '<span class="lane-arrow">&rarr;</span>' : ''}<button type="button" class="lane-step ${code}" data-go="${code === 'c' ? 'cand' : 'sales'}:${k}" title="${escapeHtml(stageTitle(code, k))}">${escapeHtml(label)}</button>`).join('')}</div>
-      <p>${escapeHtml(c.p)}</p><div class="ids">${idLinks(c.ids)}</div></div>`).join('')}</div>`;
-}
-function renderFlags() {
-  const paused = ITEMS.filter(i => i.statusKey === 'Paused').length;
-  document.getElementById('v-flags').innerHTML = `
-    <div class="view-head"><h2>Gaps &amp; checks</h2><p>What surfaced while placing every automation on the map, reviewed 8 Oct 2026. Bugs and gaps first.</p></div>
-    <div class="flags">${FLAGS.map(f => `<div class="flagc" style="--sev:${SEV_COLOUR[f.sev]}"><h3><span class="sev">${escapeHtml(f.sev)}</span>${escapeHtml(f.t)}${f.count === 'paused' ? ` (${paused} today)` : ''}</h3>
-      <p>${escapeHtml(f.p)}</p>${f.ids.length ? `<div class="ids">${idLinks(f.ids)}</div>` : ''}</div>`).join('')}</div>`;
-}
 /* ---------- Flowchart ---------- */
 function flowChips(ids) {
   const items = (ids || []).map(id => BY_ID[String(id)]).filter(i => i && i.statusKey !== 'Retired');
@@ -959,7 +807,9 @@ function flowChips(ids) {
   }).join('')}</div>`;
 }
 const flowSets = list => list && list.length ? `<div class="fc-sets">${list.map(s => `<span class="fc-set">${escapeHtml(s)}</span>`).join('')}</div>` : '';
-const flowNote = n => n ? `<div class="fc-note${n[0] === 'Gap' ? ' gap' : ''}"><b>${escapeHtml(n[0])}:</b> ${escapeHtml(n[1])}</div>` : '';
+/* A note is ['Gap' | 'Check' | 'Bug', text]; a node can have one note or a list of them. */
+const flowNote = n => !n ? '' : (Array.isArray(n[0]) ? n : [n]).map(x =>
+  `<div class="fc-note${x[0] === 'Check' ? '' : ' gap'}"><b>${escapeHtml(x[0])}:</b> ${escapeHtml(x[1])}</div>`).join('');
 const flowSugg = list => (list || []).map(s => `<div class="fc-sg"><span class="fc-kick">Suggested workflow</span><b>${escapeHtml(s.title)}</b><p>${escapeHtml(s.text)}</p></div>`).join('');
 function flowGo(g, cur) {
   const other = g[0] !== cur;
@@ -989,11 +839,20 @@ function flowLink(n, next) {
   const inner = n.after ? `<div class="fc-after">${label}${flowSets(n.after.sets)}${flowChips(n.after.autos)}</div>` : label;
   return `<div class="fc-link${next && next.k === 'sugg' ? ' to-sugg' : ''}"><div class="fc-rail"></div>${inner}</div>`;
 }
+/* The full list of a stage's automations from the register, folded away under the stage.
+   A search opens the stages that have matches. */
+function stageList(j, k, ext, open) {
+  const list = itemsFor(j, k);
+  if (state.q && !list.length) return '<p class="fc-none">No matching automations in this stage.</p>';
+  const extra = state.q ? '' : (ext || []).map(extCard).join('');
+  const label = state.q ? `${list.length} matching automation${list.length === 1 ? '' : 's'}` : `All ${list.length} automation${list.length === 1 ? '' : 's'} in this stage`;
+  return `<details class="fc-all" id="${j}-${k}"${state.q || open ? ' open' : ''}><summary>${label}</summary>
+    <div class="cards">${renderList(list) || '<p class="empty">None.</p>'}${extra}</div></details>`;
+}
 function flowStage(j, k, n) {
   const s = JOURNEYS[j].stages.find(x => x.k === k);
-  const c = ITEMS.filter(i => i.journey === j && i.stage === k && i.statusKey !== 'Retired').length;
   return `<div class="fc-stage"><div class="fc-rail"><span class="fc-mk">${String(n).padStart(2, '0')}</span></div>
-    <div class="fc-shead"><h3>${escapeHtml(s.t)}</h3><span class="cnt">${c} automation${c === 1 ? '' : 's'} in this stage</span><button type="button" class="ho" data-go="${j}:${k}">Open on the journey &rarr;</button></div></div>`;
+    <div class="fc-shead-wrap"><div class="fc-shead"><h3>${escapeHtml(s.t)}</h3></div>${stageList(j, k, s.ext)}</div></div>`;
 }
 function flowLine(j, groups) {
   const order = JOURNEYS[j].stages.map(s => s.k);
@@ -1009,30 +868,29 @@ function flowLine(j, groups) {
   }
   return `<div class="fc-flow">${html}</div>`;
 }
-function renderFlow() {
-  const j = flowState.j, F = FLOW[j];
-  const el = document.getElementById('v-flow');
-  el.dataset.j = j;
+function renderJourney(j) {
+  const F = FLOW[j], J = JOURNEYS[j];
+  const el = document.getElementById('v-' + j);
   el.classList.toggle('no-autos', !flowState.autos);
   el.classList.toggle('no-sugg', !flowState.sugg);
+  const fresh = ITEMS.some(i => i.journey === j && i.stage === 'new');
   el.innerHTML = `
-    <div class="view-head"><h2>Flowchart</h2><p>One person’s path through the journey, in a straight line.</p></div>
+    <div class="view-head"><h2>${escapeHtml(J.label)} journey</h2></div>
     <div class="controls">
-      <button type="button" class="chip" data-fj="cand" aria-pressed="${j === 'cand'}">Candidate</button>
-      <button type="button" class="chip" data-fj="sales" aria-pressed="${j === 'sales'}">Sales contact</button>
-      <span class="hint">|</span>
-      <button type="button" class="chip" data-ft="autos" aria-pressed="${flowState.autos}">Show automations</button>
+      <input type="search" id="q-${j}" placeholder="Search automations by name, purpose, list or ID" aria-label="Search automations" value="${escapeHtml(state.q)}">
       <button type="button" class="chip" data-ft="sugg" aria-pressed="${flowState.sugg}">Show suggestions</button>
+      <button type="button" class="chip" data-ft="autos" aria-pressed="${flowState.autos}">Show automations on steps</button>
     </div>
     <div class="fc-legend"><span><i class="fc-lg step"></i>Step</span><span><i class="fc-lg dec"></i>Decision</span><span><i class="fc-lg gap"></i>Gap: nothing automated</span><span><i class="fc-lg sugg"></i>Suggested workflow (not built)</span><span><i class="fc-dot"></i>Active</span><span><i class="fc-dot paused"></i>Paused</span></div>
     <p class="fc-intro">${escapeHtml(F.intro)}</p>
+    ${fresh ? `<div class="fc-new"><h2 class="fc-h2">${NEW_STAGE.t}</h2><p>${escapeHtml(NEW_STAGE.b)}</p>${stageList(j, 'new', null, true)}</div>` : ''}
     ${flowLine(j, F.stages)}
     ${F.loop ? `<div id="fc-${F.loop.id}"><h2 class="fc-h2">The nurture loop</h2><p class="fc-intro">Where candidates sit whenever they aren’t moving down the main line. Their status decides which content they get.</p>${flowLine(j, [{ k:F.loop.stage, nodes:F.loop.nodes }])}</div>` : ''}
-    <h2 class="fc-h2">${BAND.t}</h2><div class="fc-health"><p>${escapeHtml(F.health.text)}</p>${flowChips(F.health.autos)}</div>`;
+    <h2 class="fc-h2">${BAND.t}</h2><div class="fc-health"><p>${escapeHtml(F.health.text)}</p>${flowChips(F.health.autos)}${flowNote(F.health.note)}${stageList(j, 'health')}</div>`;
 }
 function flowJump(target) {
   const [j, id] = target.split(':');
-  flowState.j = j; state.view = 'flow'; render();
+  state.view = j; render();
   const el = document.getElementById('fc-' + id);
   if (!el) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1127,37 +985,28 @@ function downloadChecks() {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+/* Counts in the sidebar (retired automations aren't shown on the journeys). */
 function renderStats() {
-  const count = j => {
-    const a = ITEMS.filter(i => i.journey === j);
-    const n = k => a.filter(i => i.statusKey === k).length;
-    return { total:a.length, active:n('Active'), paused:n('Paused'), retired:n('Retired'), fresh:a.filter(i => i.stage === 'new').length };
-  };
-  const c = count('cand'), s = count('sales');
-  const fresh = c.fresh + s.fresh;
-  document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="k">Candidate journey</div><div class="v">${c.total}<small>${c.active} active · ${c.paused} paused · ${c.retired} retired</small></div></div>
-    <div class="stat"><div class="k">Sales contact journey</div><div class="v">${s.total}<small>${s.active} active · ${s.paused} paused · ${s.retired} retired</small></div></div>
-    <div class="stat"><div class="k">Hand-offs</div><div class="v">${CONNS.length}</div></div>
-    <div class="stat"><div class="k">Not on the map yet</div><div class="v">${fresh}</div></div>`;
-  document.getElementById('navCand').textContent = c.total;
-  document.getElementById('navSales').textContent = s.total;
+  const count = j => ITEMS.filter(i => i.journey === j && i.statusKey !== 'Retired').length;
+  document.getElementById('navCand').textContent = count('cand');
+  document.getElementById('navSales').textContent = count('sales');
   document.getElementById('navChecks').textContent = ITEMS.filter(flagged).length;
 }
 function render() {
-  for (const v of ['cand', 'sales', 'flow', 'conn', 'flags', 'checks']) document.getElementById('v-' + v).hidden = v !== state.view;
+  for (const v of ['cand', 'sales', 'checks']) document.getElementById('v-' + v).hidden = v !== state.view;
   document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
   if (state.view === 'cand' || state.view === 'sales') renderJourney(state.view);
-  if (state.view === 'flow') renderFlow();
   if (state.view === 'checks') renderChecks();
 }
+/* Open a stage's automation list on its journey, e.g. 'cand:tt' (used by the Might need update tab). */
 function go(target) {
   const [j, k] = target.split(':');
   state.view = j; render();
   const el = document.getElementById(j + '-' + k);
   if (!el) return;
+  el.open = true;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   el.classList.add('hl'); setTimeout(() => el.classList.remove('hl'), 1600);
 }
 
@@ -1170,17 +1019,13 @@ document.getElementById('viewNav').addEventListener('click', e => {
 document.addEventListener('click', e => {
   const goBtn = e.target.closest('[data-go]');
   if (goBtn) { go(goBtn.dataset.go); return; }
-  const chip = e.target.closest('[data-status]');
-  if (chip) { state.show[chip.dataset.status] = !state.show[chip.dataset.status]; render(); return; }
   const cgroup = e.target.closest('[data-cgroup]');
   if (cgroup) { checkState.group = checkState.group === cgroup.dataset.cgroup ? 'all' : cgroup.dataset.cgroup; renderChecks(); return; }
   const crecord = e.target.closest('[data-crecord]');
   if (crecord) { checkState.record = crecord.dataset.crecord; renderChecks(); return; }
   if (e.target.closest('[data-cchecked]')) { checkState.showChecked = !checkState.showChecked; renderChecks(); return; }
-  const fj = e.target.closest('[data-fj]');
-  if (fj) { flowState.j = fj.dataset.fj; renderFlow(); return; }
   const ft = e.target.closest('[data-ft]');
-  if (ft) { flowState[ft.dataset.ft] = !flowState[ft.dataset.ft]; renderFlow(); return; }
+  if (ft) { flowState[ft.dataset.ft] = !flowState[ft.dataset.ft]; render(); return; }
   const fgo = e.target.closest('[data-fgo]');
   if (fgo) { flowJump(fgo.dataset.fgo); return; }
   if (e.target.closest('#checks-refresh')) { load(true); return; }
@@ -1300,8 +1145,7 @@ async function load(force) {
     RAW_ROWS = rows;
     prepare(rows);
     status.hidden = true;
-    document.getElementById('stats').hidden = false;
-    renderStats(); renderConn(); renderFlags(); render();
+    renderStats(); render();
   } catch (err) {
     console.error('Automation register load error:', err);
     status.hidden = true;
@@ -1309,8 +1153,9 @@ async function load(force) {
   }
 }
 
+/* #flow, #conn and #flags were views before Nov 2026; old links land on the candidate journey. */
 const startView = location.hash.slice(1);
-if (['cand', 'sales', 'flow', 'conn', 'flags', 'checks'].includes(startView)) state.view = startView;
+if (['cand', 'sales', 'checks'].includes(startView)) state.view = startView;
 document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
 load(false);
 </script>
