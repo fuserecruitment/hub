@@ -174,8 +174,12 @@
   .fc-all > .cards{padding:0 10px 10px;}
   .fc-all.hl{box-shadow:0 0 0 3px var(--blue);}
   .fc-none{font-size:12.5px;color:var(--ink-soft);font-style:italic;}
-  .fc-new{max-width:920px;margin-top:12px;}
-  .fc-new > p{font-size:14px;color:var(--ink-soft);margin-bottom:10px;}
+  #v-sales,#v-new{margin-top:56px;padding-top:28px;border-top:2px solid var(--line);}
+  #v-new{max-width:920px;--accent:var(--amber);}
+  .fc-jh{font-size:24px;margin-bottom:6px;}
+  .fc-newh{font-size:16px;margin:18px 0 8px;}
+  .fc-flagcount{color:var(--warn);}
+  .fc-chip .chk{font-size:10px;padding:1px 7px;align-self:center;}
   .fc-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-soft);align-items:center;margin-bottom:6px;}
   .fc-legend span{display:inline-flex;gap:6px;align-items:center;}
   .fc-lg{width:13px;height:13px;display:inline-block;border:2px solid var(--ink-soft);background:var(--white);}
@@ -183,8 +187,6 @@
   .fc-lg.dec{transform:rotate(45deg) scale(.8);}
   .fc-lg.gap{border-color:var(--warn);background:var(--red-bg);border-radius:3px;}
   .fc-lg.sugg{border:2px dashed var(--sugg);background:var(--sugg-bg);border-radius:3px;}
-  .fc-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none;align-self:center;display:inline-block;}
-  .fc-dot.paused{background:#C98A00;}
   .fc-intro{color:var(--ink-soft);font-size:14px;max-width:72ch;}
   .fc-flow{max-width:920px;margin-top:10px;}
   .fc-node,.fc-link,.fc-stage{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:14px;}
@@ -233,6 +235,7 @@
   .fc-sg{border:2px dashed var(--sugg);background:var(--sugg-bg);border-radius:var(--radius-md);padding:9px 11px;display:flex;flex-direction:column;gap:5px;}
   .fc-sg b{font-size:14px;font-weight:600;}
   .fc-sg p{font-size:13.5px;color:var(--ink);}
+  .fc-sg.urgent .fc-kick{color:var(--warn);}
   .fc-gos{display:flex;flex-wrap:wrap;gap:6px;}
   .fc-go{
     font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:600;text-align:left;cursor:pointer;justify-self:start;
@@ -240,10 +243,6 @@
   }
   .fc-go.x{border-color:var(--other);color:var(--other);}
   .fc-go:hover{background:var(--steel);}
-  .fc-note{font-size:13px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--amber-bg);}
-  .fc-note b{color:var(--amber);}
-  .fc-note.gap{background:var(--red-bg);}
-  .fc-note.gap b{color:var(--warn);}
   .fc-autos{display:flex;flex-wrap:wrap;gap:5px;}
   .fc-chip{
     display:inline-flex;gap:6px;align-items:baseline;font-size:12px;line-height:1.35;color:var(--ink);text-decoration:none;
@@ -266,47 +265,13 @@
     .fc-node.start .fc-mk,.fc-node.end .fc-mk{width:28px;font-size:8.5px;}
   }
 
-  /* ---------- Needs a check ---------- */
+  /* ---------- Might need update (shared checks) ---------- */
   .chk{font-size:11px;font-weight:700;border-radius:100px;padding:2px 9px;white-space:nowrap;}
   .chk.first{background:var(--red-bg);color:var(--warn);}
   .chk.tidy{background:var(--amber-bg);color:var(--amber);}
   .chk.later{background:var(--grey-bg);color:var(--ink-soft);}
   .why{margin:0;padding:10px 12px;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:13px;border-radius:var(--radius-sm);background:var(--steel);}
   .why li strong{font-weight:600;}
-  .chk-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:14px 0 16px;max-width:960px;}
-  .chk-stat{
-    background:var(--white);border:1px solid var(--line);border-top:4px solid var(--tone);border-radius:var(--radius-lg);
-    padding:12px 16px;text-align:left;font-family:'Work Sans',sans-serif;color:var(--ink);cursor:pointer;
-  }
-  .chk-stat:hover{border-color:var(--blue);border-top-color:var(--tone);}
-  .chk-stat[aria-pressed="true"]{box-shadow:0 0 0 3px var(--blue);}
-  .chk-stat .k{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
-  .chk-stat .v{display:block;font-size:24px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;}
-  .chk-stat .d{display:block;font-size:12.5px;color:var(--ink-soft);}
-  .chk-group{margin-bottom:26px;max-width:960px;}
-  .chk-group h3{font-size:18px;display:flex;gap:10px;align-items:baseline;}
-  .chk-group > p{font-size:14px;color:var(--ink-soft);margin:2px 0 12px;max-width:72ch;}
-  .chk-items{display:flex;flex-direction:column;gap:10px;}
-  .chk-item{
-    background:var(--white);border:1px solid var(--line);border-left:4px solid var(--tone);border-radius:var(--radius-lg);
-    padding:14px 18px;display:flex;flex-direction:column;gap:8px;
-  }
-  .chk-item h4{font-size:15.5px;line-height:1.35;overflow-wrap:anywhere;}
-  .chk-item .top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-  .chk-item ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;}
-  .chk-item li{font-size:14px;padding-left:16px;position:relative;}
-  .chk-item li::before{content:"";position:absolute;left:2px;top:.6em;width:7px;height:7px;border-radius:50%;background:var(--tone);}
-  .chk-item li strong{font-weight:600;}
-  .chk-item .purpose{font-size:13.5px;color:var(--ink-soft);}
-  .chk-item .foot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:12.5px;color:var(--ink-soft);}
-  .tone-first{--tone:var(--warn);}
-  .tone-tidy{--tone:#C98A00;}
-  .tone-later{--tone:var(--concrete);}
-  .tone-ok{--tone:var(--green);}
-  .text-btn{
-    padding:0;border:none;background:none;color:var(--blue);font-family:'Work Sans',sans-serif;
-    font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:underline;
-  }
   .mark-row{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;}
   .mark{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;cursor:pointer;}
   .mark input{width:18px;height:18px;accent-color:var(--green);cursor:pointer;margin:0;}
@@ -346,11 +311,11 @@
       </div>
 
       <div class="sidebar-block">
-        <label>Views</label>
+        <label>On this page</label>
         <nav id="viewNav">
-          <button type="button" class="sidebar-nav-btn active" data-view="cand">Candidate journey <span class="n" id="navCand"></span></button>
-          <button type="button" class="sidebar-nav-btn" data-view="sales">Sales contact journey <span class="n" id="navSales"></span></button>
-          <button type="button" class="sidebar-nav-btn" data-view="checks">Might need update <span class="n" id="navChecks"></span></button>
+          <button type="button" class="sidebar-nav-btn" data-jump="v-cand">Candidate journey <span class="n" id="navCand"></span></button>
+          <button type="button" class="sidebar-nav-btn" data-jump="v-sales">Sales contact journey <span class="n" id="navSales"></span></button>
+          <button type="button" class="sidebar-nav-btn" data-jump="v-new" id="navNewBtn" hidden>Not on the map yet <span class="n" id="navNew"></span></button>
         </nav>
       </div>
 
@@ -372,7 +337,7 @@
     <div class="workspace-inner">
       <div class="intro">
         <h1>How our automations fit together</h1>
-        <p>Follow a candidate or a client contact from start to finish. Each step shows what happens, which automations do it and where people branch off. Open “All automations” under any stage for the full list from the register.</p>
+        <p>Follow a candidate, then a client contact, from start to finish. Each step shows what happens, which active automations do it, where people branch off, and what we recommend changing. Open “All active automations” under any stage for the full list, with anything that might need an update first.</p>
       </div>
 
       <div class="status working" id="loadStatus" role="status" aria-live="polite">Reading the automation register…</div>
@@ -381,9 +346,10 @@
         <button type="button" class="chip" id="retry">Try again</button>
       </div>
 
+      <div id="controls" hidden></div>
       <section id="v-cand" hidden></section>
       <section id="v-sales" hidden></section>
-      <section id="v-checks" hidden></section>
+      <section id="v-new" hidden></section>
       <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
       <footer>
@@ -545,7 +511,8 @@ const FLOW = {
     { k:'step', id:'c-onhire', title:'On-hire onboarding and compliance',
       text:'Onboarding emails; host induction check with the candidate (consultants alerted if it isn’t done); Workforce Australia and wage subsidy follow-ups; safety and benefits emails; CEIS at 6 and 12 months; credential expiry alerts.',
       autos:[92321,89095,89683,98835,98830,101401,90982,57075],
-      hand:['sales','s-placed','Client asked to confirm the host induction'] },
+      hand:['sales','s-placed','Client asked to confirm the host induction'],
+      sugg:[{ title:'Safety check-in SMS for every on-hire start', text:'A Veolia safety check-in SMS was drafted but is paused. Finish it as a standard check-in a week into every on-hire placement.' }] },
     { k:'dec', id:'c-end-q', title:'Placement end date passes?', next:'Closed',
       exits:[{ a:'Not closed', k:'side', to:'Recruiter task: close or extend', text:'A Compliance note is added and the recruiter is notified.', autos:[79210] }] },
     { k:'sugg', id:'c-s-ending', title:'Contract ending workflow', sets:['Trigger: on-hire end date in 14 days','Status → Active','TT Status → Queued (if the consultant approves)'],
@@ -565,7 +532,8 @@ const FLOW = {
   loop: { stage:'nurture', id:'c-nurture', nodes:[
     { k:'step', id:'n-active', title:'Active candidate content', sets:['Status: Active'], text:'Active email series (2–4pm) plus fortnightly Top Jobs.', autos:[80666,104255],
       note:['Check','Active content is still the FY25 series; Passive moved to a 2026 series.'],
-      sugg:[{ title:'FY27 Active candidate series', text:'Rebuild the Active series to match the 2026 Passive series (A/B tests, a check-in survey) so both streams are current.' }] },
+      sugg:[{ title:'FY27 Active candidate series', text:'Rebuild the Active series to match the 2026 Passive series (A/B tests, a check-in survey) so both streams are current.' },
+        { title:'Finish New Top Jobs [FY27]', text:'A new Top Jobs email is drafted but paused. Finish it and switch it on, then retire Top Jobs 2026.' }] },
     { k:'dec', id:'n-decay', title:'No application or submission for 6 months, or survey says “not looking”?', next:'Yes',
       exits:[{ a:'No', k:'loop', to:'Stays Active' }] },
     { k:'step', id:'n-passive', title:'Passive candidate content', sets:['Status → Passive'], text:'Passive email series (11am–2pm) with a career check-in survey, plus Top Jobs.', autos:[102541,35684,105822,104255],
@@ -575,11 +543,12 @@ const FLOW = {
     { k:'step', id:'n-refresh', title:'Profile update email', text:'“It’s been a while, let’s catch up” asks them to update their Fuse profile.', autos:[30476] },
     { k:'end', id:'n-out', title:'Back on the main line',
       text:'Any client submission flips a Passive candidate back to Active and puts them on the main line at “Submitted to a client”. Programmes (Future Insure) and one-off job campaigns also draw on this pool.',
-      autos:[62899,89718,89719,91772], gos:[['cand','c-submit','Jump to Submitted to a client ↑']] }
+      autos:[62899,89718,89719,91772], gos:[['cand','c-submit','Jump to Submitted to a client ↑']],
+      note:['Check','The one-off job campaigns (NHP, Auto & General, temp broking and others) and the Elite Talent Network series are all paused. Retire the finished ones so only live work is left in Bullhorn Automation.'] }
   ]},
   health: { text:'Runs underneath every stage: email and SMS bounces ask the candidate for new details, inactive owners are reassigned, invalid emails are re-parsed from the resume, and the state, postcode and category tools keep list criteria accurate.',
     autos:[41014,59547,91569,105554],
-    note:[['Bug','The Candidate “Update Category to Administration and Business Support” automation adds Accounting & Finance instead (found 8 Oct 2026).'],
+    note:[['Fix','The Candidate “Update Category to Administration and Business Support” automation adds Accounting & Finance instead (found 8 Oct 2026).'],
       ['Check','The “Map to New Categories - SEPT 25” automations are still Active. If the migration is finished they can be retired. Marketing & Communications was corrected but not turned back on.'],
       ['Check','“Candidate Owner is Not Active” has some industry and location combinations with no owner.']] }
  },
@@ -606,7 +575,7 @@ const FLOW = {
    { k:'nurture', nodes:[
     { k:'dec', id:'s-gov', title:'Government client?', next:'No, or after the series',
       exits:[{ a:'Yes', k:'side', to:'New Government client nurture', text:'A series of hiring-advice emails, then on to the shortlists.', autos:[89457] }],
-      note:['Gap','Every other industry gets no welcome or nurture. Employment reports and webinars are one-offs.'] },
+      note:['Gap','Every other industry gets no welcome or nurture. The employment report, webinar and Project Fusion campaigns are paused one-offs.'] },
     { k:'sugg', id:'s-s-welcome', title:'Welcome and nurture series for every industry', sets:['Trigger: new categorised contact'],
       text:'Copy the Government series for Insurance & FS, Manufacturing, Infrastructure & Renewables and Trades: an intro from the owner, then hiring advice and the relevant employment report. The existing report and webinar content can be reused.' }
    ]},
@@ -615,7 +584,8 @@ const FLOW = {
       text:'A weekly email per industry showing Queued and Priority candidates: Insurance & FS, Infrastructure & Renewables, Trades and Manufacturing. Each send is a copy of a template.',
       autos:[111206,110908,110909,110814,104790],
       from:['cand','c-tt','Candidates come from the Top Talent pool'],
-      sugg:[{ title:'Technology & Transformation weekly shortlist', text:'Tech only has a template. Launch a weekly send so Tech clients get the same treatment as the other industries.' }] }
+      note:['Check','Each dated Top Talent send is paused once it has gone out. Retire the old ones so only the templates and this week’s sends are left.'],
+      sugg:[{ title:'Technology & Transformation weekly shortlist', text:'Tech only has a paused template. Launch a weekly send so Tech clients get the same treatment as the other industries.' }] }
    ]},
    { k:'signals', nodes:[
     { k:'step', id:'s-signals', title:'Engagement tracked for BD',
@@ -721,17 +691,15 @@ function placeAutomation(a) {
 }
 
 /* ===================== STATE ===================== */
-const state = { view:'cand', q:'', show:{ Active:true, Paused:true, Retired:false } };
+/* Only Active automations are shown; paused and retired ones are left off the map. */
+const state = { q:'', show:{ Active:true, Paused:false, Retired:false } };
 let ITEMS = [];
 let BY_ID = {};
 /* The register rows as loaded, so a tick can update them (and the saved copy)
    without reading the whole register again. */
 let RAW_ROWS = [];
-/* "Might need update" tab: its own filters, separate from the journey search.
-   showChecked lists the ones hidden because of a recent "Last Checked" date. */
-const checkState = { group:'all', record:'all', q:'', showChecked:false };
-/* Flowchart tab: which journey, and whether automations and suggestions show. */
-const flowState = { j:'cand', autos:true, sugg:true };
+/* Whether automations and recommendations show on the flowchart steps. */
+const flowState = { autos:true, sugg:true };
 
 function matches(item) {
   if (!state.show[item.statusKey]) return false;
@@ -797,40 +765,48 @@ function renderList(list) {
   return html;
 }
 /* ---------- Flowchart ---------- */
+/* Only Active automations appear on the steps. Paused ones are left out; where one
+   matters it's mentioned in a recommendation instead. */
 function flowChips(ids) {
-  const items = (ids || []).map(id => BY_ID[String(id)]).filter(i => i && i.statusKey !== 'Retired');
+  const items = (ids || []).map(id => BY_ID[String(id)]).filter(i => i && i.statusKey === 'Active');
   if (!items.length) return '';
   return `<div class="fc-autos">${items.map(i => {
     const url = safeUrl(i.url);
-    const inner = `<i class="fc-dot ${i.statusKey.toLowerCase()}"></i><span>${escapeHtml(i.name)}</span><span class="id">#${escapeHtml(i.id)}</span>`;
-    return url ? `<a class="fc-chip" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${escapeHtml(i.statusKey)}">${inner}</a>` : `<span class="fc-chip">${inner}</span>`;
+    const flag = flagged(i);
+    const title = flag ? CHECK_LABEL[i.check.group] + ': ' + i.check.reasons.map(r => r.title).join('; ') : 'Open in Bullhorn Automation';
+    const inner = `<span>${escapeHtml(i.name)}</span><span class="id">#${escapeHtml(i.id)}</span>${flag ? checkPill(i) : ''}`;
+    return url ? `<a class="fc-chip" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${escapeHtml(title)}">${inner}</a>` : `<span class="fc-chip" title="${escapeHtml(title)}">${inner}</span>`;
   }).join('')}</div>`;
 }
 const flowSets = list => list && list.length ? `<div class="fc-sets">${list.map(s => `<span class="fc-set">${escapeHtml(s)}</span>`).join('')}</div>` : '';
-/* A note is ['Gap' | 'Check' | 'Bug', text]; a node can have one note or a list of them. */
-const flowNote = n => !n ? '' : (Array.isArray(n[0]) ? n : [n]).map(x =>
-  `<div class="fc-note${x[0] === 'Check' ? '' : ' gap'}"><b>${escapeHtml(x[0])}:</b> ${escapeHtml(x[1])}</div>`).join('');
-const flowSugg = list => (list || []).map(s => `<div class="fc-sg"><span class="fc-kick">Suggested workflow</span><b>${escapeHtml(s.title)}</b><p>${escapeHtml(s.text)}</p></div>`).join('');
+/* Recommendations, all shown the same way: notes (['Gap' | 'Fix' | 'Check', text], one or a list)
+   and suggested new workflows ({ title, text }). */
+function flowRecs(notes, suggs) {
+  const list = [];
+  if (notes) for (const x of (Array.isArray(notes[0]) ? notes : [notes])) list.push({ kind:x[0], text:x[1] });
+  for (const s of (suggs || [])) list.push({ kind:'New workflow', title:s.title, text:s.text });
+  return list.map(r => `<div class="fc-sg${r.kind === 'Gap' || r.kind === 'Fix' ? ' urgent' : ''}"><span class="fc-kick">Recommendation &middot; ${escapeHtml(r.kind)}</span>${r.title ? `<b>${escapeHtml(r.title)}</b>` : ''}<p>${escapeHtml(r.text)}</p></div>`).join('');
+}
 function flowGo(g, cur) {
   const other = g[0] !== cur;
   return `<button type="button" class="fc-go${other ? ' x' : ''}" data-fgo="${g[0]}:${g[1]}">${other ? '&rarr; ' + escapeHtml(JOURNEYS[g[0]].label) + ': ' : ''}${escapeHtml(g[2])}</button>`;
 }
 function flowExit(e, cur) {
   return `<div class="fc-exit ${e.k}"><span class="fc-ans">${escapeHtml(e.a)}</span><span class="fc-to">${escapeHtml(e.to)}</span>
-    ${e.text ? `<p>${escapeHtml(e.text)}</p>` : ''}${flowSets(e.sets)}${flowChips(e.autos)}${e.go ? `<div>${flowGo(e.go, cur)}</div>` : ''}${flowSugg(e.sugg)}</div>`;
+    ${e.text ? `<p>${escapeHtml(e.text)}</p>` : ''}${flowSets(e.sets)}${flowChips(e.autos)}${e.go ? `<div>${flowGo(e.go, cur)}</div>` : ''}${flowRecs(null, e.sugg)}</div>`;
 }
 function flowNode(n, cur, num, last) {
-  const kick = { start:'Start', end:'End', dec:'Decision', step:'Step ' + num, sugg:'Suggested workflow' }[n.k];
+  const kick = { start:'Start', end:'End', dec:'Decision', step:'Step ' + num, sugg:'Recommendation &middot; New workflow' }[n.k];
   const mark = { start:'IN', end:'END', dec:'<b>?</b>', step:num, sugg:'+' }[n.k];
   const links = [
-    n.from && flowGo([n.from[0], n.from[1], 'From ' + n.from[2]], cur),
+    n.from && flowGo(n.from, cur),
     n.hand && flowGo(n.hand, cur),
     ...(n.gos || []).map(g => flowGo(g, cur))
   ].filter(Boolean);
   return `<div class="fc-node ${n.k}${n.gap ? ' gapnode' : ''}${last ? ' last' : ''}" id="fc-${n.id}"><div class="fc-rail"><span class="fc-mk">${mark}</span></div>
     <div class="fc-card"><span class="fc-kick">${kick}</span><h4>${escapeHtml(n.title)}</h4>${n.text ? `<p>${escapeHtml(n.text)}</p>` : ''}
     ${n.exits ? `<div class="fc-exits">${n.exits.map(e => flowExit(e, cur)).join('')}</div>` : ''}
-    ${flowSets(n.sets)}${flowChips(n.autos)}${flowNote(n.note)}${flowSugg(n.sugg)}
+    ${flowSets(n.sets)}${flowChips(n.autos)}${flowRecs(n.note, n.sugg)}
     ${links.length ? `<div class="fc-gos">${links.join('')}</div>` : ''}</div></div>`;
 }
 /* The arrow to the next node, labelled with the answer that carries on down the line. */
@@ -839,13 +815,16 @@ function flowLink(n, next) {
   const inner = n.after ? `<div class="fc-after">${label}${flowSets(n.after.sets)}${flowChips(n.after.autos)}</div>` : label;
   return `<div class="fc-link${next && next.k === 'sugg' ? ' to-sugg' : ''}"><div class="fc-rail"></div>${inner}</div>`;
 }
-/* The full list of a stage's automations from the register, folded away under the stage.
-   A search opens the stages that have matches. */
+/* The stage's active automations from the register, folded away under the stage heading,
+   with the ones that might need an update first. A search opens the stages that have matches. */
 function stageList(j, k, ext, open) {
-  const list = itemsFor(j, k);
+  const list = itemsFor(j, k).sort((a, b) => flagged(b.i) - flagged(a.i));
   if (state.q && !list.length) return '<p class="fc-none">No matching automations in this stage.</p>';
   const extra = state.q ? '' : (ext || []).map(extCard).join('');
-  const label = state.q ? `${list.length} matching automation${list.length === 1 ? '' : 's'}` : `All ${list.length} automation${list.length === 1 ? '' : 's'} in this stage`;
+  const n = list.length, s = n === 1 ? '' : 's';
+  const flags = list.filter(x => flagged(x.i)).length;
+  const label = (state.q ? `${n} matching automation${s}` : `All ${n} active automation${s} in this stage`) +
+    (flags ? ` <span class="fc-flagcount">&middot; ${flags} might need an update</span>` : '');
   return `<details class="fc-all" id="${j}-${k}"${state.q || open ? ' open' : ''}><summary>${label}</summary>
     <div class="cards">${renderList(list) || '<p class="empty">None.</p>'}${extra}</div></details>`;
 }
@@ -868,168 +847,71 @@ function flowLine(j, groups) {
   }
   return `<div class="fc-flow">${html}</div>`;
 }
-function renderJourney(j) {
-  const F = FLOW[j], J = JOURNEYS[j];
-  const el = document.getElementById('v-' + j);
-  el.classList.toggle('no-autos', !flowState.autos);
-  el.classList.toggle('no-sugg', !flowState.sugg);
-  const fresh = ITEMS.some(i => i.journey === j && i.stage === 'new');
-  el.innerHTML = `
-    <div class="view-head"><h2>${escapeHtml(J.label)} journey</h2></div>
+function renderControls() {
+  document.getElementById('controls').innerHTML = `
     <div class="controls">
-      <input type="search" id="q-${j}" placeholder="Search automations by name, purpose, list or ID" aria-label="Search automations" value="${escapeHtml(state.q)}">
-      <button type="button" class="chip" data-ft="sugg" aria-pressed="${flowState.sugg}">Show suggestions</button>
+      <input type="search" id="q-all" placeholder="Search automations by name, purpose, list or ID" aria-label="Search automations" value="${escapeHtml(state.q)}">
+      <button type="button" class="chip" data-ft="sugg" aria-pressed="${flowState.sugg}">Show recommendations</button>
       <button type="button" class="chip" data-ft="autos" aria-pressed="${flowState.autos}">Show automations on steps</button>
     </div>
-    <div class="fc-legend"><span><i class="fc-lg step"></i>Step</span><span><i class="fc-lg dec"></i>Decision</span><span><i class="fc-lg gap"></i>Gap: nothing automated</span><span><i class="fc-lg sugg"></i>Suggested workflow (not built)</span><span><i class="fc-dot"></i>Active</span><span><i class="fc-dot paused"></i>Paused</span></div>
+    <div class="fc-legend"><span><i class="fc-lg step"></i>Step</span><span><i class="fc-lg dec"></i>Decision</span><span><i class="fc-lg gap"></i>Gap: nothing automated</span><span><i class="fc-lg sugg"></i>Recommendation</span>${ITEMS.some(flagged) ? `<span><span class="chk first">${escapeHtml(AutomationChecks.LABEL)}</span>Worth a look</span>` : ''}</div>`;
+}
+function renderJourney(j) {
+  const F = FLOW[j], J = JOURNEYS[j];
+  document.getElementById('v-' + j).innerHTML = `
+    <h2 class="fc-jh">${escapeHtml(J.label)} journey</h2>
     <p class="fc-intro">${escapeHtml(F.intro)}</p>
-    ${fresh ? `<div class="fc-new"><h2 class="fc-h2">${NEW_STAGE.t}</h2><p>${escapeHtml(NEW_STAGE.b)}</p>${stageList(j, 'new', null, true)}</div>` : ''}
     ${flowLine(j, F.stages)}
     ${F.loop ? `<div id="fc-${F.loop.id}"><h2 class="fc-h2">The nurture loop</h2><p class="fc-intro">Where candidates sit whenever they aren’t moving down the main line. Their status decides which content they get.</p>${flowLine(j, [{ k:F.loop.stage, nodes:F.loop.nodes }])}</div>` : ''}
-    <h2 class="fc-h2">${BAND.t}</h2><div class="fc-health"><p>${escapeHtml(F.health.text)}</p>${flowChips(F.health.autos)}${flowNote(F.health.note)}${stageList(j, 'health')}</div>`;
+    <h2 class="fc-h2">${BAND.t}</h2><div class="fc-health"><p>${escapeHtml(F.health.text)}</p>${flowChips(F.health.autos)}${flowRecs(F.health.note)}${stageList(j, 'health')}</div>`;
+}
+/* Automations added to the register after the map was drawn, at the bottom of the page. */
+function renderNew() {
+  const el = document.getElementById('v-new');
+  const parts = ['cand', 'sales'].filter(j => itemsFor(j, 'new').length);
+  el.hidden = !parts.length;
+  el.innerHTML = parts.length ? `<h2 class="fc-jh">${NEW_STAGE.t}</h2><p class="fc-intro">${escapeHtml(NEW_STAGE.b)}</p>
+    ${parts.map(j => `<h3 class="fc-newh">${escapeHtml(JOURNEYS[j].label)}</h3>${stageList(j, 'new', null, true)}`).join('')}` : '';
+}
+/* Counts in the sidebar: active automations only. */
+function renderStats() {
+  const count = (j, k) => ITEMS.filter(i => i.journey === j && i.statusKey === 'Active' && (!k || i.stage === k)).length;
+  document.getElementById('navCand').textContent = count('cand');
+  document.getElementById('navSales').textContent = count('sales');
+  const fresh = count('cand', 'new') + count('sales', 'new');
+  document.getElementById('navNew').textContent = fresh;
+  document.getElementById('navNewBtn').hidden = !fresh;
+}
+function render() {
+  const page = document.querySelector('.workspace-inner');
+  page.classList.toggle('no-autos', !flowState.autos);
+  page.classList.toggle('no-sugg', !flowState.sugg);
+  for (const id of ['controls', 'v-cand', 'v-sales']) document.getElementById(id).hidden = false;
+  renderControls(); renderJourney('cand'); renderJourney('sales'); renderNew();
+}
+function scrollToEl(el, block) {
+  el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block });
 }
 function flowJump(target) {
-  const [j, id] = target.split(':');
-  state.view = j; render();
+  const id = target.split(':')[1];
   const el = document.getElementById('fc-' + id);
   if (!el) return;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  scrollToEl(el, 'center');
   const node = el.classList.contains('fc-node') ? el : el.querySelector('.fc-node');
   if (node) { node.classList.add('hl'); setTimeout(() => node.classList.remove('hl'), 1600); }
 }
 
-/* Everything the shared checks flag (../shared/automation-checks.js), most
-   urgent first. Recently checked ones only when showChecked is on. */
-function flaggedItems(includeChecked) {
-  const order = AutomationChecks.ORDER;
-  return ITEMS.filter(i => includeChecked ? i.check : flagged(i)).sort((a, b) =>
-    order[a.check.group] - order[b.check.group] || (a.check.lastDate || 0) - (b.check.lastDate || 0));
-}
-function checkMatches(i) {
-  if (checkState.group !== 'all' && i.check.group !== checkState.group) return false;
-  if (checkState.record !== 'all' && i.record !== checkState.record) return false;
-  if (!checkState.q) return true;
-  const hay = (i.name + ' ' + i.purpose + ' ' + i.list + ' ' + i.id + ' ' + i.check.reasons.map(r => r.title).join(' ')).toLowerCase();
-  return checkState.q.split(/\s+/).every(w => hay.includes(w));
-}
-function checkItem(i) {
-  const url = safeUrl(i.url);
-  const stage = i.stage === 'new' ? null : (JOURNEYS[i.journey].stages.find(s => s.k === i.stage) || (i.stage === 'health' ? { t: BAND.t } : null));
-  const done = i.check.recentlyChecked;
-  return `<article class="chk-item tone-${done ? 'ok' : i.check.group}">
-    <div class="top"><span class="pill">${escapeHtml(i.record)}</span><span class="pill ${i.statusKey.toLowerCase()}">${escapeHtml(i.status || i.statusKey)}</span>${i.activation ? `<span class="pill">${escapeHtml(i.activation)}</span>` : ''}${done ? '<span class="pill active">Checked</span>' : ''}</div>
-    <h4>${escapeHtml(i.name)}</h4>
-    ${done ? `<p class="purpose"><strong>${escapeHtml(checkedText(i.check))}</strong></p>` : ''}
-    <ul>${i.check.reasons.map(r => `<li><strong>${escapeHtml(r.title)}.</strong> ${escapeHtml(r.detail)}</li>`).join('')}</ul>
-    ${i.purpose ? `<p class="purpose">${escapeHtml(i.purpose)}</p>` : ''}
-    ${done ? '' : `<div class="mark-row">${markBox(i)}</div>`}
-    <div class="foot">
-      ${url ? `<a class="open-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Open in Bullhorn Automation</a>` : ''}
-      ${stage ? `<button type="button" class="text-btn" data-go="${i.journey}:${i.stage}">Show on the ${i.journey === 'sales' ? 'sales contact' : 'candidate'} journey</button>` : ''}
-      ${i.check.lastDate ? `<span>Last changed ${escapeHtml(AutomationChecks.formatDate(i.check.lastDate))}</span>` : ''}
-    </div></article>`;
-}
-function renderChecks() {
-  const open = flaggedItems(false);
-  const checked = ITEMS.filter(i => i.check && i.check.recentlyChecked);
-  const all = flaggedItems(checkState.showChecked);
-  const shown = all.filter(checkMatches);
-  const live = ITEMS.filter(i => i.statusKey !== 'Retired').length;
-  const byGroup = g => open.filter(i => i.check.group === g).length;
-  const days = AutomationChecks.LIMITS.recheckDays;
-  const recordOrder = ['Candidate', 'Sales Contact', 'Placement', 'Job', 'Submission'];
-  const records = [...new Set(all.map(i => i.record).filter(Boolean))]
-    .sort((x, y) => (recordOrder.indexOf(x) + 1 || 99) - (recordOrder.indexOf(y) + 1 || 99));
-
-  const groups = AutomationChecks.GROUPS.map(g => {
-    const list = shown.filter(i => i.check.group === g.key);
-    return list.length ? `<section class="chk-group"><h3>${escapeHtml(g.title)} <span class="cnt">${list.length}</span></h3>
-      <p>${escapeHtml(g.blurb)}</p><div class="chk-items">${list.map(checkItem).join('')}</div></section>` : '';
-  }).join('');
-
-  document.getElementById('v-checks').innerHTML = `
-    <div class="view-head"><h2>Might need update</h2><p>Worked out automatically from the register each time the page loads: automations that look out of date, unfinished or inconsistent. Retired ones are left out. It means &ldquo;worth a look&rdquo;, not &ldquo;broken&rdquo;.</p></div>
-    <p class="hint" style="max-width:72ch;margin-top:8px">Checked one and it&rsquo;s fine? Tick <strong>Checked &ndash; looks fine</strong>. That writes today&rsquo;s date into its <strong>Last Checked</strong> column in the register, and it drops off this list for ${days} days, or until it&rsquo;s changed. Dates typed straight into the register show up after its weekly Monday update, or straight away with &ldquo;Refresh now&rdquo; below.</p>
-    <div class="chk-stats">
-      ${AutomationChecks.GROUPS.map(g => `<button type="button" class="chk-stat tone-${g.key}" data-cgroup="${g.key}" aria-pressed="${checkState.group === g.key}">
-        <span class="k">${escapeHtml(g.title)}</span><span class="v">${byGroup(g.key)}</span><span class="d">${escapeHtml(g.short)}</span></button>`).join('')}
-      <button type="button" class="chk-stat tone-ok" data-cchecked aria-pressed="${checkState.showChecked}"><span class="k">Checked recently</span><span class="v">${checked.length}</span><span class="d">${checkState.showChecked ? 'Shown below. Click to hide' : 'Hidden for ' + days + ' days. Click to show'}</span></button>
-      <div class="chk-stat tone-ok" style="cursor:default"><span class="k">Nothing flagged</span><span class="v">${live - open.length - checked.length}</span><span class="d">of ${live} not retired</span></div>
-    </div>
-    <div class="controls">
-      <input type="search" id="checks-q" placeholder="Search names, purposes and reasons" aria-label="Search flagged automations" value="${escapeHtml(checkState.q)}">
-      ${['all', ...records].map(r => `<button type="button" class="chip" data-crecord="${escapeHtml(r)}" aria-pressed="${checkState.record === r}">${r === 'all' ? 'All records' : escapeHtml(r)}</button>`).join('')}
-      <span class="hint">${shown.length} of ${all.length} shown</span>
-      <button type="button" class="text-btn" id="checks-csv">Download as CSV</button>
-      <button type="button" class="text-btn" id="checks-refresh">Refresh now</button>
-    </div>
-    ${groups || '<p class="empty">Nothing matches. Try another search or filter.</p>'}`;
-}
-function csvCell(value) {
-  const s = String(value == null ? '' : value);
-  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-}
-function downloadChecks() {
-  const title = Object.fromEntries(AutomationChecks.GROUPS.map(g => [g.key, g.title]));
-  const rows = [['Priority', 'Record', 'Automation', 'Status', 'Activation', 'Why it might need update', 'Last changed', 'Last checked', 'Link'],
-    ...flaggedItems(checkState.showChecked).filter(checkMatches).map(i => [
-      title[i.check.group], i.record, i.name, i.status, i.activation, i.check.reasons.map(r => r.title).join('; '),
-      i.check.lastDate ? AutomationChecks.formatDate(i.check.lastDate) : '',
-      i.check.checkedOn ? AutomationChecks.formatDate(i.check.checkedOn) : '', safeUrl(i.url) || ''])];
-  /* The BOM makes Excel open it as UTF-8. */
-  const blob = new Blob(['﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'automations-might-need-update-' + new Date().toISOString().slice(0, 10) + '.csv';
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-/* Counts in the sidebar (retired automations aren't shown on the journeys). */
-function renderStats() {
-  const count = j => ITEMS.filter(i => i.journey === j && i.statusKey !== 'Retired').length;
-  document.getElementById('navCand').textContent = count('cand');
-  document.getElementById('navSales').textContent = count('sales');
-  document.getElementById('navChecks').textContent = ITEMS.filter(flagged).length;
-}
-function render() {
-  for (const v of ['cand', 'sales', 'checks']) document.getElementById('v-' + v).hidden = v !== state.view;
-  document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
-  if (state.view === 'cand' || state.view === 'sales') renderJourney(state.view);
-  if (state.view === 'checks') renderChecks();
-}
-/* Open a stage's automation list on its journey, e.g. 'cand:tt' (used by the Might need update tab). */
-function go(target) {
-  const [j, k] = target.split(':');
-  state.view = j; render();
-  const el = document.getElementById(j + '-' + k);
-  if (!el) return;
-  el.open = true;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  el.classList.add('hl'); setTimeout(() => el.classList.remove('hl'), 1600);
-}
-
 /* ===================== EVENTS ===================== */
 document.getElementById('viewNav').addEventListener('click', e => {
-  const b = e.target.closest('[data-view]'); if (!b) return;
-  state.view = b.dataset.view; render();
-  try { history.replaceState(null, '', '#' + state.view); } catch {}
+  const b = e.target.closest('[data-jump]'); if (!b) return;
+  const el = document.getElementById(b.dataset.jump);
+  if (el) scrollToEl(el, 'start');
 });
 document.addEventListener('click', e => {
-  const goBtn = e.target.closest('[data-go]');
-  if (goBtn) { go(goBtn.dataset.go); return; }
-  const cgroup = e.target.closest('[data-cgroup]');
-  if (cgroup) { checkState.group = checkState.group === cgroup.dataset.cgroup ? 'all' : cgroup.dataset.cgroup; renderChecks(); return; }
-  const crecord = e.target.closest('[data-crecord]');
-  if (crecord) { checkState.record = crecord.dataset.crecord; renderChecks(); return; }
-  if (e.target.closest('[data-cchecked]')) { checkState.showChecked = !checkState.showChecked; renderChecks(); return; }
   const ft = e.target.closest('[data-ft]');
   if (ft) { flowState[ft.dataset.ft] = !flowState[ft.dataset.ft]; render(); return; }
   const fgo = e.target.closest('[data-fgo]');
-  if (fgo) { flowJump(fgo.dataset.fgo); return; }
-  if (e.target.closest('#checks-refresh')) { load(true); return; }
-  if (e.target.closest('#checks-csv')) downloadChecks();
+  if (fgo) flowJump(fgo.dataset.fgo);
 });
 /* Tick box: write the date to the register, then update the rows we already
    have (and the saved copy) so the flag disappears without a full reload. */
@@ -1066,19 +948,11 @@ function showToast(text) {
   toastTimer = setTimeout(() => { t.hidden = true; }, 5000);
 }
 document.addEventListener('input', e => {
-  if (e.target.id === 'checks-q') {
-    checkState.q = e.target.value.trim().toLowerCase();
-    const pos = e.target.selectionStart;
-    renderChecks();
-    const box = document.getElementById('checks-q');
-    if (box) { box.focus(); try { box.setSelectionRange(pos, pos); } catch {} }
-    return;
-  }
-  if (!e.target.id || !e.target.id.startsWith('q-')) return;
+  if (e.target.id !== 'q-all') return;
   state.q = e.target.value.trim().toLowerCase();
   const pos = e.target.selectionStart;
   render();
-  const box = document.getElementById(e.target.id);
+  const box = document.getElementById('q-all');
   if (box) { box.focus(); try { box.setSelectionRange(pos, pos); } catch {} }
 });
 document.getElementById('retry').addEventListener('click', () => load(true));
@@ -1153,11 +1027,12 @@ async function load(force) {
   }
 }
 
-/* #flow, #conn and #flags were views before Nov 2026; old links land on the candidate journey. */
-const startView = location.hash.slice(1);
-if (['cand', 'sales', 'checks'].includes(startView)) state.view = startView;
-document.querySelectorAll('#viewNav [data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
-load(false);
+/* #cand and #sales open at that journey. Old links to views removed in Nov 2026
+   (#flow, #conn, #flags, #checks) open at the top of the page. */
+load(false).then(() => {
+  const el = ['cand', 'sales'].includes(location.hash.slice(1)) && document.getElementById('v-' + location.hash.slice(1));
+  if (el) el.scrollIntoView();
+});
 </script>
 </body>
 </html>

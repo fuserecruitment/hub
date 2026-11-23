@@ -56,7 +56,7 @@ Match `automation-finder/index.html`, the reference tool page.
 |---|---|---|
 | `bullhorn-category/` | Works out industry / category / sub-category for Bullhorn records | AI lookup via `bullhorn-category/worker/` |
 | `automation-finder/` | Plain-English search of the Active Automation Register | `bullhorn-automation-finder` worker → Power Automate flow → register spreadsheet |
-| `journeys/` | Candidate and sales contact journeys as flowcharts (steps, hand-offs, gaps, suggestions, every automation by stage), plus a "Might need update" tab | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
+| `journeys/` | One page: candidate and sales contact journeys as flowcharts (steps, hand-offs, recommendations, active automations by stage with "Might need update" flags) | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
 | `present-feedback/` | Static report on the Present survey (Sept 2026) | None (static) |
 | `candidate-emails/` | Static audit of the Active and Passive candidate email workflows (Oct 2026): click rates, proposed per-stage flows, content to create | None (static, data baked into the page) |
 | `shared/` | Code used by more than one tool (no page of its own) | None |
@@ -70,17 +70,16 @@ Match `automation-finder/index.html`, the reference tool page.
   first, Tidy up, When there's time) show how urgent. Retired automations
   are never flagged.
 - Used by the Automation Finder (a label and reasons on each answer card) and
-  the Journey Map (a label on each card, plus the "Might need update" tab with
-  filters, CSV download and "Refresh now", `#checks`).
+  the Journey Map (a label on step chips and cards; each stage's automation
+  list counts and puts flagged ones first).
 - Marking one as checked: the **Checked – looks fine** tick box (Journey Map
-  tab and cards, Automation Finder answers) calls `markChecked()`, which goes
+  cards, Automation Finder answers) calls `markChecked()`, which goes
   worker `/api/check` → "Mark checked" flow (`automation-finder/CHECK_FLOW_SPEC.md`)
   → writes today's date to **Last Checked** in the register, matched by
   Automation URL. A date typed into the register directly works too. The flag
   is hidden for `LIMITS.recheckDays` (90) days, or until the automation's Date
-  Last Modified is after that date. The tab can show the recently checked ones
-  on request. Automations with no link can't be ticked (the flow needs the
-  link to find the row).
+  Last Modified is after that date. Automations with no link can't be ticked
+  (the flow needs the link to find the row).
 - Thresholds are in `LIMITS`, word lists in `SENDS` / `SEASONAL`. Change them
   there; both pages pick it up. Automations are matched between pages with
   `keyFor()` (the number at the end of the Herefish URL).
@@ -92,22 +91,25 @@ Match `automation-finder/index.html`, the reference tool page.
   category tools, Map to New Categories, Top Talent sends) are grouped by
   name in `placeAutomation()`.
 - Anything not in `STAGE_IDS` and not matched by a name rule appears in a
-  "Not on the map yet" list at the top of its journey. To place it, add its
-  ID to the right stage.
+  "Not on the map yet" section at the bottom of the page. To place it, add
+  its ID to the right stage.
 - `ALSO` lists automations shown on both journeys.
-- Three views: Candidate journey, Sales contact journey (`#cand`, `#sales`)
-  and Might need update (`#checks`). Each journey is a flowchart,
-  hand-written in `FLOW` (reviewed 29 Oct 2026): one person's path, grouped
-  by the stage keys in `JOURNEYS`, with decisions, field changes, hand-offs
-  to the other journey, gaps and checks (`note`) at each step. Under each
-  stage heading, "All N automations" folds out the stage's full list from
-  the register; the search box opens the stages with matches.
-- Automation names and statuses come from the register at load time;
-  retired or missing IDs are skipped. Suggested workflows (`sugg`) aren't
-  built yet and show in purple (`--sugg`), a colour used only for suggestions.
-- The separate column view, "How they connect" and "Gaps & checks" tabs were
-  removed in Nov 2026 as duplicates of the flowchart; old `#flow`, `#conn`
-  and `#flags` links open the candidate journey.
+- One page, read top to bottom: the Candidate journey, then the Sales contact
+  journey (`#cand`, `#sales` jump to them), then "Not on the map yet". Each
+  journey is a flowchart, hand-written in `FLOW` (reviewed 29 Oct 2026, paused
+  workflows added as recommendations 24 Nov 2026): one person's path, grouped
+  by the stage keys in `JOURNEYS`, with decisions, field changes and
+  hand-offs to the other journey. Under each stage heading, "All N active
+  automations" folds out the stage's list from the register, flagged ones
+  first; the search box opens the stages with matches.
+- Only Active automations are shown (`state.show`). Paused workflows are left
+  off; where one matters it's named in a recommendation instead.
+- Recommendations (purple, `--sugg`, a colour used only for them) combine
+  notes (`note`: `['Gap' | 'Fix' | 'Check', text]`) and suggested new
+  workflows (`sugg`, or a `k:'sugg'` node). "Show recommendations" hides them.
+- Tabs removed in Nov 2026 (column view, Flowchart, How they connect, Gaps &
+  checks, Might need update) were duplicates of this page; old `#flow`,
+  `#conn`, `#flags` and `#checks` links open at the top.
 - It keeps the register in localStorage (`automationJourneys.register`) and
   treats it as stale once the latest weekly update has passed. The register's
   scheduled update runs Mondays 6:00 am Philippine time, so the cutoff is
