@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SharePoint Preview Test</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --muted:#5b6470; --ok:#1a7f37; --bad:#c62828; --line:#e3e6ea; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 "Work Sans", system-ui, sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  p.lead { color:var(--muted); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:12px; }
+  .title { font-weight:600; margin-bottom:4px; }
+  .detail { color:var(--muted); font-size:13px; word-break:break-word; }
+  input { width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:6px; font:inherit; margin:8px 0; }
+  button { padding:8px 14px; border:0; border-radius:6px; background:#1b1f24; color:#fff; font:inherit; cursor:pointer; }
+  .result { margin-top:8px; font-size:14px; font-weight:600; }
+  .result.ok { color:var(--ok); } .result.bad { color:var(--bad); }
+</style>
+</head>
+<body>
+<main>
+  <h1>SharePoint preview test</h1>
+  <p class="lead">Open this from the SharePoint link (not the synced copy), try each test, then screenshot the page.</p>
+
+  <div class="card">
+    <div class="title">1. Call a Power Automate flow</div>
+    <div class="detail">Paste the link of one of the tt planner flows that only reads data (the "When an HTTP request is received" URL). It is called with an empty request, so use one that does not add or change anything.</div>
+    <input id="flowUrl" placeholder="https://prod-00.australiasoutheast.logic.azure.com/workflows/...">
+    <button id="flowBtn">Call flow</button>
+    <div id="flowRes" class="result"></div>
+  </div>
+
+  <div class="card">
+    <div class="title">2. Download a PNG</div>
+    <div class="detail">Should save a small image called test-post.png.</div>
+    <button id="pngBtn">Download test PNG</button>
+    <div id="pngRes" class="result"></div>
+  </div>
+
+  <div class="card">
+    <div class="title">3. Copy a caption</div>
+    <div class="detail">Click, then paste into Notepad or Teams to check it copied.</div>
+    <button id="copyBtn">Copy test caption</button>
+    <div id="copyRes" class="result"></div>
+  </div>
+
+  <div class="card detail" id="where"></div>
+</main>
+<script>
+function show(id, ok, msg) { const el = document.getElementById(id); el.className = 'result ' + (ok ? 'ok' : 'bad'); el.textContent = msg; }
+document.getElementById('where').textContent = 'Opened at: ' + location.href;
+
+document.getElementById('flowBtn').onclick = async () => {
+  const url = document.getElementById('flowUrl').value.trim();
+  if (!url) return show('flowRes', false, 'Paste a flow link first.');
+  show('flowRes', true, 'Calling…');
+  try {
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const t = await r.text();
+    show('flowRes', r.ok, (r.ok ? 'Works' : 'Reached the flow but it returned an error') + ' (HTTP ' + r.status + '), ' + t.length + ' characters back');
+  } catch (e) { show('flowRes', false, 'Blocked: ' + e.message); }
+};
+
+document.getElementById('pngBtn').onclick = () => {
+  try {
+    const c = document.createElement('canvas'); c.width = 540; c.height = 675;
+    const x = c.getContext('2d');
+    x.fillStyle = '#1b1f24'; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = '#fff'; x.font = 'bold 40px system-ui'; x.fillText('Test post', 40, 90);
+    c.toBlob(b => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b); a.download = 'test-post.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      show('pngRes', true, 'Download started. Check your Downloads folder for test-post.png.');
+    }, 'image/png');
+  } catch (e) { show('pngRes', false, 'Blocked: ' + e.message); }
+};
+
+document.getElementById('copyBtn').onclick = async () => {
+  const text = 'Test caption from the social post generator';
+  try { await navigator.clipboard.writeText(text); show('copyRes', true, 'Copied. Paste somewhere to confirm.'); }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand && document.execCommand('copy'); ta.remove();
+    show('copyRes', !!ok, ok ? 'Copied using the fallback method. Paste somewhere to confirm.' : 'Blocked: ' + e.message);
+  }
+};
+</script>
+</body>
+</html>

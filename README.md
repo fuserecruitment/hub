@@ -18,6 +18,11 @@ confidential content here.
 | Automation Journey Map | `journeys/` (reads the register through the Automation Finder worker; stages are set in `STAGE_IDS` in its `index.html`; the "Might need update" flags come from `shared/automation-checks.js`, which the Automation Finder uses too) | https://fuserecruitment.github.io/hub/journeys/ |
 | Present Feedback Review | `present-feedback/` | https://fuserecruitment.github.io/hub/present-feedback/ |
 | Candidate Email Audit | `candidate-emails/` | https://fuserecruitment.github.io/hub/candidate-emails/ |
+| Social Post Generator | `social-posts/` (worker in `social-posts/worker/`, SharePoint list and flow setup in `social-posts/FLOW_SPEC.md`; a standalone SharePoint backup version in `social-posts/sharepoint-version/`) | https://fuserecruitment.github.io/hub/social-posts/ |
+
+The home page groups tools under **For everyone** (Bullhorn Categorisation)
+and **Marketing** (everything else). Groups only organise the menu; anyone
+signed in can open any tool.
 
 Bullhorn Categorisation used to live in its own repo,
 [fuserecruitment/bullhorn-category](https://github.com/fuserecruitment/bullhorn-category).
@@ -26,8 +31,9 @@ It was moved here with its history, and the old address now redirects here.
 ## Adding a tool
 
 1. Put the tool in its own folder in this repo.
-2. Add an entry to the `TOOLS` list near the top of the script in `index.html`.
-   It shows up in the sidebar and as a card on the home page.
+2. Add an entry to the `TOOLS` list near the top of the script in `index.html`,
+   with `group: 'everyone'` or `group: 'marketing'`. It shows up in the
+   sidebar and as a card on the home page, under that group.
 3. In the tool's page, add the `noindex` robots tag and sign-in check to `<head>`, and the shared
    sidebar with a "Back to Fuse Hub" link. Copy both from
    `present-feedback/index.html`.

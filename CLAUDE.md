@@ -30,10 +30,17 @@ step-by-step instructions for anything she has to do outside the repo.
 2. The sign-in check script in `<head>`: it reads `fuseHub.email` from
    localStorage and sends people to `../?next=...` if it's missing. Copy it
    from `automation-finder/index.html`. It's a soft gate, not security.
+   The hub sign-in also asks for a first name (`fuseHub.name`), used for the
+   home page greeting ("How can I make your work easier today, Sam?") and to
+   prefill names in tools. People signed in before it was added are asked
+   for it once, with their email filled in.
 3. The shared navy sidebar: Fuse logo (`../fuse-logo.png`), tool name (no
    tag line under it), and a `← Back to Fuse Hub` button (`.sidebar-nav-btn.hub-back`).
 4. An entry in the `TOOLS` list in the root `index.html` (sidebar + home card)
-   and a row in `README.md`.
+   with its `group`, and a row in `README.md`. Groups (`GROUPS`): `everyone`
+   is only Bullhorn Categorisation, the one tool the whole team uses;
+   everything else is `marketing`. Groups organise the menu, they don't
+   restrict access.
 
 ## Branding
 
@@ -59,7 +66,30 @@ Match `automation-finder/index.html`, the reference tool page.
 | `journeys/` | One page: candidate and sales contact journeys as flowcharts (steps, hand-offs, recommendations, active automations by stage with "Might need update" flags) | Same worker and flow as Automation Finder, request body includes `"mode": "register"` |
 | `present-feedback/` | Static report on the Present survey (Sept 2026) | None (static) |
 | `candidate-emails/` | Static audit of the Active and Passive candidate email workflows (Oct 2026): click rates, proposed per-stage flows, content to create | None (static, data baked into the page) |
+| `social-posts/` | Social Post Generator: pick a live job from fuserecruitment.com, get two AI caption drafts (or copy a prompt for Copilot) | `fuse-social-posts` worker → "Get jobs" / "Write caption" flows → SharePoint Jobs list (kept in step with the website by an hourly "Sync jobs" flow). See `social-posts/FLOW_SPEC.md` |
 | `shared/` | Code used by more than one tool (no page of its own) | None |
+
+### Social Post Generator (`social-posts/`)
+
+- Job data is never committed: job ads can name consultants. It reaches the
+  page at runtime from the Jobs list via `/api/jobs`, and is kept in
+  sessionStorage for an hour (`JOBS_CACHE_MINUTES`).
+- `/api/caption` only passes on a job reference, a platform, an angle and
+  short name/role/notes (see the worker). The flow looks the job up itself,
+  so the page never sends job text to the AI.
+- Platform and angle keys live in three places that must match: `PLATFORMS` /
+  `ANGLES` in the page, the same lists in `worker/src/index.js`, and the AI
+  Builder prompt in `FLOW_SPEC.md` step 3.4. The style rules are also in the
+  page's Copilot prompt (`PROMPT_TEMPLATE`).
+- The AI returns two drafts separated by a line containing only `---`.
+- `sharepoint-version/` is a backup, kept "in case": a standalone HTML file
+  with a job snapshot built in, for the SharePoint file preview (no AI, as
+  the preview blocks flow calls). See its README. Its `data/` and `dist/`
+  hold job ads and are git-ignored; never commit them. It isn't a hub page,
+  so it has no sign-in check, sidebar or `TOOLS` entry.
+- Other post types (multiple jobs, top talent, testimonials, blogs) show as
+  "Soon" in the sidebar. Images come later, once the post templates are
+  designed; photos will come from a SharePoint folder.
 
 ### Automation checks (`shared/automation-checks.js`)
 

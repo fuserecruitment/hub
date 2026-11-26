@@ -5,3 +5,8 @@ dist/
 build/
 .DS_Store
 Thumbs.db
+
+# Social Post Generator, SharePoint backup: job ads can name consultants, so the
+# job snapshot and built files stay on this computer only (repo is public)
+social-posts/sharepoint-version/data/
+__pycache__/

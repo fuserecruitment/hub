@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<title>Social Post Generator | Fuse Recruitment</title>
+<script>
+/* Fuse Hub sign-in check: send people to the hub to enter their Fuse email first. */
+(function () {
+  var email = null;
+  try { email = localStorage.getItem('fuseHub.email'); } catch (e) { return; }
+  if (!email || !/^[^\s@]+@fuserecruitment\.com$/i.test(email)) {
+    location.replace('../?next=' + encodeURIComponent(location.href));
+  }
+})();
+</script>
+<link rel="icon" type="image/png" href="../fuse-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --navy:#151A36;
+    --blue:#009CDD;
+    --blue-soft:#D6EFFA;
+    --concrete:#A2C8D8;
+    --steel:#E6EFF3;
+    --line:#CBD9E1;
+    --warn:#B23B3B;
+    --white:#FFFFFF;
+    --ink:#151A36;
+    --ink-soft:#5B6178;
+    --green:#1E7B4F;
+    --green-bg:#E3F3EA;
+    --radius-lg:10px;
+    --radius-md:8px;
+    --radius-sm:7px;
+    --sidebar-w:300px;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--steel);
+    color:var(--ink);
+    font-family:'Work Sans',sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{margin:0;color:var(--navy);font-weight:700;letter-spacing:-0.01em;}
+  p{margin:0;}
+  [hidden]{display:none !important;}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+
+  /* ---------- Shell: sidebar + workspace (same component as the other Fuse Hub tools) ---------- */
+  .shell{display:flex;min-height:100vh;}
+
+  .sidebar{
+    width:var(--sidebar-w);flex-shrink:0;
+    background:var(--navy);color:var(--white);
+    display:flex;flex-direction:column;
+    height:100vh;position:sticky;top:0;overflow:hidden;
+  }
+  .sidebar-scroll{flex:1;min-height:0;overflow-y:auto;}
+  .sidebar-brand{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center;}
+  .sidebar-logo{display:block;width:96px;height:auto;margin:0 auto 14px;}
+  .sidebar-brand h1{font-size:16.5px;margin:0;color:#fff;}
+  .sidebar-block{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .sidebar-block label{
+    display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.06em;color:rgba(255,255,255,.5);margin-bottom:8px;
+  }
+  .sidebar-block p{font-size:13px;color:rgba(255,255,255,.7);}
+  .sidebar-block p + p{margin-top:8px;}
+  .sidebar-block a{color:var(--concrete);}
+  .sidebar-nav-btn{
+    display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:10px 12px;margin-bottom:4px;border-radius:7px;border:none;
+    background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);font-family:'Work Sans',sans-serif;
+    font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;
+  }
+  .sidebar-nav-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+  .sidebar-nav-btn.active{background:var(--blue);color:#fff;}
+  .sidebar-nav-btn:disabled{cursor:default;background:transparent;color:rgba(255,255,255,.4);}
+  .sidebar-nav-btn.hub-back{margin-bottom:0;}
+  .sidebar-nav-btn:last-child{margin-bottom:0;}
+  .soon{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:100px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);}
+  .sidebar .sidebar-input{
+    width:100%;padding:9px 11px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.06);color:#fff;font-family:'Work Sans',sans-serif;font-size:13.5px;margin-bottom:12px;
+  }
+  .sidebar .sidebar-input::placeholder{color:rgba(255,255,255,.35);}
+  .sidebar .sidebar-input:focus{outline:none;border-color:var(--blue);}
+  .sidebar-hint{font-size:12px;color:rgba(255,255,255,.5);}
+
+  .workspace{flex:1;min-width:0;padding:32px 36px 80px;}
+  .workspace-inner{max-width:1240px;margin:0 auto;}
+
+  /* ---------- Intro ---------- */
+  .intro{padding-bottom:22px;}
+  .intro h1{font-size:28px;line-height:1.25;margin:0 0 10px;}
+  .intro p{color:var(--ink-soft);font-size:15px;max-width:70ch;}
+
+  /* ---------- Cards and controls ---------- */
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:16px;}
+  .card.job{border-top:3px solid var(--blue);}
+  .card-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:10px;}
+  .field-label{display:block;font-size:13px;font-weight:600;margin:0 0 8px;}
+  input[type=text], input[type=search], select, textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--white);color:var(--ink);
+    font-family:'Work Sans',sans-serif;font-size:14px;
+  }
+  input:focus, select:focus, textarea:focus{outline:none;border-color:var(--blue);}
+  textarea{resize:vertical;line-height:1.5;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border:none;border-radius:var(--radius-sm);
+    background:var(--blue);color:#fff;font-family:'Work Sans',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;text-decoration:none;
+  }
+  .btn:hover{background:#1AAEEC;}
+  .btn:disabled{background:var(--concrete);cursor:default;}
+  .btn.secondary{background:var(--white);color:var(--ink);border:1px solid var(--line);padding:11px 17px;}
+  .btn.secondary:hover{border-color:var(--blue);background:var(--white);}
+  .btn.small{padding:8px 12px;font-size:13px;}
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .chip{
+    padding:6px 12px;border-radius:100px;border:1px solid var(--line);background:var(--steel);color:var(--ink);
+    font-family:'Work Sans',sans-serif;font-size:13px;cursor:pointer;
+  }
+  .chip:hover{border-color:var(--blue);}
+  .chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .pill{font-size:11.5px;font-weight:600;border-radius:100px;padding:3px 10px;background:var(--steel);color:var(--ink-soft);white-space:nowrap;}
+  .pill.new{background:var(--blue);color:#fff;}
+  .status{min-height:22px;margin-top:10px;font-size:13.5px;color:var(--ink-soft);}
+  .status.working::before{
+    content:"";display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px;
+    border:2px solid var(--concrete);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .error{background:#FBECEC;border:1px solid #EBC5C5;border-radius:var(--radius-lg);padding:14px 16px;color:var(--warn);font-size:14px;}
+  .link-btn{padding:0;border:none;background:none;color:var(--blue);font-family:'Work Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;}
+
+  /* ---------- Job list + detail ---------- */
+  .split{display:grid;grid-template-columns:minmax(300px,390px) 1fr;gap:20px;align-items:start;}
+  .list-card{position:sticky;top:20px;margin-bottom:0;}
+  .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;}
+  .filters select{font-size:13px;padding:8px 10px;}
+  .count{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--ink-soft);margin:0 0 8px;}
+  .jobs{list-style:none;margin:0;padding:0;max-height:calc(100vh - 300px);min-height:260px;overflow:auto;}
+  .job-row{
+    display:block;width:100%;text-align:left;cursor:pointer;font-family:'Work Sans',sans-serif;color:var(--ink);
+    background:var(--steel);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:8px;
+  }
+  .job-row:hover{border-color:var(--blue);}
+  .job-row.selected{background:var(--blue-soft);border-color:var(--blue);}
+  .row-title{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;font-weight:600;font-size:14px;}
+  .row-meta{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .empty{padding:24px 8px;color:var(--ink-soft);font-size:14px;text-align:center;}
+
+  .job-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:10px;}
+  .job-head h2{font-size:20px;line-height:1.3;}
+  .ref{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .open-link{
+    flex-shrink:0;display:inline-block;padding:9px 14px;border-radius:var(--radius-sm);background:var(--navy);color:#fff;
+    font-size:13.5px;font-weight:600;text-decoration:none;
+  }
+  .open-link:hover{background:#262D57;}
+  .facts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .summary{margin-bottom:12px;}
+  details summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--blue);}
+  .desc{white-space:pre-wrap;font-size:13.5px;line-height:1.6;background:var(--steel);border-radius:var(--radius-sm);padding:14px 16px;margin-top:10px;max-height:340px;overflow:auto;}
+
+  .drafts{display:grid;gap:12px;margin-top:16px;}
+  .draft{background:var(--steel);border:1px solid var(--line);border-radius:var(--radius-md);padding:14px 16px;}
+  .draft-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;}
+  .draft-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+  .draft textarea{background:var(--white);min-height:180px;font-size:14px;}
+  .tip{font-size:13px;color:var(--ink-soft);margin-top:10px;}
+  textarea.prompt{min-height:260px;font-size:13px;margin:10px 0;}
+
+  .placeholder{text-align:center;padding:48px 20px;color:var(--ink-soft);}
+  .placeholder h2{font-size:18px;margin-bottom:6px;}
+
+  .toast{
+    position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:12px 18px;border-radius:var(--radius-md);
+    font-size:13.5px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .2s ease;pointer-events:none;z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+  @media(max-width:1100px){
+    .split{grid-template-columns:1fr;}
+    .list-card{position:static;}
+    .jobs{max-height:420px;}
+  }
+  @media(max-width:860px){
+    .shell{flex-direction:column;}
+    .sidebar{width:100%;height:auto;position:relative;}
+    .sidebar-about{display:none;}
+    .workspace{padding:24px 16px 60px;}
+    .intro h1{font-size:24px;}
+  }
+  @media(max-width:560px){
+    .job-head{flex-direction:column;}
+    .filters{grid-template-columns:1fr;}
+    .btn{justify-content:center;}
+  }
+  @media (prefers-reduced-motion:reduce){.status.working::before{animation:none;}}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-scroll">
+      <div class="sidebar-brand">
+        <img src="../fuse-logo.png" alt="Fuse" class="sidebar-logo">
+        <h1>Social Post Generator</h1>
+      </div>
+
+      <div class="sidebar-block">
+        <a class="sidebar-nav-btn hub-back" href="../">&larr; Back to Fuse Hub</a>
+      </div>
+
+      <div class="sidebar-block">
+        <label>Post type</label>
+        <button class="sidebar-nav-btn active" type="button">Single job</button>
+        <button class="sidebar-nav-btn" type="button" disabled>Multiple jobs <span class="soon">Soon</span></button>
+        <button class="sidebar-nav-btn" type="button" disabled>Top talent <span class="soon">Soon</span></button>
+        <button class="sidebar-nav-btn" type="button" disabled>Client testimonial <span class="soon">Soon</span></button>
+        <button class="sidebar-nav-btn" type="button" disabled>Blog <span class="soon">Soon</span></button>
+      </div>
+
+      <div class="sidebar-block">
+        <label for="name">Your name</label>
+        <input class="sidebar-input" type="text" id="name" placeholder="e.g. Sam Taylor" autocomplete="name">
+        <label for="role">Your role (optional)</label>
+        <input class="sidebar-input" type="text" id="role" placeholder="e.g. Senior Consultant">
+        <p class="sidebar-hint">Used in your captions. Saved in this browser only.</p>
+      </div>
+
+      <div class="sidebar-block sidebar-about">
+        <label>Where the jobs come from</label>
+        <p>The live jobs on fuserecruitment.com. They're copied into a SharePoint list every hour, so a new job can take up to an hour to appear.</p>
+        <p>Captions are drafted by AI. Always check the facts before you post.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <div class="workspace-inner">
+      <div class="intro">
+        <h1>Turn a live job into a social post.</h1>
+        <p>Pick a job, choose the platform and angle, and get two caption drafts to edit and post.</p>
+      </div>
+
+      <div class="split">
+        <!-- Job list -->
+        <section class="card list-card" aria-label="Jobs">
+          <div class="card-label">Live jobs</div>
+          <input type="search" id="q" placeholder="Search title, location or reference" autocomplete="off">
+          <div class="filters">
+            <select id="fState" aria-label="Location"><option value="">All locations</option></select>
+            <select id="fType" aria-label="Work type"><option value="">All work types</option></select>
+          </div>
+          <div class="count"><span id="count">Loading jobs</span><button class="link-btn" type="button" id="refreshJobs">Refresh</button></div>
+          <ul class="jobs" id="jobs" aria-label="Job results" aria-live="polite"></ul>
+        </section>
+
+        <!-- Detail + caption -->
+        <section>
+          <div class="card placeholder" id="noJob">
+            <h2>Pick a job to get started</h2>
+            <p>Its details will appear here, ready to turn into a caption.</p>
+          </div>
+
+          <div id="jobPanel" hidden>
+            <div class="card job">
+              <div class="job-head">
+                <div>
+                  <h2 id="dTitle"></h2>
+                  <div class="ref" id="dRef"></div>
+                </div>
+                <a class="open-link" id="dLink" href="#" target="_blank" rel="noopener">View job ad &nearr;</a>
+              </div>
+              <div class="facts" id="dFacts"></div>
+              <p class="summary" id="dSummary"></p>
+              <details>
+                <summary>Full job ad</summary>
+                <div class="desc" id="dDesc"></div>
+              </details>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Caption</div>
+
+              <span class="field-label">Platform</span>
+              <div class="chips" id="platforms"></div>
+
+              <span class="field-label">Angle</span>
+              <div class="chips" id="angles"></div>
+
+              <label class="field-label" for="notes">Anything else to mention (optional)</label>
+              <input type="text" id="notes" maxlength="300" placeholder="e.g. immediate start, great team, I placed someone here last year" style="margin-bottom:16px">
+
+              <div class="btn-row">
+                <button class="btn" type="button" id="generate">Write my captions</button>
+              </div>
+              <div class="status" id="genStatus" role="status" aria-live="polite"></div>
+              <div id="drafts" class="drafts" aria-live="polite"></div>
+            </div>
+
+            <div class="card">
+              <details>
+                <summary>Prefer Copilot? Copy the prompt instead</summary>
+                <textarea class="prompt" id="prompt" spellcheck="false"></textarea>
+                <div class="btn-row">
+                  <button class="btn secondary small" type="button" id="copyPrompt">Copy prompt</button>
+                  <a class="btn secondary small" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Open Copilot &nearr;</a>
+                </div>
+              </details>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer>
+        <span>Fuse Recruitment</span>
+        <span>Captions are AI-assisted. Check every fact before you post.</span>
+      </footer>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =====================================================================
+   SETTINGS
+   ===================================================================== */
+const WORKER = 'https://fuse-social-posts.marketing-1b3.workers.dev';
+const JOBS_CACHE_MINUTES = 60;
+
+/* Keys must match the worker's lists (worker/src/index.js) and the
+   "Write caption" flow (FLOW_SPEC.md). The guide text is used in the
+   Copilot prompt below. */
+const PLATFORMS = {
+  linkedin:  { label: 'LinkedIn',  guide: 'LinkedIn post. 80 to 150 words. Open with a strong first line that makes people stop scrolling. Short paragraphs. Finish with a clear call to action and the job link. Add 3 relevant hashtags on the last line.' },
+  instagram: { label: 'Instagram', guide: 'Instagram caption. 50 to 100 words. Punchy first line. Links are not clickable on Instagram, so tell people to apply through the link in our bio or to search the job reference on fuserecruitment.com. Add 4 to 6 relevant hashtags on the last line.' },
+  facebook:  { label: 'Facebook',  guide: 'Facebook post. 60 to 120 words. Friendly and conversational. Include the job link. Add 2 or 3 relevant hashtags at most.' },
+};
+const ANGLES = {
+  straight: { label: 'Straight to the point', guide: 'Lead with the role, location and pay (if given). Keep it factual and easy to scan.' },
+  growth:   { label: 'Career growth',         guide: 'Lead with what this role does for the candidate\'s career: skills, progression and where it can take them.' },
+  culture:  { label: 'Team and culture',      guide: 'Lead with what it is like to work there: the team, the environment and the day-to-day.' },
+  urgent:   { label: 'Urgent start',          guide: 'Lead with the fact that the role needs someone soon. Create urgency without sounding desperate.' },
+};
+
+/* The Copilot prompt. Keep the style rules in step with the "Write caption"
+   prompt in Power Automate (FLOW_SPEC.md, step 3). */
+const PROMPT_TEMPLATE = `You are helping a recruitment consultant at Fuse Recruitment write a social media post to promote one of their live jobs.
+
+WHAT TO WRITE
+{{platformGuide}}
+Angle: {{angleGuide}}
+
+WHO IS POSTING
+{{poster}}
+
+THE JOB
+Title: {{title}}
+Location: {{location}}
+Work type: {{workType}}
+Job reference: {{ref}}
+Link to apply: {{url}}
+Summary: {{summary}}
+{{notes}}
+Full job ad:
+"""
+{{description}}
+"""
+
+FUSE STYLE RULES
+- Write like a real person: clear, plain-spoken, engaging and friendly. Speak to one person ("you").
+- Australian spelling. Sentence case. Short sentences.
+- Do not use emoji. Do not use em dashes; use a full stop or a comma instead.
+- Avoid corporate filler such as leverage, synergy, utilise, passionate, best-in-class, cutting-edge and game-changer.
+- Use digits for numbers ($90k, 3 roles, 6 weeks). Australian dollars without "AUD".
+- Only use facts from the job details above. Never invent pay, benefits, client names or numbers. Take pay from the job ad if it is there; otherwise leave it out.
+- Do not name the client company unless it appears in the job ad.
+
+Give me 2 different versions so I can pick one, then I will edit it to sound like me.`;
+
+/* =====================================================================
+   APP
+   ===================================================================== */
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k) { try { return localStorage.getItem('fuseSocial.' + k) || ''; } catch (e) { return ''; } },
+  set(k, v) { try { localStorage.setItem('fuseSocial.' + k, v); } catch (e) {} },
+};
+const WORK_TYPES = { FULL_TIME: 'Full time', PART_TIME: 'Part time', CONTRACTOR: 'Contract/temp', TEMPORARY: 'Contract/temp', 'CONTRACT/TEMP': 'Contract/temp', INTERN: 'Graduate' };
+
+let JOBS = [];
+const state = { selected: null, platform: store.get('platform') || 'linkedin', angle: 'straight', busy: false };
+
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function fmtDate(iso) { const d = new Date(iso); return iso && !isNaN(d) ? d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : ''; }
+function daysAgo(iso) { const d = new Date(iso); return isNaN(d) ? 999 : Math.floor((Date.now() - d) / 86400000); }
+
+let toastTimer;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function post(path, body) {
+  const res = await fetch(WORKER + path, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}),
+  });
+  let data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) throw new Error(data.error || ('Request failed (' + res.status + ')'));
+  return data;
+}
+
+/* ---------- Jobs ---------- */
+function tidyJob(j) {
+  const out = {
+    id: String(j.id || ''), title: String(j.title || ''), url: String(j.url || ''), summary: String(j.summary || ''),
+    location: String(j.location || ''), state: String(j.state || ''), workType: String(j.workType || ''),
+    salary: String(j.salary || ''), datePosted: String(j.datePosted || '').slice(0, 10), description: String(j.description || ''),
+  };
+  out.workType = WORK_TYPES[out.workType.toUpperCase()] || out.workType;
+  // Website summaries end with the reference, e.g. "... in Darra.. BH-40427"
+  if (out.summary && out.id) out.summary = out.summary.replace(new RegExp('\\.*\\s*' + out.id.replace(/-/g, '\\-') + '\\s*$'), '.').trim();
+  return out;
+}
+
+async function loadJobs(force) {
+  $('count').textContent = 'Loading jobs';
+  $('jobs').innerHTML = '<li class="empty">Loading live jobs&hellip;</li>';
+  let data = null;
+  if (!force) {
+    try {
+      const cached = JSON.parse(sessionStorage.getItem('fuseSocial.jobs') || 'null');
+      if (cached && Date.now() - cached.savedAt < JOBS_CACHE_MINUTES * 60000) data = cached.data;
+    } catch (e) {}
+  }
+  if (!data) {
+    try {
+      data = await post('/api/jobs', {});
+      try { sessionStorage.setItem('fuseSocial.jobs', JSON.stringify({ savedAt: Date.now(), data })); } catch (e) {}
+    } catch (err) {
+      $('count').textContent = 'No jobs loaded';
+      $('jobs').innerHTML = `<li class="error">Couldn't load the jobs: ${esc(err.message)}. Try Refresh in a minute.</li>`;
+      return;
+    }
+  }
+  JOBS = (data.jobs || []).map(tidyJob).filter(j => j.id && j.title)
+    .sort((a, b) => b.datePosted.localeCompare(a.datePosted));
+  fillFilters();
+  renderList();
+}
+
+function fillFilters() {
+  const keep = { s: $('fState').value, t: $('fType').value };
+  const states = [...new Set(JOBS.map(j => j.state).filter(Boolean))].sort();
+  const types = [...new Set(JOBS.map(j => j.workType).filter(Boolean))].sort();
+  $('fState').innerHTML = '<option value="">All locations</option>' + states.map(s => `<option>${esc(s)}</option>`).join('');
+  $('fType').innerHTML = '<option value="">All work types</option>' + types.map(s => `<option>${esc(s)}</option>`).join('');
+  $('fState').value = states.includes(keep.s) ? keep.s : '';
+  $('fType').value = types.includes(keep.t) ? keep.t : '';
+}
+
+function filtered() {
+  const q = $('q').value.trim().toLowerCase(), st = $('fState').value, ty = $('fType').value;
+  return JOBS.filter(j => (!st || j.state === st) && (!ty || j.workType === ty) &&
+    (!q || [j.title, j.location, j.id, j.summary].join(' ').toLowerCase().includes(q)));
+}
+
+function renderList() {
+  const list = filtered();
+  $('count').textContent = list.length === JOBS.length ? `${JOBS.length} live jobs, newest first` : `${list.length} of ${JOBS.length} jobs`;
+  if (!JOBS.length) { $('jobs').innerHTML = '<li class="empty">No live jobs found.</li>'; return; }
+  if (!list.length) { $('jobs').innerHTML = '<li class="empty">No jobs match. Try a different search.</li>'; return; }
+  $('jobs').innerHTML = list.map(j => `
+    <li><button type="button" class="job-row${state.selected && state.selected.id === j.id ? ' selected' : ''}" data-id="${esc(j.id)}">
+      <div class="row-title"><span>${esc(j.title)}</span>${daysAgo(j.datePosted) <= 3 ? '<span class="pill new">New</span>' : ''}</div>
+      <div class="row-meta">${esc(j.location)}${j.workType ? ' &middot; ' + esc(j.workType) : ''}${j.salary ? ' &middot; ' + esc(j.salary) : ''}</div>
+      <div class="row-meta">Posted ${esc(fmtDate(j.datePosted))} &middot; ${esc(j.id)}</div>
+    </button></li>`).join('');
+}
+
+['q', 'fState', 'fType'].forEach(id => $(id).addEventListener('input', renderList));
+$('refreshJobs').addEventListener('click', () => loadJobs(true));
+$('jobs').addEventListener('click', (e) => {
+  const b = e.target.closest('.job-row'); if (!b) return;
+  const j = JOBS.find(x => x.id === b.dataset.id); if (j) selectJob(j);
+});
+
+function selectJob(j) {
+  state.selected = j;
+  document.querySelectorAll('.job-row').forEach(b => b.classList.toggle('selected', b.dataset.id === j.id));
+  $('noJob').hidden = true; $('jobPanel').hidden = false;
+  $('dTitle').textContent = j.title;
+  $('dRef').textContent = 'Job reference ' + j.id;
+  $('dLink').href = j.url;
+  $('dFacts').innerHTML = [j.location, j.workType, j.salary, j.datePosted && 'Posted ' + fmtDate(j.datePosted)]
+    .filter(Boolean).map(f => `<span class="pill">${esc(f)}</span>`).join('');
+  $('dSummary').textContent = j.summary;
+  $('dDesc').textContent = j.description || 'The full ad is on the website.';
+  $('drafts').innerHTML = ''; $('genStatus').textContent = ''; $('genStatus').className = 'status';
+  updatePrompt();
+  if (window.innerWidth <= 1100) $('jobPanel').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ---------- Options ---------- */
+function renderChips(id, options, key) {
+  $(id).innerHTML = Object.entries(options).map(([k, v]) =>
+    `<button type="button" class="chip" data-k="${k}" aria-pressed="${state[key] === k}">${esc(v.label)}</button>`).join('');
+  $(id).addEventListener('click', (e) => {
+    const c = e.target.closest('.chip'); if (!c) return;
+    state[key] = c.dataset.k;
+    if (key === 'platform') store.set('platform', state.platform);
+    $(id).querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.k === state[key]));
+    updatePrompt();
+  });
+}
+renderChips('platforms', PLATFORMS, 'platform');
+renderChips('angles', ANGLES, 'angle');
+
+/* Name: what they last typed here, or else the first name from the hub sign-in. */
+let hubName = '';
+try { hubName = (localStorage.getItem('fuseHub.name') || '').trim(); } catch (e) {}
+$('name').value = store.get('name') || hubName; $('role').value = store.get('role');
+['name', 'role'].forEach(id => $(id).addEventListener('input', () => { store.set(id, $(id).value); updatePrompt(); }));
+$('notes').addEventListener('input', updatePrompt);
+
+function options() {
+  return { platform: state.platform, angle: state.angle, name: $('name').value.trim(), role: $('role').value.trim(), notes: $('notes').value.trim() };
+}
+
+function buildPrompt(j, o) {
+  const poster = o.name
+    ? `${o.name}${o.role ? ', ' + o.role : ''} at Fuse Recruitment. Write it in first person as ${o.name.split(' ')[0]}, and invite people to message them directly.`
+    : 'The Fuse Recruitment company page. Write it as "we".';
+  const vals = {
+    platformGuide: PLATFORMS[o.platform].guide, angleGuide: ANGLES[o.angle].guide, poster,
+    title: j.title, location: j.location || 'Not given', workType: j.workType || 'Not given',
+    ref: j.id, url: j.url, summary: j.summary, notes: o.notes ? `Also mention: ${o.notes}\n` : '',
+    description: j.description || '',
+  };
+  return PROMPT_TEMPLATE.replace(/\{\{(\w+)\}\}/g, (_, k) => vals[k] ?? '');
+}
+function updatePrompt() { if (state.selected) $('prompt').value = buildPrompt(state.selected, options()); }
+
+/* ---------- AI captions ---------- */
+function splitDrafts(text) {
+  const parts = String(text || '').split(/\n\s*-{3,}\s*\n/).map(s => s.trim()).filter(Boolean);
+  return parts.length ? parts.slice(0, 3) : [String(text || '').trim()];
+}
+
+$('generate').addEventListener('click', async () => {
+  const j = state.selected; if (!j || state.busy) return;
+  const o = options();
+  state.busy = true; $('generate').disabled = true;
+  $('genStatus').className = 'status working'; $('genStatus').textContent = 'Writing your captions. This takes about 15 seconds.';
+  $('drafts').innerHTML = '';
+  try {
+    const data = await post('/api/caption', { jobId: j.id, platform: o.platform, angle: o.angle, name: o.name, role: o.role, notes: o.notes });
+    const drafts = splitDrafts(data.reply);
+    if (!drafts[0]) throw new Error('The AI sent back an empty reply');
+    $('drafts').innerHTML = drafts.map((d, i) => `
+      <div class="draft">
+        <div class="draft-top"><span class="draft-label">Draft ${i + 1}</span><button type="button" class="btn secondary small" data-copy="${i}">Copy</button></div>
+        <textarea id="draft${i}" aria-label="Draft ${i + 1}">${esc(d)}</textarea>
+      </div>`).join('') +
+      '<p class="tip">Edit the draft so it sounds like you, and check every fact against the job ad before you post.</p>';
+    $('genStatus').className = 'status'; $('genStatus').textContent = '';
+    $('generate').textContent = 'Write new versions';
+  } catch (err) {
+    $('genStatus').className = 'status';
+    $('genStatus').innerHTML = `<div class="error">Couldn't write captions: ${esc(err.message)}. Try again, or copy the prompt into Copilot below.</div>`;
+  } finally {
+    state.busy = false; $('generate').disabled = false;
+  }
+});
+
+$('drafts').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  copyText($('draft' + b.dataset.copy).value, 'Caption copied');
+});
+$('copyPrompt').addEventListener('click', () => copyText($('prompt').value, 'Prompt copied'));
+
+async function copyText(text, msg) {
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch (e2) {}
+    ta.remove();
+  }
+  toast(ok ? msg : 'Could not copy. Select the text and press Ctrl+C.');
+}
+
+loadJobs(false);
+</script>
+</body>
+</html>

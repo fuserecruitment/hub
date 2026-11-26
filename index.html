@@ -63,6 +63,7 @@
     border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;
     font-family:'Work Sans',sans-serif;font-size:15px;
   }
+  .gate-card input + label{margin-top:16px;}
   .gate-card input::placeholder{color:rgba(255,255,255,.35);}
   .gate-card input:focus{outline:none;border-color:var(--blue);}
   .gate-error{min-height:20px;margin-top:8px;text-align:left;font-size:12.5px;color:#FF9B9B;}
@@ -117,6 +118,10 @@
   .intro h1{font-size:28px;line-height:1.25;margin:0 0 10px;}
   .intro p{color:var(--ink-soft);font-size:15px;}
 
+  .tool-group + .tool-group{margin-top:36px;}
+  .group-head{margin-bottom:14px;}
+  .group-head h2{font-size:19px;margin-bottom:2px;}
+  .group-head p{color:var(--ink-soft);font-size:14px;}
   .tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
   .tool-card{
     display:flex;flex-direction:column;background:var(--white);border:1px solid var(--line);
@@ -150,7 +155,9 @@
   <form class="gate-card" id="gateForm" novalidate>
     <img src="fuse-logo.png" alt="Fuse">
     <h1>Fuse Hub</h1>
-    <p>Internal tools for the Fuse team. Enter your Fuse email to continue.</p>
+    <p>Internal tools for the Fuse team. Enter your first name and Fuse email to continue.</p>
+    <label for="gateName">First name</label>
+    <input type="text" id="gateName" autocomplete="given-name" maxlength="40" placeholder="e.g. Sam" required>
     <label for="gateEmail">Work email</label>
     <input type="email" id="gateEmail" autocomplete="email" placeholder="name@email.com" required>
     <div class="gate-error" id="gateError" role="alert"></div>
@@ -172,10 +179,7 @@
         <a class="sidebar-nav-btn active" href="./">Home</a>
       </div>
 
-      <div class="sidebar-block">
-        <label>Tools</label>
-        <nav id="toolNav"></nav>
-      </div>
+      <nav id="toolNav" aria-label="Tools"></nav>
     </div>
 
     <div class="sidebar-user">
@@ -188,11 +192,11 @@
   <main class="workspace">
     <div class="workspace-inner">
       <div class="intro">
-        <h1>Everything in one place.</h1>
+        <h1 id="greeting">How can I make your work easier today?</h1>
         <p>Pick a tool from the sidebar or below. Each tool has a link back to Fuse Hub.</p>
       </div>
 
-      <div class="tool-grid" id="toolGrid"></div>
+      <div id="toolGrid"></div>
 
       <footer>
         <span>Fuse Recruitment</span>
@@ -204,35 +208,54 @@
 
 <script>
 /* ===================== TOOLS ===================== */
-/* To add a tool to the hub, add an entry here. It appears in the sidebar
-   and as a card on the home page. */
+/* To add a tool to the hub, add an entry here with the group it belongs to.
+   It appears in the sidebar and as a card on the home page, under that
+   group's heading. Groups only organise the menu: anyone signed in can
+   still open every tool. */
+const GROUPS = [
+  { id: 'everyone',  label: 'For everyone', intro: 'Tools for the whole Fuse team.' },
+  { id: 'marketing', label: 'Marketing',    intro: 'Tools and reports for the marketing team.' }
+];
+
 const TOOLS = [
   {
     name: 'Bullhorn Categorisation',
+    group: 'everyone',
     tag: 'Bullhorn',
     description: 'Work out the industry, category and subcategory for contacts, candidates, jobs and companies.',
     url: 'bullhorn-category/'
   },
   {
+    name: 'Social Post Generator',
+    group: 'marketing',
+    tag: 'Social',
+    description: 'Pick a live job from the website and get AI caption drafts for LinkedIn, Instagram or Facebook.',
+    url: 'social-posts/'
+  },
+  {
     name: 'Automation Finder',
+    group: 'marketing',
     tag: 'Bullhorn',
     description: 'Describe what you need in plain English and find out whether a Bullhorn automation already does it.',
     url: 'automation-finder/'
   },
   {
     name: 'Automation Journey Map',
+    group: 'marketing',
     tag: 'Bullhorn',
     description: 'See how every Bullhorn automation fits on the candidate and sales contact journeys, where they hand off, where the gaps are, and which ones might need an update.',
     url: 'journeys/'
   },
   {
     name: 'Present Feedback Review',
+    group: 'marketing',
     tag: 'Report',
     description: 'Findings from the September 2026 survey of 39 consultants and resourcers on building profiles in Present.',
     url: 'present-feedback/'
   },
   {
     name: 'Candidate Email Audit',
+    group: 'marketing',
     tag: 'Report',
     description: 'Which emails and blog links in the Active and Passive candidate workflows get clicked, and a proposed flow for each stage of the candidate journey.',
     url: 'candidate-emails/'
@@ -243,6 +266,7 @@ const TOOLS = [
 /* Shared with the tool pages: they read the same key on the same
    fuserecruitment.github.io origin and send people here if it's missing. */
 const EMAIL_KEY = 'fuseHub.email';
+const NAME_KEY = 'fuseHub.name';   // first name, for the greeting (tools may read it too)
 const EMAIL_PATTERN = /^[^\s@]+@fuserecruitment\.com$/i;
 
 function readEmail() {
@@ -251,8 +275,18 @@ function readEmail() {
 function writeEmail(email) {
   try { localStorage.setItem(EMAIL_KEY, email); } catch {}
 }
+function readName() {
+  try { return (localStorage.getItem(NAME_KEY) || '').trim(); } catch { return ''; }
+}
+function writeName(name) {
+  try { localStorage.setItem(NAME_KEY, name); } catch {}
+}
 function clearEmail() {
-  try { localStorage.removeItem(EMAIL_KEY); } catch {}
+  try { localStorage.removeItem(EMAIL_KEY); localStorage.removeItem(NAME_KEY); } catch {}
+}
+/* "sam" -> "Sam", "mary-jane" -> "Mary-Jane". Leaves names like "McKenzie" alone. */
+function tidyName(name) {
+  return name.trim().replace(/\s+/g, ' ').replace(/(^|[\s-])([a-z])/g, (m, sep, ch) => sep + ch.toUpperCase());
 }
 
 /* Only follow ?next= back to our own pages, never to another site. */
@@ -274,36 +308,66 @@ function showApp(email) {
   document.getElementById('gate').hidden = true;
   document.getElementById('app').hidden = false;
   document.getElementById('userEmail').textContent = email;
+  const name = readName();
+  document.getElementById('greeting').textContent = name
+    ? `How can I make your work easier today, ${name}?`
+    : 'How can I make your work easier today?';
 
-  document.getElementById('toolNav').innerHTML = TOOLS.map(t =>
-    `<a class="sidebar-nav-btn" href="${t.url}">${escapeHtml(t.name)}</a>`
+  const grouped = GROUPS
+    .map(g => ({ ...g, tools: TOOLS.filter(t => t.group === g.id) }))
+    .filter(g => g.tools.length);
+
+  document.getElementById('toolNav').innerHTML = grouped.map(g => `
+    <div class="sidebar-block">
+      <label>${escapeHtml(g.label)}</label>
+      ${g.tools.map(t => `<a class="sidebar-nav-btn" href="${t.url}">${escapeHtml(t.name)}</a>`).join('')}
+    </div>`
   ).join('');
 
-  document.getElementById('toolGrid').innerHTML = TOOLS.map(t => `
-    <a class="tool-card" href="${t.url}">
-      <span class="tool-tag">${escapeHtml(t.tag)}</span>
-      <h3>${escapeHtml(t.name)}</h3>
-      <p>${escapeHtml(t.description)}</p>
-      <span class="tool-open">Open &rarr;</span>
-    </a>`
+  document.getElementById('toolGrid').innerHTML = grouped.map(g => `
+    <section class="tool-group">
+      <div class="group-head">
+        <h2>${escapeHtml(g.label)}</h2>
+        <p>${escapeHtml(g.intro)}</p>
+      </div>
+      <div class="tool-grid">
+        ${g.tools.map(t => `
+        <a class="tool-card" href="${t.url}">
+          <span class="tool-tag">${escapeHtml(t.tag)}</span>
+          <h3>${escapeHtml(t.name)}</h3>
+          <p>${escapeHtml(t.description)}</p>
+          <span class="tool-open">Open &rarr;</span>
+        </a>`).join('')}
+      </div>
+    </section>`
   ).join('');
 }
 
 function showGate() {
   document.getElementById('app').hidden = true;
   document.getElementById('gate').hidden = false;
-  document.getElementById('gateEmail').focus();
+  const email = readEmail();
+  if (email && EMAIL_PATTERN.test(email) && !document.getElementById('gateEmail').value) {
+    document.getElementById('gateEmail').value = email;
+  }
+  document.getElementById('gateName').focus();
 }
 
 document.getElementById('gateForm').addEventListener('submit', e => {
   e.preventDefault();
+  const name = tidyName(document.getElementById('gateName').value);
   const email = document.getElementById('gateEmail').value.trim().toLowerCase();
   const error = document.getElementById('gateError');
+  if (!name) {
+    error.textContent = 'Please enter your first name.';
+    return;
+  }
   if (!EMAIL_PATTERN.test(email)) {
     error.textContent = 'Please use your @fuserecruitment.com email.';
     return;
   }
   error.textContent = '';
+  writeName(name);
   writeEmail(email);
   const next = safeNext();
   if (next) { location.href = next; return; }
@@ -312,12 +376,15 @@ document.getElementById('gateForm').addEventListener('submit', e => {
 
 document.getElementById('signOut').addEventListener('click', () => {
   clearEmail();
+  document.getElementById('gateName').value = '';
   document.getElementById('gateEmail').value = '';
   showGate();
 });
 
+/* People who signed in before the hub asked for a first name are asked
+   once more, with their email already filled in. */
 const saved = readEmail();
-if (saved && EMAIL_PATTERN.test(saved)) {
+if (saved && EMAIL_PATTERN.test(saved) && readName()) {
   const next = safeNext();
   if (next) location.replace(next); else showApp(saved);
 } else {
