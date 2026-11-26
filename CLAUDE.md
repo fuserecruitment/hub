@@ -38,9 +38,15 @@ step-by-step instructions for anything she has to do outside the repo.
    tag line under it), and a `← Back to Fuse Hub` button (`.sidebar-nav-btn.hub-back`).
 4. An entry in the `TOOLS` list in the root `index.html` (sidebar + home card)
    with its `group`, and a row in `README.md`. Groups (`GROUPS`): `everyone`
-   is only Bullhorn Categorisation, the one tool the whole team uses;
-   everything else is `marketing`. Groups organise the menu, they don't
-   restrict access.
+   is Bullhorn Categorisation and the Social Post Generator, the tools the
+   whole team uses; everything else is `marketing`, including an outside link to the Top
+   Talent Campaign Planner (`../top-talent/`, its own repo; don't edit it
+   from here). The Marketing group (`onlyFor: 'marketing'`) only shows for
+   emails in `MARKETING_EMAIL_HASHES`: SHA-256 of the lower-case email, one
+   per line, commented with the team and date only. Never put a plain email
+   or a name in that list (public repo). Hash with
+   `python -c "import hashlib;print(hashlib.sha256('name@fuserecruitment.com'.encode()).hexdigest())"`.
+   It hides the menu only; tool pages don't check it.
 
 ## Branding
 

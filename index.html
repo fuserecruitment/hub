@@ -214,8 +214,35 @@
    still open every tool. */
 const GROUPS = [
   { id: 'everyone',  label: 'For everyone', intro: 'Tools for the whole Fuse team.' },
-  { id: 'marketing', label: 'Marketing',    intro: 'Tools and reports for the marketing team.' }
+  { id: 'marketing', label: 'Marketing',    intro: 'Tools and reports for the marketing team.', onlyFor: 'marketing' }
 ];
+
+/* Who sees the Marketing group. This repo is public, so emails are stored
+   as SHA-256 hashes of the lower-case address, never in plain text. To add
+   someone, ask Claude to hash their email and add it here, with a comment
+   giving only their team (no names). This only hides the menu: anyone with
+   a tool's link can still open it. */
+const MARKETING_EMAIL_HASHES = [
+  '7f165487e3375cf9e7a9ea56e41baccb1da770bef5451d3dca92585eb9fc33b5', // marketing (added 26 Nov 2026)
+  '2064218525a0905640d1a7ebd237afee5c1c9c1b3c0d60e7e66470c6ae3cc37c', // marketing (added 26 Nov 2026)
+  'f19fdd1c6e9483127d53eeb13ef508464b7e9916f6a0dcbcb7a23c51ebfcfd7a', // marketing (added 26 Nov 2026)
+  'd4e3bbaa6e2c285e4741bf8c89a0fcb5cb779e4c59f6c4bbac0907672e6b180e', // marketing (added 26 Nov 2026)
+  'e9639a60bbfe20aac4ad0b2c1b8b34591e3f7c29de2adaebd081ed35f5dfa360', // marketing (added 26 Nov 2026)
+];
+
+async function sha256Hex(text) {
+  const bytes = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function audiencesFor(email) {
+  const audiences = ['everyone'];
+  try {
+    if (MARKETING_EMAIL_HASHES.includes(await sha256Hex(email.trim().toLowerCase()))) audiences.push('marketing');
+  } catch {}
+  return audiences;
+}
 
 const TOOLS = [
   {
@@ -227,10 +254,17 @@ const TOOLS = [
   },
   {
     name: 'Social Post Generator',
-    group: 'marketing',
+    group: 'everyone',
     tag: 'Social',
     description: 'Pick a live job from the website and get AI caption drafts for LinkedIn, Instagram or Facebook.',
     url: 'social-posts/'
+  },
+  {
+    name: 'Top Talent Campaign Planner',
+    group: 'marketing',
+    tag: 'Campaigns',
+    description: 'Plan, review and track the Top Talent email campaigns by industry and branch, with send dates, metrics and AI insights.',
+    url: '../top-talent/'
   },
   {
     name: 'Automation Finder',
@@ -304,7 +338,8 @@ function escapeHtml(s) {
   return s.replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 }
 
-function showApp(email) {
+async function showApp(email) {
+  const audiences = await audiencesFor(email);
   document.getElementById('gate').hidden = true;
   document.getElementById('app').hidden = false;
   document.getElementById('userEmail').textContent = email;
@@ -314,6 +349,7 @@ function showApp(email) {
     : 'How can I make your work easier today?';
 
   const grouped = GROUPS
+    .filter(g => !g.onlyFor || audiences.includes(g.onlyFor))
     .map(g => ({ ...g, tools: TOOLS.filter(t => t.group === g.id) }))
     .filter(g => g.tools.length);
 

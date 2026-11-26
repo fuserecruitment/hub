@@ -20,9 +20,16 @@ confidential content here.
 | Candidate Email Audit | `candidate-emails/` | https://fuserecruitment.github.io/hub/candidate-emails/ |
 | Social Post Generator | `social-posts/` (worker in `social-posts/worker/`, SharePoint list and flow setup in `social-posts/FLOW_SPEC.md`; a standalone SharePoint backup version in `social-posts/sharepoint-version/`) | https://fuserecruitment.github.io/hub/social-posts/ |
 
-The home page groups tools under **For everyone** (Bullhorn Categorisation)
-and **Marketing** (everything else). Groups only organise the menu; anyone
-signed in can open any tool.
+The home page groups tools under **For everyone** (Bullhorn Categorisation
+and the Social Post Generator) and **Marketing** (everything else, plus a link to the
+[Top Talent Campaign Planner](https://fuserecruitment.github.io/top-talent/),
+which lives in its own repo).
+
+Only people on the marketing list see the Marketing group. The list is
+`MARKETING_EMAIL_HASHES` in `index.html`: each email is stored as a SHA-256
+hash, so no addresses are published in this public repo. To add someone,
+ask Claude to hash their email and add it. This only hides the menu: anyone
+with a tool's link can still open it.
 
 Bullhorn Categorisation used to live in its own repo,
 [fuserecruitment/bullhorn-category](https://github.com/fuserecruitment/bullhorn-category).
